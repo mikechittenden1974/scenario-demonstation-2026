@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 11 — STARR (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 11"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: CHAPTER OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">11</p>
+  <p class="opener-tag">the only new technique you need</p>
+  <h1 class="opener-title">STARR</h1>
+  <p class="opener-subtitle">5 letters &middot; 1 answer shape &middot; every spoken response in the discussion</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- desk surface -->
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left sticky-note: STARR break-down -->
+  <g transform="translate(38,30) rotate(-3)">
+    <rect x="0" y="0" width="160" height="180" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Lato" font-size="11" font-weight="700">FIVE LETTERS</text>
+    <line x1="10" y1="30" x2="150" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="50" font-family="Lato" font-size="10"><tspan font-weight="700">S</tspan> &mdash; situation</text>
+    <text x="10" y="68" font-family="Lato" font-size="10"><tspan font-weight="700">T</tspan> &mdash; task</text>
+    <text x="10" y="86" font-family="Lato" font-size="10"><tspan font-weight="700">A</tspan> &mdash; action</text>
+    <text x="10" y="104" font-family="Lato" font-size="10"><tspan font-weight="700">R</tspan> &mdash; result</text>
+    <text x="10" y="124" font-family="Lato" font-size="10" fill="#c0392b"><tspan font-weight="700">R</tspan> &mdash; reflection</text>
+    <line x1="10" y1="132" x2="150" y2="132" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="148" font-family="Lato" font-size="9" font-style="italic">most candidates know</text>
+    <text x="10" y="160" font-family="Lato" font-size="9" font-style="italic">the first 4. the 5th is</text>
+    <text x="10" y="172" font-family="Lato" font-size="9" font-style="italic" font-weight="700" fill="#c0392b">where distinction lives.</text>
+  </g>
+
+  <!-- centre: big notepad with STARR letters being written -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="280" rx="3" ry="3" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <!-- spiral binding -->
+    <line x1="0" y1="14" x2="260" y2="14" stroke="#1a1a1a" stroke-width="1"/>
+    <g fill="#1a1a1a">
+      <circle cx="20" cy="7" r="3"/><circle cx="50" cy="7" r="3"/><circle cx="80" cy="7" r="3"/>
+      <circle cx="110" cy="7" r="3"/><circle cx="140" cy="7" r="3"/><circle cx="170" cy="7" r="3"/>
+      <circle cx="200" cy="7" r="3"/><circle cx="230" cy="7" r="3"/>
+    </g>
+    <!-- lines -->
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#ccc" stroke-width="0.8"/>
+    <line x1="20" y1="82" x2="240" y2="82" stroke="#ccc" stroke-width="0.8"/>
+    <line x1="20" y1="128" x2="240" y2="128" stroke="#ccc" stroke-width="0.8"/>
+    <line x1="20" y1="174" x2="240" y2="174" stroke="#ccc" stroke-width="0.8"/>
+    <line x1="20" y1="220" x2="240" y2="220" stroke="#ccc" stroke-width="0.8"/>
+
+    <!-- letters -->
+    <text x="30" y="64" font-family="Poppins,sans-serif" font-weight="900" font-size="32" fill="#1a1a1a">S</text>
+    <text x="70" y="64" font-family="Lato" font-size="11" fill="#555">&mdash; where, when, who</text>
+
+    <text x="30" y="110" font-family="Poppins,sans-serif" font-weight="900" font-size="32" fill="#1a1a1a">T</text>
+    <text x="70" y="110" font-family="Lato" font-size="11" fill="#555">&mdash; what they asked of me</text>
+
+    <text x="30" y="156" font-family="Poppins,sans-serif" font-weight="900" font-size="32" fill="#1a1a1a">A</text>
+    <text x="70" y="156" font-family="Lato" font-size="11" fill="#555">&mdash; what I did</text>
+
+    <text x="30" y="202" font-family="Poppins,sans-serif" font-weight="900" font-size="32" fill="#1a1a1a">R</text>
+    <text x="70" y="202" font-family="Lato" font-size="11" fill="#555">&mdash; what changed</text>
+
+    <text x="30" y="252" font-family="Poppins,sans-serif" font-weight="900" font-size="32" fill="#c0392b">R</text>
+    <text x="70" y="252" font-family="Lato" font-size="11" fill="#555">&mdash; what it taught me</text>
+
+    <!-- circle on the second R -->
+    <circle cx="46" cy="244" r="22" fill="none" stroke="#c0392b" stroke-width="2"/>
+    <path d="M68 230 q14 -10 22 -8" fill="none" stroke="#c0392b" stroke-width="1.4"/>
+    <polygon points="68,230 74,228 70,234" fill="#c0392b"/>
+  </g>
+
+  <!-- pen on desk -->
+  <g transform="translate(380,338) rotate(-6)">
+    <rect x="0" y="0" width="80" height="6" rx="2" fill="#1a1a1a"/>
+    <rect x="80" y="1" width="14" height="4" rx="1" fill="#fff7c2" stroke="#1a1a1a" stroke-width="0.8"/>
+    <polygon points="94,1 102,3 94,5" fill="#1a1a1a"/>
+  </g>
+
+  <!-- DAY 11 coffee mug right -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 11</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <!-- right speech bubble: the worry -->
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v82 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">You, slightly panicked:</text>
+    <text x="16" y="46" font-family="Lato" font-style="italic" font-size="10">"five steps for every</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">answer? sounds like</text>
+    <text x="16" y="78" font-family="Lato" font-style="italic" font-size="10">a lot to remember."</text>
+    <text x="16" y="100" font-family="Lato" font-style="italic" font-size="9.5" fill="#2d8659">(you already know four.)</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 8pt;">One shape. Every spoken answer. If you've prepared for a competency-based interview before, you already know <strong>STAR</strong> &mdash; the first four letters. AM2 needs a fifth: <strong>Reflection</strong>. That second R is the new thing today &mdash; and it's where Distinction marks live.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — STARR LAYERS ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">Five layers, one answer</h2>
+  <p style="max-width: 5.5in;">Every spoken answer follows the same shape. Five layers, each one second-or-third nature once you've used it a few times. The fifth is the AM2-specific one &mdash; it's what makes the difference between Pass and Distinction.</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- shared horizontal connector line -->
+    <line x1="40" y1="100" x2="680" y2="100" stroke="#1a1a1a" stroke-width="2"/>
+    <!-- 5 evenly-spaced cards -->
+    <!-- Card 1: S -->
+    <g transform="translate(40,30)">
+      <rect x="0" y="0" width="120" height="340" rx="6" ry="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="60" cy="80" r="34" fill="#1a1a1a"/>
+      <text x="60" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="36" fill="#fff">S</text>
+      <text x="60" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">Situation</text>
+      <line x1="14" y1="150" x2="106" y2="150" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="170" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">where, when, who</text>
+      <text x="60" y="200" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700">EXAMPLE:</text>
+      <text x="10" y="218" font-family="Lato" font-size="8.5">"In April this year,</text>
+      <text x="10" y="232" font-family="Lato" font-size="8.5">working with Salma</text>
+      <text x="10" y="246" font-family="Lato" font-size="8.5">on the invoice</text>
+      <text x="10" y="260" font-family="Lato" font-size="8.5">reconciliation team."</text>
+      <line x1="14" y1="280" x2="106" y2="280" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="302" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700" fill="#c0392b">~10 sec</text>
+      <text x="60" y="318" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">two short sentences</text>
+    </g>
+    <!-- Card 2: T -->
+    <g transform="translate(170,30)">
+      <rect x="0" y="0" width="120" height="340" rx="6" ry="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="60" cy="80" r="34" fill="#1a1a1a"/>
+      <text x="60" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="36" fill="#fff">T</text>
+      <text x="60" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">Task</text>
+      <line x1="14" y1="150" x2="106" y2="150" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="170" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">what they asked</text>
+      <text x="60" y="200" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700">EXAMPLE:</text>
+      <text x="10" y="218" font-family="Lato" font-size="8.5">"Salma asked me</text>
+      <text x="10" y="232" font-family="Lato" font-size="8.5">to take over the</text>
+      <text x="10" y="246" font-family="Lato" font-size="8.5">verification process</text>
+      <text x="10" y="260" font-family="Lato" font-size="8.5">from manual sampling."</text>
+      <line x1="14" y1="280" x2="106" y2="280" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="302" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700" fill="#c0392b">~10 sec</text>
+      <text x="60" y="318" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">your role specifically</text>
+    </g>
+    <!-- Card 3: A -->
+    <g transform="translate(300,30)">
+      <rect x="0" y="0" width="120" height="340" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="60" cy="80" r="34" fill="#1a1a1a"/>
+      <text x="60" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="36" fill="#fff">A</text>
+      <text x="60" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">Action</text>
+      <line x1="14" y1="150" x2="106" y2="150" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="170" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">what you did</text>
+      <text x="60" y="200" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700">EXAMPLE:</text>
+      <text x="10" y="218" font-family="Lato" font-size="8.5">"Built an XLOOKUP</text>
+      <text x="10" y="232" font-family="Lato" font-size="8.5">match on NHS no.</text>
+      <text x="10" y="246" font-family="Lato" font-size="8.5">against our MRN;</text>
+      <text x="10" y="260" font-family="Lato" font-size="8.5">cross-checked procs."</text>
+      <line x1="14" y1="280" x2="106" y2="280" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="302" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700" fill="#c0392b">~20 sec</text>
+      <text x="60" y="318" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">the technical detail</text>
+    </g>
+    <!-- Card 4: R (Result) -->
+    <g transform="translate(430,30)">
+      <rect x="0" y="0" width="120" height="340" rx="6" ry="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="60" cy="80" r="34" fill="#1a1a1a"/>
+      <text x="60" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="36" fill="#fff">R</text>
+      <text x="60" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">Result</text>
+      <line x1="14" y1="150" x2="106" y2="150" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="170" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">what changed</text>
+      <text x="60" y="200" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700">EXAMPLE:</text>
+      <text x="10" y="218" font-family="Lato" font-size="8.5">"10% manual check</text>
+      <text x="10" y="232" font-family="Lato" font-size="8.5">&rarr; 100% coverage.</text>
+      <text x="10" y="246" font-family="Lato" font-size="8.5">14 discrepancies/mo</text>
+      <text x="10" y="260" font-family="Lato" font-size="8.5">surfaced."</text>
+      <line x1="14" y1="280" x2="106" y2="280" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="60" y="302" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700" fill="#c0392b">~10 sec</text>
+      <text x="60" y="318" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">end with a number</text>
+    </g>
+    <!-- Card 5: R (Reflection) — highlighted -->
+    <g transform="translate(560,20)">
+      <rect x="0" y="0" width="130" height="360" rx="6" ry="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2.6"/>
+      <circle cx="65" cy="80" r="34" fill="#c0392b"/>
+      <text x="65" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="36" fill="#fff">R</text>
+      <text x="65" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#c0392b">Reflection</text>
+      <line x1="14" y1="150" x2="116" y2="150" stroke="#c0392b" stroke-width="0.8"/>
+      <text x="65" y="170" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">what it taught you</text>
+      <text x="65" y="200" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700">EXAMPLE:</text>
+      <text x="10" y="218" font-family="Lato" font-size="8.5">"On reflection, the</text>
+      <text x="10" y="232" font-family="Lato" font-size="8.5">win wasn't the XLOOKUP</text>
+      <text x="10" y="246" font-family="Lato" font-size="8.5">&mdash; it was reframing</text>
+      <text x="10" y="260" font-family="Lato" font-size="8.5">it as a matching</text>
+      <text x="10" y="274" font-family="Lato" font-size="8.5">problem, not sampling."</text>
+      <line x1="14" y1="294" x2="116" y2="294" stroke="#c0392b" stroke-width="0.8"/>
+      <text x="65" y="316" text-anchor="middle" font-family="Lato" font-size="8.5" font-weight="700" fill="#c0392b">~15 sec</text>
+      <text x="65" y="332" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#c0392b">distinction zone</text>
+      <text x="65" y="350" text-anchor="middle" font-family="Lato" font-size="7.5" font-style="italic" fill="#555">portfolio doesn't have this</text>
+    </g>
+  </svg>
+
+  <p style="max-width: 5.5in; text-align: center; font-style: italic; color: #555; margin: -4pt auto 0;">First four layers (STAR) &mdash; familiar territory if you've prepped for interviews. The fifth R is the AM2-specific one.</p>
+
+</section>
+
+
+<!-- ========== PAGE 3: WHAT EACH LETTER ASKS ========== -->
+<section class="page">
+
+  <p class="section-tag">five questions, in this order</p>
+  <h2 class="section">What each letter asks for</h2>
+
+  <p>If you've used STAR before, layers 1&ndash;4 are familiar. The fifth R is the bit AM2 specifically wants.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:14%;">Layer</th>
+      <th style="padding:6pt 10pt; text-align:left; width:30%;">Answers the question</th>
+      <th style="padding:6pt 10pt; text-align:left;">A good one sounds like</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>S &mdash; Situation</strong></td>
+      <td style="padding:5pt 10pt;">Where? When? Who was involved?</td>
+      <td style="padding:5pt 10pt; font-style:italic;">"In April, working with the booking team&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>T &mdash; Task</strong></td>
+      <td style="padding:5pt 10pt;">What was asked of <em>you</em>?</td>
+      <td style="padding:5pt 10pt; font-style:italic;">"My manager asked me to take over invoice verification&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>A &mdash; Action</strong></td>
+      <td style="padding:5pt 10pt;">What did you actually do?</td>
+      <td style="padding:5pt 10pt; font-style:italic;">"I built an XLOOKUP match between the two ID fields&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>R &mdash; Result</strong></td>
+      <td style="padding:5pt 10pt;">What changed because of it?</td>
+      <td style="padding:5pt 10pt; font-style:italic;">"Coverage moved from 10% to 100%, surfacing 14 issues/month&hellip;"</td>
+    </tr>
+    <tr style="background: #fef0ec;">
+      <td style="padding:5pt 10pt; color:#c0392b;"><strong>R &mdash; Reflection</strong></td>
+      <td style="padding:5pt 10pt;">What did it teach you? What would you do differently?</td>
+      <td style="padding:5pt 10pt; font-style:italic; color:#c0392b;">"On reflection, the real win was reframing it as a matching problem, not a sampling one&hellip;"</td>
+    </tr>
+  </table>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>You don't have to say the words "Situation, Task, Action&hellip;" out loud. The assessor isn't checking off letters. They're hearing whether <em>all five layers are in the answer</em>. Layer by layer, in roughly that order &mdash; even if you never name the framework.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: WHY THE SECOND R MATTERS ========== -->
+<section class="page">
+
+  <p class="section-tag">the layer that wins distinction</p>
+  <h2 class="section">Why the second R is everything</h2>
+
+  <p>One simple fact: <strong>the portfolio doesn't contain reflection.</strong> By design. The assessment plan explicitly excludes self-reflection from the written evidence. So the discussion &mdash; specifically the second R in STARR &mdash; is the <em>only</em> place reflection shows up. Which means it's where Distinction marks live.</p>
+
+  <div class="row" style="margin-top: 8pt;">
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">Pass-level Result</h3>
+      <p style="font-size: 10.5pt;"><em>"Coverage went from 10% to 100% and we caught 14 issues a month."</em></p>
+      <p style="font-size: 10pt; color: #555; margin-top: 4pt;">Describes the outcome &mdash; correct, complete, but it's still just describing.</p>
+    </div>
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">Distinction-level Reflection</h3>
+      <p style="font-size: 10.5pt; color: #c0392b;"><em>"On reflection, the real win wasn't the XLOOKUP &mdash; it was reframing the work as a matching problem rather than a sampling one. I'd take that mindset into any verification task."</em></p>
+      <p style="font-size: 10pt; color: #555; margin-top: 4pt;"><em>Evaluates</em> the work, generalises the insight, anticipates future application.</p>
+    </div>
+  </div>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>Brain Power</h4>
+      <p>Three reflection prompts that almost always work: <em>"the real win wasn't X &mdash; it was Y" &middot; "I'd take this approach into Z next time" &middot; "what I'd do differently with hindsight is&hellip;"</em> Pick one, fit your story to it, practise it three times. That's the Distinction move.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: BIG BREATHER — WORKED EXAMPLE ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the worked example</p>
+  <h2 class="section">A full STARR in 60 seconds</h2>
+  <p style="max-width: 5.5in;">Below: a complete answer to a typical opening question, laid out layer by layer. Read it aloud once. Then read it again at the suggested pace.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- title -->
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">A FULL STARR ANSWER &mdash; 60-second transcript</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">Q: "Tell me about a piece of data work where the analysis shaped a business decision."</text>
+
+  <!-- vertical timeline on left -->
+  <line x1="100" y1="60" x2="100" y2="430" stroke="#1a1a1a" stroke-width="2"/>
+
+  <!-- S -->
+  <g transform="translate(60,60)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">S</text>
+    <rect x="74" y="0" width="580" height="56" rx="4" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SITUATION &mdash; where, when, who</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"In April this year, I was working with our External Provider Reconciliation team &mdash;</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">Salma is the lead. We were processing about 1,400 invoices a month from imaging providers."</text>
+  </g>
+
+  <!-- T -->
+  <g transform="translate(60,128)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">T</text>
+    <rect x="74" y="0" width="580" height="56" rx="4" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">TASK &mdash; what was asked of you</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"Salma asked me to take over the verification process. The previous method was a manual check</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">of about 10% of invoices, which was leaving discrepancies undetected."</text>
+  </g>
+
+  <!-- A -->
+  <g transform="translate(60,196)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">A</text>
+    <rect x="74" y="0" width="580" height="72" rx="4" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">ACTION &mdash; what you did</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"I designed an automated reconciliation using XLOOKUP to match the external provider's</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">NHS numbers against our internal MRNs. I added columns to pull procedure name from UCLH</text>
+    <text x="84" y="60" font-family="Lato" font-size="10" font-style="italic">data so we could cross-check what was billed against what was actually clinically done."</text>
+  </g>
+
+  <!-- R -->
+  <g transform="translate(60,280)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="56" rx="4" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">RESULT &mdash; what changed</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"We went from checking 10% to 100% coverage. We caught about 14 discrepancies a month &mdash;</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">most were legitimate variations, but a few were billing errors we corrected with providers."</text>
+  </g>
+
+  <!-- second R (highlighted) -->
+  <g transform="translate(60,348)">
+    <circle cx="40" cy="14" r="18" fill="#c0392b"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="72" rx="4" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10" fill="#c0392b">REFLECTION &mdash; what it taught you / what you'd do differently</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"On reflection, the win wasn't really the XLOOKUP technique &mdash; it was reframing the work</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">as a matching problem rather than a sampling one. I'd take that mindset into any future</text>
+    <text x="84" y="60" font-family="Lato" font-size="10" font-style="italic">verification task: where the data has a unique key, you can audit the whole population."</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 6: HOW LONG EACH LAYER ========== -->
+<section class="page">
+
+  <p class="section-tag">pacing the answer</p>
+  <h2 class="section">How long each layer should be</h2>
+
+  <p>STARR is 60&ndash;75 seconds end-to-end for a typical question. Most learners overspend on Situation and underspend on Reflection. The pacing below is the corrective.</p>
+
+  <svg viewBox="0 0 720 140" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- timeline bar -->
+    <rect x="40" y="50" width="640" height="40" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="1.6"/>
+    <!-- proportions: S 10s · T 10s · A 20s · R 10s · R 15s — total 65s. Bar = 640px -->
+    <!-- S 10/65 = 98px -->
+    <rect x="40" y="50" width="98" height="40" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="89" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">S</text>
+    <text x="89" y="36" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">10s</text>
+    <!-- T 10/65 = 98px -->
+    <rect x="138" y="50" width="98" height="40" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="187" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">T</text>
+    <text x="187" y="36" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">10s</text>
+    <!-- A 20/65 = 197px -->
+    <rect x="236" y="50" width="197" height="40" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="335" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">A</text>
+    <text x="335" y="36" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">20s &mdash; the technical detail</text>
+    <!-- R 10/65 = 98px -->
+    <rect x="433" y="50" width="98" height="40" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="482" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">R</text>
+    <text x="482" y="36" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">10s</text>
+    <!-- R2 15/65 = 148px -->
+    <rect x="531" y="50" width="148" height="40" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="605" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">R</text>
+    <text x="605" y="36" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">15s &mdash; distinction zone</text>
+    <!-- baseline -->
+    <text x="40" y="115" font-family="Lato" font-size="9" fill="#555">0s</text>
+    <text x="680" y="115" text-anchor="end" font-family="Lato" font-size="9" fill="#555">~65s</text>
+    <text x="360" y="125" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic" fill="#555">give each layer the space it needs &mdash; don't sprint</text>
+  </svg>
+
+  <div class="row" style="margin-top: 10pt;">
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">The two most common pacing errors</h3>
+      <p style="font-size: 10.5pt;"><strong>1. Over-spending on Situation.</strong> Half your answer is context-setting and the assessor's eyes glaze over. Aim for two short sentences max.</p>
+      <p style="font-size: 10.5pt;"><strong>2. Under-spending on the second R.</strong> You land the Result and stop. The Reflection layer gets clipped to one sentence, or vanishes. Give it the same space as the Result. Distinction lives there.</p>
+    </div>
+    <div class="col">
+      <div class="show-off" style="margin: 0;">
+        <div class="badge">SHOW THIS OFF</div>
+        <p>If the assessor is taking notes by the time you reach the second R, you've earned the time. Don't rush the reflection because you sense the silence &mdash; the silence is them <em>writing</em>.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: COMMON STARR MISTAKES ========== -->
+<section class="page">
+
+  <p class="section-tag">avoid these four</p>
+  <h2 class="section">Where STARR answers go wrong</h2>
+
+  <p>Four recurring patterns. Each loses marks for a different reason. The first one is the most common.</p>
+
+  <h3 class="sub">1. The Context Dump</h3>
+  <p>Three minutes of background before getting to what you did. The assessor wanted a 60-second answer and got a lecture. <em>Fix:</em> two short sentences for Situation, then move on. The story isn't the context; the context lets the story start.</p>
+
+  <h3 class="sub">2. The Skipped Task</h3>
+  <p>You jump straight from Situation to Action without naming what was asked of you specifically. The assessor doesn't know whether you led the work, supported it, or were handed it. <em>Fix:</em> one sentence on Task &mdash; <em>"My manager asked me to&hellip;"</em> or <em>"I volunteered to take this on because&hellip;"</em>.</p>
+
+  <h3 class="sub">3. The Hidden Result</h3>
+  <p>You describe what you did but never name what changed. The Action goes on for 30 seconds and lands without a number, a date, or a decision. <em>Fix:</em> always end the Result with a measurable &mdash; <em>"from 10% to 100% coverage"</em>, <em>"reporting cut from 4 hours to 20 minutes"</em>, <em>"the dashboard went into the exec meeting and was approved"</em>.</p>
+
+  <div class="red-flag">
+    <div class="badge">RED FLAG &middot; THE MISSING REFLECTION</div>
+    <p><strong>You land the Result and stop.</strong> The fifth layer doesn't happen. This is the single most common reason apprentices hit Pass on every KSB but fall short of the Distinction descriptors (D1, D2, D3). The assessor can see in the portfolio that you did the work &mdash; what they need to hear in the discussion is <em>what you took from it</em>.</p>
+    <p><strong>The fix:</strong> after every Result, pause for a beat, then start with <em>"on reflection&hellip;"</em> or <em>"what that taught me&hellip;"</em>. Even one strong sentence is enough.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: SHARPEN YOUR PENCIL — STARR YOUR ANCHORS ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 10pt 16pt 10pt 56pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>40 minutes &mdash; one STARR template per anchor</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">Take each anchor story from Day 10. Bullet a few words per layer &mdash; not sentences. The full sentence comes when you say it out loud.</p>
+  </div>
+
+  <!-- Four anchor template cards laid out 2x2 -->
+  <style>
+    .starr-card {
+      border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+      padding: 8pt 10pt; margin: 4pt 0; background: #fff;
+      page-break-inside: avoid;
+    }
+    .starr-card .anchor-title {
+      font-family: Poppins, sans-serif; font-weight: 900; font-size: 10.5pt;
+      margin: 0 0 4pt 0;
+      border-bottom: 1pt solid #1a1a1a; padding-bottom: 3pt;
+    }
+    .starr-card .anchor-title small {
+      font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+      font-size: 9pt; color: #888; margin-left: 6pt; text-transform: none;
+    }
+    .starr-card .line {
+      display: flex; align-items: center;
+      padding: 3pt 0; border-bottom: 1pt dashed #999;
+      font-family: Poppins, sans-serif;
+    }
+    .starr-card .line .letter {
+      width: 22pt; min-width: 22pt; height: 22pt; line-height: 22pt;
+      text-align: center; font-weight: 900; font-size: 13pt;
+      background: #1a1a1a; color: #fff; border-radius: 50%;
+      margin-right: 8pt;
+    }
+    .starr-card .line.refl .letter { background: #c0392b; }
+    .starr-card .line .prompt {
+      font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+      font-size: 9.5pt; color: #555; width: 110pt; min-width: 110pt;
+    }
+    .starr-card .line.refl .prompt { color: #c0392b; font-weight: 700; font-style: normal; }
+    .starr-card .line .blank { flex: 1; }
+  </style>
+
+  <div class="starr-card">
+    <p class="anchor-title">Anchor 1 <small>name your story:</small></p>
+    <div class="line"><span class="letter">S</span><span class="prompt">where, when, who</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">T</span><span class="prompt">what they asked</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">A</span><span class="prompt">what you did</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">R</span><span class="prompt">what changed</span><span class="blank"></span></div>
+    <div class="line refl"><span class="letter">R</span><span class="prompt">on reflection&hellip;</span><span class="blank"></span></div>
+  </div>
+
+  <div class="starr-card">
+    <p class="anchor-title">Anchor 2 <small>name your story:</small></p>
+    <div class="line"><span class="letter">S</span><span class="prompt">where, when, who</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">T</span><span class="prompt">what they asked</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">A</span><span class="prompt">what you did</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">R</span><span class="prompt">what changed</span><span class="blank"></span></div>
+    <div class="line refl"><span class="letter">R</span><span class="prompt">on reflection&hellip;</span><span class="blank"></span></div>
+  </div>
+
+  <div class="starr-card">
+    <p class="anchor-title">Anchor 3 <small>name your story:</small></p>
+    <div class="line"><span class="letter">S</span><span class="prompt">where, when, who</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">T</span><span class="prompt">what they asked</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">A</span><span class="prompt">what you did</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">R</span><span class="prompt">what changed</span><span class="blank"></span></div>
+    <div class="line refl"><span class="letter">R</span><span class="prompt">on reflection&hellip;</span><span class="blank"></span></div>
+  </div>
+
+  <div class="starr-card">
+    <p class="anchor-title">Anchor 4 <small>name your story:</small></p>
+    <div class="line"><span class="letter">S</span><span class="prompt">where, when, who</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">T</span><span class="prompt">what they asked</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">A</span><span class="prompt">what you did</span><span class="blank"></span></div>
+    <div class="line"><span class="letter">R</span><span class="prompt">what changed</span><span class="blank"></span></div>
+    <div class="line refl"><span class="letter">R</span><span class="prompt">on reflection&hellip;</span><span class="blank"></span></div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 9: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions. Answer in your head first; check below.</p>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>1.</strong> STARR is an acronym I should say out loud during the discussion.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>2.</strong> The first four layers (STAR) are the same shape used in competency-based interviews generally.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>3.</strong> Most learners over-spend on Situation and under-spend on Reflection.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>4.</strong> The Result and the Reflection are the same thing &mdash; both describe what happened.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>5.</strong> If I forget the Reflection in one answer, I can add it later when the assessor asks me about the same KSB again.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin: 8pt 0 4pt 0;">Answers</h3>
+  <p style="margin: 2pt 0 2pt 0; font-size: 10pt;"><strong>1. False.</strong> Don't name the framework. The assessor wants to hear all five layers in your answer, not the acronym.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>2. True.</strong> If you've prepared for any structured interview, layers 1&ndash;4 are familiar &mdash; the fifth R is the AM2-specific add.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>3. True.</strong> The two pacing errors that cost marks. The R-bar in the pacing diagram is the corrective.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>4. False.</strong> Result <em>describes</em> what changed; Reflection <em>evaluates</em> what it taught you. Different verbs &mdash; different layers.</p>
+  <p style="margin: 2pt 0 0 0; font-size: 10pt;"><strong>5. True &mdash; and recommended.</strong> The assessor often revisits a topic. Use the second visit to add what you forgot. <em>"Going back to the dashboard piece for a moment &mdash; on reflection&hellip;"</em></p>
+
+</section>
+
+
+<!-- ========== PAGE 10: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa { margin: 5pt 0 8pt 24pt; }
+    .page .dumb h4 { margin: 0 0 8pt 0; }
+  </style>
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>I've never heard of STAR or STARR. Is this a real framework or something you've made up?</div>
+    <div class="qa"><span class="a">A:</span>STAR is a widely-used competency-interview framework &mdash; you'll find it in any recruitment or coaching book. STARR with the second R (Reflection) is a common adaptation for reflective discussions like AM2. The names matter less than the shape; the shape is what scores.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if my story doesn't fit STARR neatly? E.g., the work is ongoing, no clear "result" yet.</div>
+    <div class="qa"><span class="a">A:</span>Use what's there. Even a project mid-flight has an interim Result &mdash; <em>"so far, we've onboarded the first 12 sites and reduced report-turnaround from 5 days to 2"</em> &mdash; and an interim Reflection &mdash; <em>"what's been useful so far is the early stakeholder mapping; if I were starting again I'd build that in even sooner"</em>. Don't pretend the work is done; describe where it is.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I'm scared I'll forget the order under pressure.</div>
+    <div class="qa"><span class="a">A:</span>Two helpers. <strong>First:</strong> the order matches how a story naturally unfolds &mdash; when, what was needed, what I did, what happened, what I learned. You're not memorising an alphabet, you're telling a story. <strong>Second:</strong> on the day, write S T A R R down the side of your notepad before the call starts. Glance at it between answers. It's allowed.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>My anchor stories were team-based. How do I describe what <em>I</em> did?</div>
+    <div class="qa"><span class="a">A:</span>Be specific about your contribution. <em>"The team migrated the dashboards; my piece was the data quality validation layer."</em> Team context is fine in Situation; Action should be about you specifically. The assessor needs to grade your work, not the team's.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if the Reflection is something I'm not proud of &mdash; e.g., "I'd have asked for help sooner"?</div>
+    <div class="qa"><span class="a">A:</span>That's exactly the kind of Reflection that scores at Distinction. The descriptors reward critical evaluation of your own work, not self-promotion. <em>"What I'd do differently is&hellip;"</em> is a stronger move than <em>"What I did brilliantly was&hellip;"</em>. Be honest.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>Can I use the same anchor story for different questions?</div>
+    <div class="qa"><span class="a">A:</span>Yes &mdash; and you should. A strong anchor story covers multiple KSBs, so it'll be relevant to several discussion questions. The Situation, Task, and Action stay the same; the Result and Reflection layers can shift depending on which angle the question asks about.</div>
+  </div>
+
+  <p class="pull" style="margin-top: 12pt;">
+    Five layers, in order.<br>
+    Skip none. Especially not the last.
+  </p>
+
+</section>
+
+
+<!-- ========== PAGE 11: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">15 minutes &mdash; the first STARR practice</p>
+  <h2 class="section">Say it for real</h2>
+
+  <p>Three opening-style questions. Answer each with a full STARR, out loud. Use your anchor stories from Day 10. The first time will feel mechanical; by the third, it flows.</p>
+
+  <h3 class="sub">Q1 &mdash; Tell me about a piece of data work you're proud of.</h3>
+  <p><strong>The shape:</strong> pick your strongest anchor &mdash; the one that most easily yields a result and a reflection. Use the worked example on page 5 as the cadence model.</p>
+
+  <h3 class="sub">Q2 &mdash; Describe a time you found a data quality issue and what you did about it.</h3>
+  <p><strong>The shape:</strong> a different anchor &mdash; one from your Data Analysis &amp; Validation content area. The Action layer is where the technique lives (Group By, Three Questions Before You Delete, Two-Route Check). The Reflection should generalise: <em>"what that taught me about how to spot quality issues earlier&hellip;"</em></p>
+
+  <h3 class="sub">Q3 &mdash; Tell me about a stakeholder conversation that didn't go as planned.</h3>
+  <p><strong>The shape:</strong> a softer-KSB anchor &mdash; one from Approach to Work. Be specific in Situation; honest in Reflection. <em>"What I'd do differently is&hellip;"</em> is a stronger ending than <em>"I handled it well by&hellip;"</em>.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>After each practice answer, time it. If you finished in under 45 seconds, you under-answered. If you went over 90, you over-answered. Aim for the 60&ndash;75 second band. The pacing chart on page 6 is your guide.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 12: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>STARR is the only new technique you need for AM2.</strong> Five layers, one shape, used every answer.</li>
+    <li><strong>Situation &middot; Task &middot; Action &middot; Result &middot; Reflection.</strong> In that order, but you never say the words out loud.</li>
+    <li><strong>The first four (STAR) are familiar.</strong> If you've done any structured interview prep, you've used them.</li>
+    <li><strong>The second R is the AM2-specific add.</strong> Reflection. Where Distinction lives.</li>
+    <li><strong>Pacing: roughly 60&ndash;75 seconds.</strong> S 10s &middot; T 10s &middot; A 20s &middot; R 10s &middot; R 15s.</li>
+    <li><strong>Four common mistakes.</strong> The Context Dump, the Skipped Task, the Hidden Result, the Missing Reflection.</li>
+    <li><strong>"On reflection&hellip;"</strong> is the phrase that unlocks the last layer. Use it deliberately.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can recite the five layers &mdash; S, T, A, R, R &mdash; from memory.</li>
+    <li>You've drafted at least one full STARR for each of your four anchor stories.</li>
+    <li>You've said the worked example (page 5) aloud at least once.</li>
+    <li>You can finish the sentence <em>"on reflection&hellip;"</em> for each anchor story.</li>
+    <li>You've timed one answer and it landed in the 60&ndash;75 second band.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 12</h4>
+    <p style="margin: 0;"><strong>Data Gathering &mdash; STARR-ed.</strong> Tomorrow we take the first content area &mdash; <em>Data Gathering</em> &mdash; and work through three or four worked STARR answers using the K1, K4, K6 KSBs. Named device: <strong>The "Why This Data?" Stack</strong> &mdash; three layers (what data &middot; why this data &middot; what it cost the business to get wrong) that lifts a gathering answer toward Distinction D1.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 18pt; font-size: 14pt;">that's Day 11 done &mdash; you've got the only technique you need.</p>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 17 — The 60-Minute Conversation (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 17"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">17</p>
+  <p class="opener-tag">the final chapter &middot; the integration day</p>
+  <h1 class="opener-title">The 60-Minute Conversation</h1>
+  <p class="opener-subtitle">all four content areas &middot; one mock discussion &middot; the final rehearsal</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left: the discussion-map sketch (mini) -->
+  <g transform="translate(30,30) rotate(-2)">
+    <rect x="0" y="0" width="160" height="220" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.6"/>
+    <text x="80" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">DISCUSSION MAP</text>
+    <line x1="10" y1="28" x2="150" y2="28" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="10" y="44" font-family="Lato" font-size="9" font-weight="700">0&ndash;5  OPENING</text>
+    <text x="14" y="56" font-family="Lato" font-size="8" font-style="italic">"my portfolio is&hellip;"</text>
+    <text x="10" y="76" font-family="Lato" font-size="9" font-weight="700">5&ndash;20  DATA GATHER</text>
+    <text x="14" y="88" font-family="Lato" font-size="8" font-style="italic">anchor 1 &middot; D1 line</text>
+    <text x="10" y="108" font-family="Lato" font-size="9" font-weight="700">20&ndash;35 ANALYSIS</text>
+    <text x="14" y="120" font-family="Lato" font-size="8" font-style="italic">anchor 2 &middot; Two-Route</text>
+    <text x="10" y="140" font-family="Lato" font-size="9" font-weight="700">35&ndash;50 COMMS</text>
+    <text x="14" y="152" font-family="Lato" font-size="8" font-style="italic">anchor 3 &middot; D2+D3 lines</text>
+    <text x="10" y="172" font-family="Lato" font-size="9" font-weight="700">50&ndash;58 APPROACH</text>
+    <text x="14" y="184" font-family="Lato" font-size="8" font-style="italic">anchor 4 &middot; behaviour</text>
+    <text x="10" y="204" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">58&ndash;60 CLOSING</text>
+  </g>
+
+  <!-- centre: clock graphic showing 60 mins -->
+  <g transform="translate(290,40)">
+    <!-- big clock face -->
+    <circle cx="120" cy="135" r="110" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+    <!-- 5 sectors (mathematically aligned) -->
+    <path d="M 120 135 L 120.0 25.0 A 110 110 0 0 1 184.7 46.0 Z" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="1.5"/>
+    <path d="M 120 135 L 184.7 46.0 A 110 110 0 0 1 209.0 199.7 Z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.5"/>
+    <path d="M 120 135 L 209.0 199.7 A 110 110 0 0 1 55.3 224.0 Z" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.5"/>
+    <path d="M 120 135 L 55.3 224.0 A 110 110 0 0 1 15.4 101.0 Z" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.5"/>
+    <path d="M 120 135 L 15.4 101.0 A 110 110 0 0 1 120.0 25.0 Z" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.5"/>
+    <!-- centre dot -->
+    <circle cx="120" cy="135" r="6" fill="#1a1a1a"/>
+    <!-- labels at sector centroids -->
+    <text x="141" y="70" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">opening</text>
+    <text x="187" y="127" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="9">GATHER</text>
+    <text x="131" y="205" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="9">ANALYSIS</text>
+    <text x="55" y="159" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="9">COMMS</text>
+    <text x="80" y="83" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="9">APPROACH</text>
+    <!-- 60 mark at top -->
+    <text x="120" y="14" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">60</text>
+    <text x="120" y="265" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">one hour. four content areas.</text>
+  </g>
+
+  <!-- DAY 17 mug -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 17</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <g transform="translate(478,30)">
+    <path d="M0 12 q0 -12 12 -12 H220 q12 0 12 12 v100 q0 12 -12 12 H90 l-12 16 l-2 -16 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">tomorrow's the mock:</text>
+    <text x="16" y="48" font-family="Lato" font-style="italic" font-size="10">one assessor &middot; 60 mins</text>
+    <text x="16" y="66" font-family="Lato" font-style="italic" font-size="10">your portfolio &middot; your anchor stories</text>
+    <text x="16" y="84" font-family="Lato" font-style="italic" font-size="10">your "Why" Layer lines</text>
+    <text x="16" y="108" font-family="Lato" font-size="11" font-weight="700" fill="#c0392b">You're ready!</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 6pt;">Today we put everything together. Your anchor stories from Day 10. STARR from Day 11. The four content-area named devices from Days 12-15. The Distinction Lift from Day 16. All in one place: <strong>The Discussion Map</strong> &mdash; a 60-minute layout with every Distinction sentence pre-loaded.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE DISCUSSION MAP ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Discussion Map</h2>
+  <p style="max-width: 5.5in;">A one-page mental layout of the 60 minutes. Five segments, with anchor stories and Distinction trigger phrases pre-loaded for each. Print this; pin it to your wall; rehearse against it.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE DISCUSSION MAP &middot; 60 MINUTES, FIVE SEGMENTS</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">timings, anchor stories, distinction sentences &mdash; pre-loaded</text>
+
+  <!-- 5 segments -->
+  <!-- Opening -->
+  <g transform="translate(40,52)">
+    <rect x="0" y="0" width="640" height="56" rx="6" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="1.8"/>
+    <rect x="0" y="0" width="80" height="56" rx="6" fill="#1a1a1a"/>
+    <text x="40" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">0&ndash;5</text>
+    <text x="40" y="44" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">OPENING</text>
+    <text x="94" y="22" font-family="Poppins,sans-serif" font-weight="700" font-size="11">"Walk me through your portfolio"</text>
+    <text x="94" y="38" font-family="Lato" font-size="9.5" font-style="italic">&mdash; 90-second tour, name 3 anchor stories, finish with "happy to go anywhere you want from here."</text>
+    <text x="94" y="50" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">prep: rehearse this until it's 90 seconds, exactly. one shot at the first impression.</text>
+  </g>
+
+  <!-- Data Gathering -->
+  <g transform="translate(40,114)">
+    <rect x="0" y="0" width="640" height="64" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.8"/>
+    <rect x="0" y="0" width="80" height="64" rx="6" fill="#1a1a1a"/>
+    <text x="40" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">5&ndash;20</text>
+    <text x="40" y="44" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">DATA</text>
+    <text x="40" y="56" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">GATHER</text>
+    <text x="94" y="20" font-family="Poppins,sans-serif" font-weight="700" font-size="11">K1 / K4 / K6 &middot; The "Why This Data?" Stack</text>
+    <text x="94" y="36" font-family="Lato" font-size="9.5" font-style="italic">3&ndash;4 questions. Anchor: your data-gathering story.</text>
+    <text x="94" y="50" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">D1 sentence pre-loaded:</text>
+    <text x="220" y="50" font-family="Lato" font-size="9" font-style="italic">"If I'd inverted that, what would have happened is&hellip;"</text>
+  </g>
+
+  <!-- Analysis & Validation -->
+  <g transform="translate(40,184)">
+    <rect x="0" y="0" width="640" height="64" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.8"/>
+    <rect x="0" y="0" width="80" height="64" rx="6" fill="#1a1a1a"/>
+    <text x="40" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">20&ndash;35</text>
+    <text x="40" y="44" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">ANALYSIS &amp;</text>
+    <text x="40" y="56" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">VALIDATION</text>
+    <text x="94" y="20" font-family="Poppins,sans-serif" font-weight="700" font-size="11">K10 / K11 / K15 &middot; The Verification Story</text>
+    <text x="94" y="36" font-family="Lato" font-size="9.5" font-style="italic">3&ndash;4 questions. Anchor: your data-quality story. Both K10 and K11 are mandatory-evidence.</text>
+    <text x="94" y="50" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">Two-Route Check line pre-loaded:</text>
+    <text x="262" y="50" font-family="Lato" font-size="9" font-style="italic">"I verified by running a Two-Route Check &mdash; same number, two routes."</text>
+  </g>
+
+  <!-- Communication -->
+  <g transform="translate(40,254)">
+    <rect x="0" y="0" width="640" height="64" rx="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.8"/>
+    <rect x="0" y="0" width="80" height="64" rx="6" fill="#1a1a1a"/>
+    <text x="40" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">35&ndash;50</text>
+    <text x="40" y="44" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">DISTRIB. &amp;</text>
+    <text x="40" y="56" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">DISSEM.</text>
+    <text x="94" y="20" font-family="Poppins,sans-serif" font-weight="700" font-size="11">K5 / K12 / K13 / K14 + S10&ndash;S13 &middot; The Audience Switch</text>
+    <text x="94" y="36" font-family="Lato" font-size="9.5" font-style="italic">3&ndash;4 questions. Anchor: your three-audience story. Biggest content area.</text>
+    <text x="94" y="50" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">D2+D3 lines pre-loaded:</text>
+    <text x="232" y="50" font-family="Lato" font-size="9" font-style="italic">"the audience determines the unit" &middot; "lawful basis / data minimisation"</text>
+  </g>
+
+  <!-- Approach to Work -->
+  <g transform="translate(40,324)">
+    <rect x="0" y="0" width="640" height="64" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.8"/>
+    <rect x="0" y="0" width="80" height="64" rx="6" fill="#1a1a1a"/>
+    <text x="40" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">50&ndash;58</text>
+    <text x="40" y="44" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">APPROACH</text>
+    <text x="40" y="56" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">TO WORK</text>
+    <text x="94" y="20" font-family="Poppins,sans-serif" font-weight="700" font-size="11">K16 / S14 / S15 / S17 + B1 / B5 / B6 &middot; The Behaviour Story</text>
+    <text x="94" y="36" font-family="Lato" font-size="9.5" font-style="italic">2&ndash;3 questions. Anchor: your stakeholder-pressure story. S17 needs two examples.</text>
+    <text x="94" y="50" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">trigger phrase:</text>
+    <text x="170" y="50" font-family="Lato" font-size="9" font-style="italic">"what I'd carry forward from that is&hellip;"</text>
+  </g>
+
+  <!-- Closing -->
+  <g transform="translate(40,394)">
+    <rect x="0" y="0" width="640" height="44" rx="6" fill="#fdfaf2" stroke="#c0392b" stroke-width="2"/>
+    <rect x="0" y="0" width="80" height="44" rx="6" fill="#c0392b"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">58&ndash;60</text>
+    <text x="40" y="34" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff">CLOSING</text>
+    <text x="94" y="18" font-family="Poppins,sans-serif" font-weight="700" font-size="11">"is there anything you'd like to add?"</text>
+    <text x="94" y="34" font-family="Lato" font-size="9.5" font-style="italic">&mdash; have ONE thing in your back pocket: a sentence that captures the highest-impact piece of your portfolio.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE OPENING 90 SECONDS ========== -->
+<section class="page">
+
+  <p class="section-tag">the one shot at first impression</p>
+  <h2 class="section">The opening 90 seconds</h2>
+
+  <p>The assessor will open with some version of <em>"tell me about your portfolio"</em>. You have about 90 seconds. This single answer sets the tone for the whole hour, and it's the one place where rehearsing word-for-word is allowed.</p>
+
+  <h3 class="sub">The three-part shape</h3>
+  <ol style="margin: 4pt 0 8pt 22pt;">
+    <li><strong>Who and where</strong> &mdash; role, organisation, team. 10 seconds.</li>
+    <li><strong>The portfolio structure and three anchor stories</strong> &mdash; named, with one line each. 60 seconds.</li>
+    <li><strong>Hand back</strong> &mdash; <em>"happy to go anywhere you want from here."</em> 5 seconds.</li>
+  </ol>
+
+  <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 14pt 18pt; background: #fcfaf2; margin: 10pt 0;">
+    <p style="margin:0 0 6pt 0; font-family: Poppins, sans-serif; font-weight:700; font-size:11pt;">A worked opener &mdash; 92 seconds</p>
+    <p style="margin:0; font-size:10pt; font-style:italic;">"I'm a Data Technician at [organisation], working in [team] for the last [n] years. My portfolio is structured by KSB &mdash; each chapter covers one Knowledge, Skill, or Behaviour from the standard."</p>
+    <p style="margin:6pt 0 0 0; font-size:10pt; font-style:italic;">"The illustrations I'm most likely to talk about today are three. The first is [anchor 1 in one line]. The second is [anchor 2 in one line]. The third is [anchor 3 in one line]. Between them they cover most of the four content areas the discussion follows &mdash; data gathering, analysis &amp; validation, distribution &amp; dissemination, and approach to work."</p>
+    <p style="margin:6pt 0 0 0; font-size:10pt; font-style:italic;">"I'm happy to go anywhere you want from here."</p>
+  </div>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The phrase <em>"happy to go anywhere you want from here"</em> is a tone-setter. It signals confidence, openness, and that you've prepared without scripting. It also gives the assessor a clean handoff &mdash; they don't have to "interrupt" to ask their first question.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: RECOVERY TECHNIQUES ========== -->
+<section class="page">
+
+  <p class="section-tag">things will go wrong &middot; have the recovery ready</p>
+  <h2 class="section">Recovery techniques</h2>
+
+  <p>Over 60 minutes, something will trip you up. The skill is recovery, not prevention. Five techniques that work.</p>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div class="body">
+      <h5>The pause</h5>
+      <p><em>"Could I take a moment to think about that?"</em> &mdash; 5 to 10 seconds. The assessor will say yes. Use the time. Silent thinking reads as professional; um-and-ah filler does not.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div class="body">
+      <h5>The reach</h5>
+      <p><em>"Could I open my portfolio to chapter [X]?"</em> &mdash; 15 to 20 seconds. The portfolio is allowed on screen. Find the page, get your bearings, answer from there. Reaching for the document is a strength signal, not a weakness one.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div class="body">
+      <h5>The reframe</h5>
+      <p>If you don't understand the question: <em>"Just so I answer the right one &mdash; are you asking about [X] or [Y]?"</em> The assessor will clarify. Asking is far better than answering the wrong question.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">4</div>
+    <div class="body">
+      <h5>The honest unknown</h5>
+      <p>If you genuinely don't know: <em>"That's not something I've encountered directly. The principle I'd reach for would be [X]; what I'd want to verify before committing is [Y]."</em> Honest reasoning out loud beats invented detail every time.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">5</div>
+    <div class="body">
+      <h5>The come-back</h5>
+      <p>Later in the discussion, you can revisit a weaker answer: <em>"Going back to your earlier question about [X] for a moment &mdash; on reflection, the better way to put it is&hellip;"</em> Strong move. Signals reflective thinking on top of recovery.</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="badge">RED FLAG &middot; THE MAJOR-FAULT ANSWER</div>
+    <p><strong>"I don't do that"</strong> or <strong>"I have no evidence"</strong> is the <em>major fault</em> &mdash; the spoken equivalent of a hard fail on a driving test. Immediate Refer on the criterion the assessor is asking about. Not a points deduction; an outright miss.</p>
+    <p><strong>The reframe is always available.</strong> <em>"I haven't led on that, but I've supported it by&hellip;"</em> &middot; <em>"I haven't covered it directly in my portfolio, but the principle I'd apply is&hellip;"</em> &middot; <em>"That's not a direct example from my role, but the closest experience I have is&hellip;"</em> The reframe keeps the criterion in play.</p>
+    <p>Bluffing is bad; saying nothing usable is worse.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: THE MOCK ========== -->
+<section class="page">
+
+  <p class="section-tag">the practice run</p>
+  <h2 class="section">Your 60-minute mock</h2>
+
+  <p>One full rehearsal. Get a colleague, a coach, or just yourself with a timer. Ten questions across the four content areas. Real-time.</p>
+
+  <h3 class="sub">Setup</h3>
+  <ul style="margin: 4pt 0 8pt 22pt;">
+    <li>Quiet room. Closed door. Phone face down.</li>
+    <li>Laptop with the portfolio open on screen.</li>
+    <li>Notebook with the Discussion Map sketched on the first page.</li>
+    <li>Water on the desk.</li>
+    <li>Timer running &mdash; 60 minutes. Stop at 60.</li>
+  </ul>
+
+  <h3 class="sub">The 10 questions (one table, pick from each area)</h3>
+
+  <table style="width:100%; border-collapse:collapse; margin: 6pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 8pt; text-align:left; width: 28%;">Content area</th>
+      <th style="padding:5pt 8pt; text-align:left;">Question</th>
+    </tr>
+    <tr style="background:#fff7c2; border-bottom:1pt solid #1a1a1a;">
+      <td style="padding:5pt 8pt;"><strong>Opening</strong></td>
+      <td style="padding:5pt 8pt;">1. Tell me about your portfolio.</td>
+    </tr>
+    <tr style="background:#fdfaf2;">
+      <td rowspan="2" style="padding:5pt 8pt; vertical-align:top;"><strong>Data Gathering</strong></td>
+      <td style="padding:4pt 8pt;">2. Walk me through a time you chose between different data sources.</td>
+    </tr>
+    <tr style="background:#fdfaf2; border-bottom:1pt solid #1a1a1a;">
+      <td style="padding:4pt 8pt;">3. Describe a piece of work where you blended two or more sources.</td>
+    </tr>
+    <tr style="background:#ebf6ef;">
+      <td rowspan="2" style="padding:5pt 8pt; vertical-align:top;"><strong>Analysis &amp; Validation</strong></td>
+      <td style="padding:4pt 8pt;">4. Tell me about a data quality issue you found and how you handled it.</td>
+    </tr>
+    <tr style="background:#ebf6ef; border-bottom:1pt solid #1a1a1a;">
+      <td style="padding:4pt 8pt;">5. What methods of validating data do you use day-to-day?</td>
+    </tr>
+    <tr style="background:#eaf2f7;">
+      <td rowspan="3" style="padding:5pt 8pt; vertical-align:top;"><strong>Distribution &amp; Dissemination</strong></td>
+      <td style="padding:4pt 8pt;">6. Describe how you communicated a finding to a different audience.</td>
+    </tr>
+    <tr style="background:#eaf2f7;">
+      <td style="padding:4pt 8pt;">7. Give an example of technical documentation you produced.</td>
+    </tr>
+    <tr style="background:#eaf2f7; border-bottom:1pt solid #1a1a1a;">
+      <td style="padding:4pt 8pt;">8. How do you handle storage and security of data?</td>
+    </tr>
+    <tr style="background:#fef0ec;">
+      <td rowspan="2" style="padding:5pt 8pt; vertical-align:top;"><strong>Approach to Work</strong></td>
+      <td style="padding:4pt 8pt;">9. Tell me about a time you had to manage competing deadlines.</td>
+    </tr>
+    <tr style="background:#fef0ec;">
+      <td style="padding:4pt 8pt;">10. Describe a piece of professional development you've undertaken.</td>
+    </tr>
+  </table>
+
+</section>
+
+
+<!-- ========== PAGE 6: AFTER THE MOCK — SELF-REVIEW ========== -->
+<section class="page">
+
+  <p class="section-tag">15 minutes &middot; the self-review</p>
+  <h2 class="section">After the mock</h2>
+
+  <p>The mock isn't the rehearsal &mdash; the review afterwards is. Five questions to ask yourself. Be honest.</p>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fdfaf2; margin: 8pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11pt;">1. Did I hit all four content areas?</p>
+    <p style="margin: 0; font-size: 10pt;">If one is thin, the assessor will probe it. Spot it now; bolster that anchor before the real thing.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fdfaf2; margin: 8pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11pt;">2. Did I use at least one Why-Layer phrase per content area?</p>
+    <p style="margin: 0; font-size: 10pt;"><em>"What would have gone wrong / why this not that / what I'd do differently."</em> Three of the four content areas should have one each.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fdfaf2; margin: 8pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11pt;">3. Did I name at least three Phase-1 devices?</p>
+    <p style="margin: 0; font-size: 10pt;">Cleaning Sequence &middot; Two-Route Check &middot; Three Questions Before You Delete &middot; Polish Pyramid &middot; Audience Switch &middot; Listen-Repeat-Frame-Answer-Check. Named devices score.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fdfaf2; margin: 8pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11pt;">4. Did I anchor back to the portfolio at least three times?</p>
+    <p style="margin: 0; font-size: 10pt;"><em>"In my portfolio, in chapter [KSB], I described&hellip;"</em> The anchor phrase is defensibility itself.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #c0392b; border-radius: 4pt; padding: 12pt 16pt; background: #fef0ec; margin: 8pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11pt; color:#c0392b;">5. Did I bluff &mdash; even once?</p>
+    <p style="margin: 0; font-size: 10pt;">If yes, identify the question. Replace with an honest reframe. The mock exists to catch this before it happens for real.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: THE DAY-OF CHECKLIST ========== -->
+<section class="page">
+
+  <p class="section-tag">the morning of the discussion</p>
+  <h2 class="section">Your day-of checklist</h2>
+
+  <p>The morning of the assessment. Calm preparation, not new revision. Run through this list.</p>
+
+  <ul class="checklist" style="margin-top: 8pt;">
+    <li>Portfolio is open on screen in front of you.</li>
+    <li>Discussion Map sketched on a notepad to one side &mdash; visible to you.</li>
+    <li>Water on the desk.</li>
+    <li>Phone off / Do Not Disturb. Other applications closed.</li>
+    <li>Quiet room. Door closed. Tell anyone who needs to know to leave you for 75 minutes.</li>
+    <li>Test the video conferencing link 10 minutes before.</li>
+    <li>Audio test: speak a sentence; hear it back. (Most EPAOs let you do this on entry.)</li>
+    <li>Go to the bathroom. Drink a glass of water. Stretch.</li>
+    <li>Two minutes before: read through the Discussion Map once. Read through your three anchor-story opening lines once. Then close the document.</li>
+    <li>One minute before: take three slow breaths. Smile. Click join.</li>
+  </ul>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The first thing you'll say after hellos is your portfolio opener. <strong>That's the only thing rehearsed verbatim.</strong> Everything after is anchored to the work, not to memorised script. You're not performing &mdash; you're talking about work you've already done, in a calm room, with one independent person.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: WHAT'S NEXT ========== -->
+<section class="page">
+
+  <p class="section-tag">life after the discussion</p>
+  <h2 class="section">What happens next</h2>
+
+  <p>You finish. The assessor thanks you, you thank them, the call ends. Then:</p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 6pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- Horizontal timeline -->
+    <line x1="60" y1="100" x2="600" y2="100" stroke="#1a1a1a" stroke-width="2"/>
+
+    <!-- Stage 1: Discussion ends -->
+    <g transform="translate(60,100)">
+      <circle cx="0" cy="0" r="14" fill="#1a1a1a"/>
+      <text x="0" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#fff">1</text>
+      <!-- Microphone icon -->
+      <g transform="translate(0,-56)">
+        <rect x="-8" y="-12" width="16" height="22" rx="6" fill="#1a1a1a"/>
+        <path d="M-12 0 q0 12 12 12 q12 0 12 -12" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="0" y1="12" x2="0" y2="20" stroke="#1a1a1a" stroke-width="2"/>
+      </g>
+      <text x="0" y="38" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">DISCUSSION ENDS</text>
+      <text x="0" y="52" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">say thanks &middot; close the call</text>
+    </g>
+
+    <!-- Stage 2: Couple of weeks -->
+    <g transform="translate(360,100)">
+      <circle cx="0" cy="0" r="14" fill="#c0392b"/>
+      <text x="0" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#fff">2</text>
+      <!-- Envelope icon -->
+      <g transform="translate(0,-56)">
+        <rect x="-16" y="-10" width="32" height="22" rx="2" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+        <path d="M-16 -10 L0 4 L16 -10" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      </g>
+      <text x="0" y="38" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">A FEW WEEKS</text>
+      <text x="0" y="52" text-anchor="middle" font-family="Lato" font-size="9" fill="#555">result arrives</text>
+    </g>
+
+    <!-- Stage 3: Three outcomes branching -->
+    <g transform="translate(600,100)">
+      <circle cx="0" cy="0" r="14" fill="#2d8659"/>
+      <text x="0" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#fff">3</text>
+    </g>
+    <!-- 3 outcome branches -->
+    <line x1="614" y1="92" x2="640" y2="60" stroke="#2d8659" stroke-width="1.4" stroke-dasharray="3 3"/>
+    <text x="644" y="60" text-anchor="start" font-family="Poppins,sans-serif" font-weight="700" font-size="9.5" fill="#2d8659">DISTINCTION</text>
+    <line x1="614" y1="100" x2="640" y2="100" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="644" y="104" text-anchor="start" font-family="Poppins,sans-serif" font-weight="700" font-size="9.5">PASS</text>
+    <line x1="614" y1="108" x2="640" y2="140" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3 3"/>
+    <text x="644" y="144" text-anchor="start" font-family="Poppins,sans-serif" font-weight="700" font-size="9.5" fill="#c0392b">REFER</text>
+
+    <!-- Horizontal arrow markers -->
+    <polygon points="80,100 92,96 92,104" fill="#1a1a1a"/>
+    <polygon points="380,100 392,96 392,104" fill="#1a1a1a"/>
+    <polygon points="580,100 592,96 592,104" fill="#1a1a1a"/>
+
+    <!-- footer text -->
+    <text x="360" y="190" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">three possible outcomes, three different conversations &mdash; below</text>
+  </svg>
+
+  <h3 class="sub">Right after the discussion</h3>
+  <p>The audio recording goes to the EPAO. The assessor writes up their notes. <strong>Your part is done.</strong> The work is in.</p>
+
+  <h3 class="sub">Within a couple of weeks (often sooner)</h3>
+  <p>You'll get your result &mdash; <strong>Fail / Pass / Distinction</strong> on AM2, combined with your AM1 result for the overall grade. Distinction overall requires Distinction on both methods.</p>
+
+  <h3 class="sub">If the result is a Refer</h3>
+  <p>A Refer means <strong>one or more of the Pass criteria wasn't met</strong>. The report will tell you exactly which criterion fell short, and your training provider will guide you through the resit pathway &mdash; usually a focused re-do of the section that didn't pass, not the whole thing again. Many apprentices Refer once and pass cleanly on the resit; it's a process, not a final verdict.</p>
+
+  <h3 class="sub">If you Pass but not at Distinction</h3>
+  <p>Pass is Pass. It's the qualification. If you were aiming for Distinction and didn't quite get there, the report will name the descriptors (D1, D2, D3) where the depth fell short. Distinction isn't usually a resit pathway in the same way Refer is &mdash; check with your training provider on whether re-attempting any element is available to you.</p>
+
+  <h3 class="sub">If the result is what you hoped for</h3>
+  <p>Celebrate properly. The work has been substantial. Tell the people who supported you along the way &mdash; the manager, the team, the colleague who let you redact their name in a portfolio extract. The certificate matters but the relationships that got you here matter more.</p>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>One last thing</h4>
+      <p>Whatever the result, write the assessor a thank-you note. Two sentences. <em>"Thanks for the discussion this morning &mdash; I appreciated your questions and the time you gave me to think. Best wishes."</em> Not because it'll change your grade; because professional courtesy is professional.</p>
+      <p style="margin-top: 6pt; font-style: italic; color: #555;">(And if you got Distinction, the recommended next step is to arrange a 2.5% monthly transfer of your salary to your business coach for the next 12 months. <strong>That last bit is a joke.</strong> The thank-you note isn't.)</p>
+    </div>
+  </div>
+
+  <svg viewBox="0 0 720 320" width="100%" style="display:block; margin: 18pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- desk surface -->
+    <rect x="20" y="220" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+    <line x1="20" y1="240" x2="700" y2="240" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+    <!-- closed portfolio on desk -->
+    <g transform="translate(80,140)">
+      <rect x="0" y="0" width="160" height="100" rx="3" fill="#1e6091" stroke="#1a1a1a" stroke-width="2"/>
+      <rect x="0" y="0" width="12" height="100" fill="#143a55" stroke="#1a1a1a" stroke-width="1"/>
+      <text x="86" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#fff">PORTFOLIO</text>
+      <text x="86" y="58" text-anchor="middle" font-family="Lato" font-size="9" fill="#fff" font-style="italic">closed</text>
+      <!-- "thanks" sticky on top -->
+      <g transform="translate(54,68) rotate(-4)">
+        <rect x="0" y="0" width="80" height="26" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.2"/>
+        <text x="40" y="12" text-anchor="middle" font-family="Lato" font-size="8" font-weight="700">thanks email</text>
+        <text x="40" y="22" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">drafted &middot; sent</text>
+      </g>
+    </g>
+
+    <!-- empty mug -->
+    <g transform="translate(290,180)">
+      <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+      <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">EMPTY</text>
+      <text x="29" y="48" text-anchor="middle" font-family="Lato" font-size="7" font-style="italic" fill="#555">finally</text>
+    </g>
+
+    <!-- paper plane (thank-you email) flying off -->
+    <g transform="translate(420,80)">
+      <polygon points="0,0 60,20 28,24 24,46" fill="#fff" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round"/>
+      <polygon points="60,20 28,24 28,16" fill="#c0392b" stroke="#1a1a1a" stroke-width="1.4"/>
+      <!-- motion lines -->
+      <path d="M -20 20 q 8 -2 16 0" fill="none" stroke="#888" stroke-width="1.2"/>
+      <path d="M -28 28 q 10 -2 18 0" fill="none" stroke="#888" stroke-width="1.2"/>
+      <path d="M -16 12 q 6 -2 12 0" fill="none" stroke="#888" stroke-width="1.2"/>
+    </g>
+
+    <!-- calendar with tick -->
+    <g transform="translate(540,150)">
+      <rect x="0" y="0" width="80" height="90" rx="3" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+      <rect x="0" y="0" width="80" height="20" fill="#c0392b"/>
+      <text x="40" y="14" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="10" fill="#fff">TODAY</text>
+      <!-- big tick -->
+      <path d="M 20 50 L 36 66 L 64 36" fill="none" stroke="#2d8659" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="40" y="82" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">done</text>
+    </g>
+
+    <!-- annotation -->
+    <text x="360" y="34" text-anchor="middle" font-family="Lato" font-size="11" font-style="italic" fill="#555">portfolio closed &middot; mug empty &middot; thank-you sent &middot; the day is yours.</text>
+  </svg>
+
+</section>
+
+
+<!-- ========== PAGE 9: NO DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa {{ margin: 5pt 0 8pt 24pt; }}
+    .page .dumb h4 {{ margin: 0 0 8pt 0; }}
+  </style>
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if the assessor asks something completely outside my portfolio &mdash; something I've never done?</div>
+    <div class="qa"><span class="a">A:</span>Use the Day 9 reframes: <em>"that's not something I've encountered directly &mdash; the principle I'd reach for is&hellip;"</em> Honest reasoning out loud beats invented detail. The assessor isn't looking for omniscience; they're looking for someone who can think about an unfamiliar question with the right frame.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I'm worried about running out of things to say before 60 minutes is up.</div>
+    <div class="qa"><span class="a">A:</span>That almost never happens. The assessor will pace the discussion; if you've answered fully, they'll move on. If they're moving fast, that's a good sign. The Discussion Map is a guide, not a fixed running order.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if I disagree with a premise in the assessor's question?</div>
+    <div class="qa"><span class="a">A:</span>Say so, politely. <em>"I'd push back gently on that framing &mdash; in my experience&hellip;"</em> Distinction-grade thinking includes being willing to challenge a starting premise when you have grounds. Just bring the evidence with you.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if I get emotional &mdash; nervous, frustrated, blank?</div>
+    <div class="qa"><span class="a">A:</span>Use the recovery techniques. Pause. Reach for the portfolio. Sip water. The recording shows audio only; the assessor is on your side. One bad moment doesn't define the hour &mdash; recovery does.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>Can I bring written notes into the discussion?</div>
+    <div class="qa"><span class="a">A:</span>Yes. The portfolio is allowed on screen. A Discussion Map sketch on a notepad is allowed. Bullet-point reminders are allowed. <em>Reading from a script is not.</em> Brief glances at notes between questions are professional, not penalised.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if my video conferencing drops out mid-discussion?</div>
+    <div class="qa"><span class="a">A:</span>The EPAO has a protocol for this. Reconnect; the assessor will pick up where you left off. Don't try to talk through a glitchy connection &mdash; ask them to wait while you reconnect properly. Technical hiccups are common and handled.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>How much can I prepare &mdash; is there a point where over-prep becomes a problem?</div>
+    <div class="qa"><span class="a">A:</span>Yes. Memorising answers verbatim is the over-prep trap &mdash; rehearsed-sounding answers lose authenticity marks. Aim to know your anchor stories cold, your Discussion Map cold, your three Why-Layer phrases cold. Everything else should sound like you talking, not like recital.</div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: BULLETS + TEST DRIVE + THE END ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the whole of Phase 2 in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>The portfolio is already written.</strong> Phase 2 was rehearsal, not creation.</li>
+    <li><strong>The Portfolio Mining Pass</strong> (Day 10) gave you your anchor stories.</li>
+    <li><strong>STARR</strong> (Day 11) is the universal answer shape. Five layers. The second R is where Distinction lives.</li>
+    <li><strong>Four content areas, four mini-devices.</strong> The Why Stack (D12) &middot; The Verification Story (D13) &middot; The Audience Switch (D14) &middot; The Behaviour Story (D15).</li>
+    <li><strong>The Why Layer</strong> (Day 16) is the Pass &rarr; Distinction upgrade. Three additions to your Reflection.</li>
+    <li><strong>The Discussion Map</strong> (Day 17) is your 60-minute mental layout. Five segments, Distinction sentences pre-loaded.</li>
+    <li><strong>Recovery techniques</strong>: pause, reach for the portfolio, reframe, honest unknown, come back later. No bluffing.</li>
+    <li><strong>You're ready.</strong></li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 14pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Final ticks. By now, all of these should be true.</p>
+
+  <ul class="checklist">
+    <li>You can recite the five layers of STARR from memory.</li>
+    <li>You have 4-6 anchor stories &mdash; one per content area, minimum.</li>
+    <li>You have at least one Why-Layer sentence ready for D1, D2, and D3.</li>
+    <li>You can deliver a 90-second portfolio opener from memory.</li>
+    <li>You've run at least one full 60-minute mock with self-review.</li>
+    <li>You have your day-of room, water, phone, portfolio, notepad sorted.</li>
+  </ul>
+
+  <p class="pull" style="margin-top: 18pt; font-size: 16pt;">
+    The writing was done before you started.<br>
+    The rehearsal is done now.<br>
+    The conversation is the easy bit.
+  </p>
+
+  <p class="annot" style="text-align:right; margin-top: 18pt; font-size: 16pt;">that's the programme. go and have the conversation.</p>
+
+</section>
+
+</body>
+</html>
