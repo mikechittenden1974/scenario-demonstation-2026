@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 14 — Distribution &amp; Dissemination STARR-ed (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 14"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">14</p>
+  <p class="opener-tag">third content area &middot; the biggest one</p>
+  <h1 class="opener-title">Distribution &amp; Dissemination, STARR-ed</h1>
+  <p class="opener-subtitle" style="margin: 4pt 0 4pt 0;">K5 &middot; K12 &middot; K13 &middot; K14 &middot; S10 &middot; S11 &middot; S12 &middot; S13 &middot; D2 / D3</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 4pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left: stack of KSB stickies showing the load -->
+  <g transform="translate(30,30) rotate(-3)">
+    <rect x="0" y="0" width="140" height="56" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">K5 &middot; K12 &middot; K13 &middot; K14</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">4 Knowledge KSBs</text>
+  </g>
+  <g transform="translate(40,92) rotate(2)">
+    <rect x="0" y="0" width="140" height="56" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">S10 &middot; S11 &middot; S12 &middot; S13</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">4 Skills</text>
+  </g>
+  <g transform="translate(26,156) rotate(-2)">
+    <rect x="0" y="0" width="140" height="56" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">D2 &middot; D3</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">2 Distinction descriptors</text>
+  </g>
+  <g transform="translate(40,220) rotate(3)">
+    <rect x="0" y="0" width="140" height="48" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="70" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">10 in total</text>
+    <text x="70" y="36" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">the biggest day</text>
+  </g>
+
+  <!-- centre: Audience Switch — three audience faces -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="270" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="130" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">THE AUDIENCE SWITCH</text>
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="130" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">one piece of analysis, three audiences</text>
+    <!-- three audience circles -->
+    <g transform="translate(30,84)">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <path d="M2 60 a18 16 0 0 1 36 0" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <rect x="-2" y="42" width="44" height="6" fill="#1e6091" rx="1"/>
+      <text x="20" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="10">TECHNICAL</text>
+      <text x="20" y="88" text-anchor="middle" font-family="Lato" font-size="8.5">peer / colleague</text>
+      <text x="20" y="104" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">"how it works"</text>
+    </g>
+    <g transform="translate(110,84)">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <path d="M2 60 a18 16 0 0 1 36 0" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <rect x="-2" y="42" width="44" height="6" fill="#c0392b" rx="1"/>
+      <text x="20" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="10">MANAGER</text>
+      <text x="20" y="88" text-anchor="middle" font-family="Lato" font-size="8.5">stakeholder</text>
+      <text x="20" y="104" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">"what it means"</text>
+    </g>
+    <g transform="translate(190,84)">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <path d="M2 60 a18 16 0 0 1 36 0" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+      <rect x="-2" y="42" width="44" height="6" fill="#2d8659" rx="1"/>
+      <text x="20" y="76" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="10">END USER</text>
+      <text x="20" y="88" text-anchor="middle" font-family="Lato" font-size="8.5">customer / public</text>
+      <text x="20" y="104" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic" fill="#555">"what to do"</text>
+    </g>
+    <!-- arrows pointing in -->
+    <g transform="translate(50,200)">
+      <line x1="0" y1="0" x2="80" y2="0" stroke="#1a1a1a" stroke-width="1.4" marker-end="url(#a)"/>
+      <text x="0" y="14" font-family="Lato" font-size="9">same data</text>
+    </g>
+    <text x="130" y="220" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic">the analysis is the same;</text>
+    <text x="130" y="234" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic">the <tspan font-weight="700">delivery</tspan> changes.</text>
+    <text x="130" y="254" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">that's K12 / K14 / S13 in one go.</text>
+  </g>
+
+  <!-- DAY 14 mug -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 14</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v94 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">Today's biggest move:</text>
+    <text x="16" y="48" font-family="Lato" font-style="italic" font-size="10">don't just describe what</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">you communicated &mdash; describe</text>
+    <text x="16" y="78" font-family="Lato" font-style="italic" font-size="10">how you adapted it for</text>
+    <text x="16" y="94" font-family="Lato" font-style="italic" font-size="10">a different audience.</text>
+    <text x="16" y="114" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">&mdash; that's D2.</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 0pt; font-size: 10.5pt;">The biggest content area by KSB count, but conceptually the simplest: <em>how do you communicate the work?</em> <strong>The Audience Switch</strong> covers most of the KSBs in one move.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE AUDIENCE SWITCH ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Audience Switch &mdash; in three columns</h2>
+  <p style="max-width: 5.5in;">Same analysis, three audiences. The analysis doesn't change; the delivery does. Below: one piece of data (the StreamWave churn rate) communicated three ways &mdash; technical peer, manager, end user.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">SAME ANALYSIS &middot; THREE AUDIENCES</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">churn rate by region &mdash; communicated three ways</text>
+
+  <!-- Technical column -->
+  <g transform="translate(30,52)">
+    <rect x="0" y="0" width="210" height="400" rx="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+    <rect x="0" y="0" width="210" height="34" rx="6" fill="#1e6091"/>
+    <text x="105" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">TECHNICAL PEER</text>
+    <text x="105" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a fellow data person</text>
+
+    <text x="14" y="80" font-family="Poppins,sans-serif" font-weight="700" font-size="10">FORMAT</text>
+    <text x="14" y="96" font-family="Lato" font-size="9.5">Methodology doc + screenshots of</text>
+    <text x="14" y="110" font-family="Lato" font-size="9.5">Applied Steps, formula breakdown.</text>
+
+    <text x="14" y="138" font-family="Poppins,sans-serif" font-weight="700" font-size="10">LANGUAGE</text>
+    <text x="14" y="154" font-family="Lato" font-size="9.5">Precise. <tspan font-family="DejaVu Sans Mono">XLOOKUP</tspan>, fan-out, key mismatch.</text>
+    <text x="14" y="168" font-family="Lato" font-size="9.5">Method names allowed.</text>
+
+    <text x="14" y="196" font-family="Poppins,sans-serif" font-weight="700" font-size="10">DEPTH</text>
+    <text x="14" y="212" font-family="Lato" font-size="9.5">Full method, full reasoning,</text>
+    <text x="14" y="226" font-family="Lato" font-size="9.5">caveats, alternative approaches.</text>
+
+    <text x="14" y="254" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SAMPLE LINE</text>
+    <text x="14" y="272" font-family="Lato" font-size="9" font-style="italic">"31.2% churn from a Group By on</text>
+    <text x="14" y="284" font-family="Lato" font-size="9" font-style="italic">status &mdash; verified with a Two-Route</text>
+    <text x="14" y="296" font-family="Lato" font-size="9" font-style="italic">Check against the cancellations</text>
+    <text x="14" y="308" font-family="Lato" font-size="9" font-style="italic">table. n=280."</text>
+
+    <line x1="14" y1="326" x2="196" y2="326" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="105" y="346" text-anchor="middle" font-family="Lato" font-size="9" fill="#1e6091" font-weight="700">THE KSB BLOCK</text>
+    <text x="105" y="362" text-anchor="middle" font-family="Lato" font-size="9">K5 &middot; S10 &middot; S11 &middot; S13</text>
+    <text x="105" y="378" text-anchor="middle" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">tech documentation focus</text>
+  </g>
+
+  <!-- Manager column -->
+  <g transform="translate(255,52)">
+    <rect x="0" y="0" width="210" height="400" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+    <rect x="0" y="0" width="210" height="34" rx="6" fill="#c0392b"/>
+    <text x="105" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">MANAGER</text>
+    <text x="105" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">your stakeholder</text>
+
+    <text x="14" y="80" font-family="Poppins,sans-serif" font-weight="700" font-size="10">FORMAT</text>
+    <text x="14" y="96" font-family="Lato" font-size="9.5">Dashboard + headline +</text>
+    <text x="14" y="110" font-family="Lato" font-size="9.5">2-minute verbal walkthrough.</text>
+
+    <text x="14" y="138" font-family="Poppins,sans-serif" font-weight="700" font-size="10">LANGUAGE</text>
+    <text x="14" y="154" font-family="Lato" font-size="9.5">Plain. "Roughly a third of</text>
+    <text x="14" y="168" font-family="Lato" font-size="9.5">subscribers cancel within&hellip;"</text>
+
+    <text x="14" y="196" font-family="Poppins,sans-serif" font-weight="700" font-size="10">DEPTH</text>
+    <text x="14" y="212" font-family="Lato" font-size="9.5">Headline first. Caveat second.</text>
+    <text x="14" y="226" font-family="Lato" font-size="9.5">Method only if asked.</text>
+
+    <text x="14" y="254" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SAMPLE LINE</text>
+    <text x="14" y="272" font-family="Lato" font-size="9" font-style="italic">"Churn is sitting at around 31%</text>
+    <text x="14" y="284" font-family="Lato" font-size="9" font-style="italic">&mdash; that's about 87 of our 280</text>
+    <text x="14" y="296" font-family="Lato" font-size="9" font-style="italic">subscribers. London and the</text>
+    <text x="14" y="308" font-family="Lato" font-size="9" font-style="italic">South East are higher than average."</text>
+
+    <line x1="14" y1="326" x2="196" y2="326" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="105" y="346" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">THE KSB BLOCK</text>
+    <text x="105" y="362" text-anchor="middle" font-family="Lato" font-size="9">K12 &middot; K14 &middot; S10 &middot; S13</text>
+    <text x="105" y="378" text-anchor="middle" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">narrative + audience focus</text>
+  </g>
+
+  <!-- End User column -->
+  <g transform="translate(480,52)">
+    <rect x="0" y="0" width="210" height="400" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <rect x="0" y="0" width="210" height="34" rx="6" fill="#2d8659"/>
+    <text x="105" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#fff">END USER</text>
+    <text x="105" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">non-technical / customer</text>
+
+    <text x="14" y="80" font-family="Poppins,sans-serif" font-weight="700" font-size="10">FORMAT</text>
+    <text x="14" y="96" font-family="Lato" font-size="9.5">Single number on a screen,</text>
+    <text x="14" y="110" font-family="Lato" font-size="9.5">accessible visual, one sentence.</text>
+
+    <text x="14" y="138" font-family="Poppins,sans-serif" font-weight="700" font-size="10">LANGUAGE</text>
+    <text x="14" y="154" font-family="Lato" font-size="9.5">Everyday. No jargon. No %</text>
+    <text x="14" y="168" font-family="Lato" font-size="9.5">unless the audience is comfortable.</text>
+
+    <text x="14" y="196" font-family="Poppins,sans-serif" font-weight="700" font-size="10">DEPTH</text>
+    <text x="14" y="212" font-family="Lato" font-size="9.5">The headline. Nothing else.</text>
+    <text x="14" y="226" font-family="Lato" font-size="9.5">Method invisible.</text>
+
+    <text x="14" y="254" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SAMPLE LINE</text>
+    <text x="14" y="272" font-family="Lato" font-size="9" font-style="italic">"Fewer people in your area are</text>
+    <text x="14" y="284" font-family="Lato" font-size="9" font-style="italic">renewing their subscription."</text>
+
+    <line x1="14" y1="326" x2="196" y2="326" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="105" y="346" text-anchor="middle" font-family="Lato" font-size="9" fill="#2d8659" font-weight="700">THE KSB BLOCK</text>
+    <text x="105" y="362" text-anchor="middle" font-family="Lato" font-size="9">K14 &middot; S10 &middot; S13</text>
+    <text x="105" y="378" text-anchor="middle" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">accessibility focus</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE 8 KSBs AT A GLANCE ========== -->
+<section class="page">
+
+  <p class="section-tag">eight KSBs &middot; one chapter</p>
+  <h2 class="section">What sits inside Distribution &amp; Dissemination</h2>
+
+  <p>Eight KSBs. Don't try to learn each one in isolation &mdash; group them by what they ask for.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 6pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 8pt; text-align:left; width: 16%;">Group</th>
+      <th style="padding:5pt 8pt; text-align:left; width: 14%;">KSBs</th>
+      <th style="padding:5pt 8pt; text-align:left;">What the discussion will probe</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 8pt;"><strong>Communicate</strong></td>
+      <td style="padding:5pt 8pt;">K5 &middot; K12 &middot; S10 &middot; S13</td>
+      <td style="padding:5pt 8pt;">Methods (written, verbal, visual), narrative, adapting to audience.</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 8pt;"><strong>Document</strong></td>
+      <td style="padding:5pt 8pt;">S11</td>
+      <td style="padding:5pt 8pt;">Technical documentation using organisational templates.</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 8pt;"><strong>Audience awareness</strong></td>
+      <td style="padding:5pt 8pt;">K14</td>
+      <td style="padding:5pt 8pt;">Customer issues, business value, accessibility, technical level.</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 8pt;"><strong>Store &amp; secure</strong></td>
+      <td style="padding:5pt 8pt;">S12</td>
+      <td style="padding:5pt 8pt;">Storage, distribution, security &mdash; in line with standards.</td>
+    </tr>
+    <tr>
+      <td style="padding:5pt 8pt;"><strong>Legal &amp; ethical</strong></td>
+      <td style="padding:5pt 8pt;">K13</td>
+      <td style="padding:5pt 8pt;">UK GDPR, IPR, data sharing, marketing consent, ethics.</td>
+    </tr>
+  </table>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The Audience Switch covers Communicate + Audience awareness in a single answer (K5, K12, K14, S10, S13). One story, five KSBs. Practise it once and you've evidence-rich the biggest part of the chapter.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: THE D2 / D3 SETUP ========== -->
+<section class="page">
+
+  <p class="section-tag">two distinction descriptors live here</p>
+  <h2 class="section">D2 and D3 in plain English</h2>
+
+  <p>Two of the three Distinction descriptors sit in this content area. Both have the same shape underneath: <em>evaluate the choice, justify it, name what would have gone wrong otherwise.</em></p>
+
+  <div class="row" style="margin-top: 6pt;">
+    <div class="col">
+      <div style="border: 1.6pt solid #c0392b; border-radius: 4pt; padding: 12pt; background: #fef0ec;">
+        <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 13pt; color: #c0392b;">D2</p>
+        <p style="margin: 0 0 6pt 0; font-size: 10pt; font-style: italic;">"Critically evaluate why data is communicated and why different communication methods are used."</p>
+        <p style="margin: 0; font-size: 10pt;"><strong>The two moves:</strong></p>
+        <ol style="margin: 4pt 0 0 18pt; font-size: 10pt;">
+          <li>Justify <em>why</em> you communicated this particular finding at all.</li>
+          <li>Justify <em>why</em> you chose this delivery method for this audience.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col">
+      <div style="border: 1.6pt solid #c0392b; border-radius: 4pt; padding: 12pt; background: #fef0ec;">
+        <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 13pt; color: #c0392b;">D3</p>
+        <p style="margin: 0 0 6pt 0; font-size: 10pt; font-style: italic;">"Evaluate storage, management and distribution needs and justify ethical and security standards."</p>
+        <p style="margin: 0; font-size: 10pt;"><strong>The two moves:</strong></p>
+        <ol style="margin: 4pt 0 0 18pt; font-size: 10pt;">
+          <li>Justify the storage / access decision (who sees what).</li>
+          <li>Name the legal / ethical reason it was the right call.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub" style="margin-top: 12pt;">The Audience Switch covers D2; the GDPR-aware version covers D3</h3>
+  <p style="font-size: 10.5pt;">When you walk through the Audience Switch in the discussion, add one D3 layer: <em>"the version for the end user had names redacted &mdash; this is personal viewing data, UK GDPR; the version for the manager kept names because the business reason was set up under our access agreement."</em> That single sentence ticks D3.</p>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>Naming <em>UK GDPR</em>, <em>data minimisation</em>, or <em>least-privilege access</em> &mdash; even once &mdash; lifts D3 toward Distinction. These aren't jargon; they're the named principles the standard expects you to recognise.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: S11 — TECHNICAL DOCUMENTATION ========== -->
+<section class="page">
+
+  <p class="section-tag">the documentation skill</p>
+  <h2 class="section">S11 &mdash; technical documentation</h2>
+
+  <p>S11 is "Mandatory evidence: Present" &mdash; the assessor needs to hear about specific documents you've written using organisational templates. Not what documentation is for. Specific docs.</p>
+
+  <h3 class="sub">Three types that almost always count</h3>
+  <ul style="margin: 4pt 0 8pt 22pt;">
+    <li><strong>Methodology notes</strong> &mdash; the paragraph at the bottom of a dashboard explaining sources, transforms, assumptions, refresh date. (You wrote one in Phase 1 Day 7.)</li>
+    <li><strong>Data dictionaries</strong> &mdash; the table that names each field, its meaning, its allowed values, its source.</li>
+    <li><strong>Standard operating procedures</strong> &mdash; the step-by-step doc for recurring tasks (e.g., monthly reconciliation).</li>
+  </ul>
+
+  <h3 class="sub">What "organisational templates" means in practice</h3>
+  <p>Most workplaces have a template you're expected to use &mdash; a header block with version, author, approval, status. The assessor wants to hear that you used the workplace template, not that you invented your own.</p>
+
+  <div class="quick-card" style="margin-top: 10pt;">
+    <p class="quick-q">Question shape to expect: <em>"Give me an example of a piece of technical documentation you produced."</em></p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color: #555;"><em>The answer shape:</em> name the document by type and title &middot; name when it was used and by whom &middot; mention the template / version-control approach &middot; brief Reflection on what it taught you about writing for handover.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 6: K13 — LEGAL &amp; ETHICAL ========== -->
+<section class="page">
+
+  <p class="section-tag">the layer that bolts d3 on</p>
+  <h2 class="section">K13 &mdash; the legal &amp; ethical layer</h2>
+
+  <p>K13 is wide. The discussion-relevant chunks are smaller. Three areas the assessor will probe &mdash; with the answer-shape for each.</p>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div class="body">
+      <h5>UK GDPR + Data Protection Act 2018</h5>
+      <p>Personal data, data minimisation, lawful basis, retention. <em>The answer shape:</em> name one workplace example where you considered GDPR &mdash; redacting names in a shared sheet, aggregating instead of listing, deleting an unused export.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div class="body">
+      <h5>Intellectual Property Rights (IPR)</h5>
+      <p>Who owns the dashboards / queries / scripts you build at work? (Usually your employer, under your contract.) Who owns the data? (Depends on the source &mdash; you've probably used internal data, customer data, external data with different ownership.) <em>The answer shape:</em> one sentence acknowledging the ownership and one example of how it shaped a decision.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div class="body">
+      <h5>Data sharing + marketing consent</h5>
+      <p>Sharing data with third parties (cloud providers, external analysts, partners) requires documented agreements. Marketing consent must be specific and opt-in. <em>The answer shape:</em> one workplace example &mdash; even if the example is <em>"we considered sharing X with Y and decided not to because&hellip;"</em>.</p>
+    </div>
+  </div>
+
+  <div class="red-flag">
+    <div class="badge">RED FLAG &middot; DON'T BLUFF GDPR</div>
+    <p>If you're not certain of a detail, say so. <em>"My understanding is that lawful basis matters, but I'd want to check the specifics with our data protection lead."</em> Honest beats wrong. Bluffing on GDPR specifics is a recurring failure mode.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: SHARPEN YOUR PENCIL ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 10pt 16pt 10pt 56pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>40 minutes &mdash; the Audience Switch on your anchor</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">Take your Distribution &amp; Dissemination anchor. Sketch how you'd deliver the <em>same</em> finding to three different audiences. Note the format, language, depth, sample line for each.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 10pt 14pt; background: #fff; margin: 8pt 0;">
+    <p style="margin: 0 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt;">The finding I'm communicating: <span style="font-family: Lato; font-weight: 400; font-style: italic; color:#888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+  </div>
+
+  <table style="width:100%; border-collapse:collapse; margin: 6pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 8pt; text-align:left; width: 18%;">Audience</th>
+      <th style="padding:5pt 8pt; text-align:left; width: 27%;">Format / channel</th>
+      <th style="padding:5pt 8pt; text-align:left; width: 27%;">Language register</th>
+      <th style="padding:5pt 8pt; text-align:left;">My sample line</th>
+    </tr>
+    <tr>
+      <td style="padding:6pt 8pt; border-bottom:1pt dashed #888; background:#eaf2f7; font-weight:700;">Technical peer</td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+    </tr>
+    <tr>
+      <td style="padding:18pt 8pt; border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+    </tr>
+    <tr>
+      <td style="padding:6pt 8pt; border-bottom:1pt dashed #888; background:#fef0ec; font-weight:700;">Manager / stakeholder</td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+    </tr>
+    <tr>
+      <td style="padding:18pt 8pt; border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+    </tr>
+    <tr>
+      <td style="padding:6pt 8pt; border-bottom:1pt dashed #888; background:#ebf6ef; font-weight:700;">End user / public</td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+      <td style="border-bottom:1pt dashed #888;"></td>
+    </tr>
+    <tr>
+      <td style="padding:18pt 8pt;"></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+</section>
+
+
+<!-- ========== PAGE 8: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions.</p>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>1.</strong> Distribution &amp; Dissemination contains 8 KSBs &mdash; the biggest content area.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>2.</strong> The Audience Switch is one piece of analysis described for three different audiences.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>3.</strong> D2 specifically wants me to evaluate <em>why</em> I chose a communication method.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>4.</strong> When I'm not sure of a GDPR detail, my best move is to give my best guess confidently.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>5.</strong> S11 (technical documentation) requires me to name specific documents I produced.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin: 8pt 0 4pt 0;">Answers</h3>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>1. True.</strong> 4 K, 4 S, plus 2 of the 3 Distinction descriptors. Plan accordingly.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>2. True.</strong> Same analysis, three audiences. One story covers 5+ KSBs.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>3. True.</strong> D2 is about justifying the method choice.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>4. False.</strong> Bluff warning still applies. <em>"I'd want to check"</em> beats wrong.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>5. True.</strong> Specific docs (methodology notes, data dictionaries, SOPs) with template / version-control context.</p>
+
+</section>
+
+
+<!-- ========== PAGE 9: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa { margin: 5pt 0 8pt 24pt; }
+    .page .dumb h4 { margin: 0 0 8pt 0; }
+  </style>
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>I've only ever communicated my work to one audience &mdash; my manager. Can I still do the Audience Switch?</div>
+    <div class="qa"><span class="a">A:</span>Yes &mdash; describe how you <em>would</em> communicate it differently to a peer or end user. The Audience Switch is about audience awareness, not about whether you've actually done all three. <em>"To a technical peer I'd have included the methodology; to an end user I'd have skipped the percentage and just said 'fewer people'."</em></p></div>
+
+    <div class="qa qrow"><span class="q">Q:</span>My organisation doesn't use formal documentation templates. How do I answer S11?</div>
+    <div class="qa"><span class="a">A:</span>You probably do have de-facto templates &mdash; e.g., the layout of dashboards, the format of methodology paragraphs, the structure of email summaries. Name those. <em>"Our team has a standard methodology paragraph that lives at the bottom of every dashboard &mdash; sources, transforms, assumptions, last refresh."</em></p></div>
+
+    <div class="qa qrow"><span class="q">Q:</span>How much GDPR detail do I need to know?</div>
+    <div class="qa"><span class="a">A:</span>Enough to name three things in your own work that show data-protection thinking: redacting names, aggregating data, limiting access. You're not being assessed as a DPO; you're being assessed as a data tech who knows the rules apply.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I've sometimes used personal data without thinking about it &mdash; I just use what's in the source system. Is that a problem?</div>
+    <div class="qa"><span class="a">A:</span>For the discussion, no &mdash; provided you can describe how you'd think about it now. Reflection moves like <em>"on reflection, I'd want to check the lawful basis for that report"</em> demonstrate exactly what D3 rewards: evaluation, not perfection.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>S12 is about "storage and security" &mdash; we just save things in our shared drive. What do I say?</div>
+    <div class="qa"><span class="a">A:</span>That's storage and security &mdash; explain the controls on the shared drive. <em>"Our shared drive is restricted to the team; the methodology folder requires manager approval to access."</em> Storage / security doesn't mean cloud architecture &mdash; it means controlled access.</div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">15 minutes &mdash; rehearse two STARRs</p>
+  <h2 class="section">Say it for real</h2>
+
+  <h3 class="sub">Q1 &mdash; Tell me about a time you had to communicate a finding to a different audience than the people you usually work with.</h3>
+  <p><strong>The shape:</strong> full STARR. The Audience Switch lives in Action: <em>"For my manager I summarised at the headline level; for the customer-facing team I cut the percentages and replaced them with plain language."</em> Reflection closes with D2: <em>"the reason for splitting it that way was that&hellip;"</em></p>
+
+  <h3 class="sub">Q2 &mdash; Walk me through how you handle the security and storage of the data you work with.</h3>
+  <p><strong>The shape:</strong> two short stories. One about access (who can see the file). One about retention (when it gets deleted or aggregated). Land on a D3 sentence: <em>"the reason for restricting access at that level was the lawful basis for the original collection &mdash; the data was gathered under a clinical agreement, not a marketing one."</em></p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Naming <em>"data minimisation"</em>, <em>"least-privilege access"</em>, or <em>"lawful basis"</em> &mdash; once &mdash; tells the assessor you know the principles, not just the practices. One of those phrases is worth a paragraph of vague description.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 11: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>Eight KSBs.</strong> K5, K12, K13, K14, S10, S11, S12, S13. The biggest content area.</li>
+    <li><strong>The Audience Switch is the workhorse device.</strong> Same analysis, three audiences. Covers 5+ KSBs in one story.</li>
+    <li><strong>D2 wants justification of method choice.</strong> D3 wants justification of storage + ethics.</li>
+    <li><strong>S11 is mandatory-evidence.</strong> Name specific documents you produced, with template context.</li>
+    <li><strong>Name the legal principles.</strong> UK GDPR, data minimisation, lawful basis, least-privilege &mdash; once each is enough.</li>
+    <li><strong>Don't bluff GDPR.</strong> <em>"I'd want to check"</em> beats wrong every time.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can deliver your anchor's finding three ways &mdash; technical peer, manager, end user &mdash; from memory.</li>
+    <li>You can name two specific pieces of technical documentation you produced.</li>
+    <li>You've practised a D2 sentence: <em>"the reason I chose this method for this audience was&hellip;"</em></li>
+    <li>You've practised a D3 sentence naming at least one legal principle.</li>
+    <li>You can describe your workplace's storage / access controls in one sentence.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 15</h4>
+    <p style="margin: 0;"><strong>Approach to Work, STARR-ed.</strong> The final content area &mdash; the soft-skill KSBs (K16, S14, S15, S17, B1, B5, B6). Named device: <strong>The Behaviour Story</strong> &mdash; a shape for evidencing the things that don't have an Excel formula. Pulls Phase 1's Day 8 (Effective Working Practices) forward.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 14 done &mdash; the biggest content area, rehearsed.</p>
+
+</section>
+
+</body>
+</html>

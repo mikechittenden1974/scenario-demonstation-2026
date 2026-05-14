@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 15 — Approach to Work STARR-ed (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 15"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">15</p>
+  <p class="opener-tag">fourth content area &middot; the soft KSBs</p>
+  <h1 class="opener-title">Approach to Work, STARR-ed</h1>
+  <p class="opener-subtitle">K16 &middot; S14 &middot; S15 &middot; S17 &middot; B1 &middot; B5 &middot; B6 &mdash; the "people" KSBs</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <g transform="translate(30,30) rotate(-3)">
+    <rect x="0" y="0" width="140" height="56" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">K16 &middot; S14 &middot; S15</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">your development</text>
+  </g>
+  <g transform="translate(40,92) rotate(2)">
+    <rect x="0" y="0" width="140" height="56" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">S17 &middot; B1 &middot; B5</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">working with people</text>
+  </g>
+  <g transform="translate(26,156) rotate(-2)">
+    <rect x="0" y="0" width="140" height="56" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#c0392b">B6</text>
+    <text x="10" y="40" font-family="Lato" font-size="9">valuing difference</text>
+  </g>
+  <g transform="translate(40,220) rotate(3)">
+    <rect x="0" y="0" width="140" height="48" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="70" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">7 KSBs</text>
+    <text x="70" y="36" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">all "soft"</text>
+  </g>
+
+  <!-- centre: The Behaviour Story shape -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="270" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="130" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">THE BEHAVIOUR STORY</text>
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="130" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a four-beat shape for "soft" KSBs</text>
+    <rect x="20" y="68" width="220" height="36" rx="3" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="88" font-family="Poppins,sans-serif" font-weight="900" font-size="11">1 &middot; THE MOMENT</text>
+    <text x="30" y="100" font-family="Lato" font-size="8.5" font-style="italic">a specific incident, not a pattern</text>
+    <rect x="20" y="112" width="220" height="36" rx="3" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="132" font-family="Poppins,sans-serif" font-weight="900" font-size="11">2 &middot; WHAT WAS HARD</text>
+    <text x="30" y="144" font-family="Lato" font-size="8.5" font-style="italic">name the friction or trade-off</text>
+    <rect x="20" y="156" width="220" height="36" rx="3" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="176" font-family="Poppins,sans-serif" font-weight="900" font-size="11">3 &middot; WHAT YOU DID</text>
+    <text x="30" y="188" font-family="Lato" font-size="8.5" font-style="italic">your specific action</text>
+    <rect x="20" y="200" width="220" height="50" rx="3" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="30" y="220" font-family="Poppins,sans-serif" font-weight="900" font-size="11" fill="#c0392b">4 &middot; WHAT IT TAUGHT YOU</text>
+    <text x="30" y="234" font-family="Lato" font-size="8.5" font-style="italic">the principle you'd carry forward</text>
+    <text x="30" y="246" font-family="Lato" font-size="8" font-weight="700" fill="#c0392b">&larr; this is where soft KSBs score</text>
+  </g>
+
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 15</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v90 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">The chapter most</text>
+    <text x="16" y="42" font-family="Lato" font-size="10" font-weight="700">apprentices dread:</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">"how do I evidence</text>
+    <text x="16" y="76" font-family="Lato" font-style="italic" font-size="10">that I'm reflective /</text>
+    <text x="16" y="90" font-family="Lato" font-style="italic" font-size="10">collaborative / valuing</text>
+    <text x="16" y="104" font-family="Lato" font-style="italic" font-size="10">difference?"</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 6pt;">Seven soft KSBs. The chapter most apprentices dread because the answers feel intangible. Today's named device, <strong>The Behaviour Story</strong>, gives you a four-beat shape that turns "I worked well with people" into specific, defensible, scoreable evidence.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE SEVEN KSBs ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">seven KSBs &middot; seven stories you need ready</p>
+  <h2 class="section">What sits inside Approach to Work</h2>
+  <p style="max-width: 5.5in;">Each KSB needs one specific workplace story. Below: what the story should be about, and the trap to avoid for each.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE SEVEN SOFT KSBs &middot; AND THE STORY THAT EVIDENCES EACH</text>
+
+  <!-- 2 rows of cards -->
+  <!-- K16 -->
+  <g transform="translate(20,42)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">K16</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Learning techniques</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">A CPD entry &mdash; a course,</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">a book, a colleague who</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">taught you something.</text>
+    <text x="14" y="142" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">end with: how you</text>
+    <text x="14" y="156" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">applied it at work.</text>
+  </g>
+
+  <!-- S14 -->
+  <g transform="translate(190,42)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">S14</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Review dev needs</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">A skill gap you spotted,</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">how you identified it,</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">what you did about it.</text>
+    <text x="14" y="142" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">your CPD log is the</text>
+    <text x="14" y="156" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">backbone of this answer.</text>
+  </g>
+
+  <!-- S15 -->
+  <g transform="translate(360,42)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">S15</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Keep up to date</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">The newsletters,</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">communities, YouTube</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">channels you follow.</text>
+    <text x="14" y="142" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">name three sources.</text>
+    <text x="14" y="156" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">name one new thing.</text>
+  </g>
+
+  <!-- S17 -->
+  <g transform="translate(530,42)">
+    <rect x="0" y="0" width="170" height="180" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="85" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">S17</text>
+    <text x="85" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Multi-functional team</text>
+    <line x1="14" y1="50" x2="156" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="85" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">A project where you</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">worked with a non-data</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">role &mdash; clinical, finance,</text>
+    <text x="14" y="134" font-family="Lato" font-size="9.5">ops, customer-facing.</text>
+    <text x="14" y="154" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">need TWO examples.</text>
+    <text x="14" y="168" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">(plan says so.)</text>
+  </g>
+
+  <!-- B1 -->
+  <g transform="translate(105,232)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">B1</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Time / stakeholders</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">A deadline pressure</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">moment &mdash; how you</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">prioritised, communicated.</text>
+    <text x="14" y="142" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">mandatory evidence.</text>
+    <text x="14" y="156" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">have a concrete story.</text>
+  </g>
+
+  <!-- B5 -->
+  <g transform="translate(275,232)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">B5</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Internal &amp; external</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">Working with an external</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">provider, vendor, customer.</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">Name the relationship.</text>
+    <text x="14" y="142" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">mandatory evidence.</text>
+    <text x="14" y="156" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">internal + external both.</text>
+  </g>
+
+  <!-- B6 -->
+  <g transform="translate(445,232)">
+    <rect x="0" y="0" width="160" height="180" rx="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="80" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#c0392b">B6</text>
+    <text x="80" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="10">Value difference</text>
+    <line x1="14" y1="50" x2="146" y2="50" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="80" y="70" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a story about</text>
+    <text x="14" y="92" font-family="Lato" font-size="9.5">Adapting to someone</text>
+    <text x="14" y="106" font-family="Lato" font-size="9.5">whose perspective,</text>
+    <text x="14" y="120" font-family="Lato" font-size="9.5">access need, or context</text>
+    <text x="14" y="134" font-family="Lato" font-size="9.5">differed from yours.</text>
+    <text x="14" y="154" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">specific incident only.</text>
+    <text x="14" y="168" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">no generic sentiment.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE BEHAVIOUR STORY ========== -->
+<section class="page">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Behaviour Story</h2>
+
+  <p>The trap for soft KSBs is being general. <em>"I'm collaborative."</em> Doesn't score. The Behaviour Story is a four-beat shape that forces specifics: a moment, a friction, an action, a learning. It sits inside the Action+Reflection layers of STARR.</p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(20,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">1</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">THE MOMENT</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">A specific incident.</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">A date. A name.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">not "I usually"</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">but "on the 14th, Salma&hellip;"</text>
+    </g>
+    <polygon points="176,82 188,90 176,98" fill="#1a1a1a"/>
+    <line x1="170" y1="90" x2="184" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <g transform="translate(192,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">2</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">WHAT WAS HARD</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">Name the friction or</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">trade-off &mdash; not a brag.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">name the discomfort</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">"two competing deadlines"</text>
+    </g>
+    <polygon points="348,82 360,90 348,98" fill="#1a1a1a"/>
+    <line x1="342" y1="90" x2="356" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <g transform="translate(364,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">3</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">WHAT YOU DID</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">The specific action,</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">not the principle.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">verbs, not nouns</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">"I called Salma to renegotiate"</text>
+    </g>
+    <polygon points="520,82 532,90 520,98" fill="#c0392b"/>
+    <line x1="514" y1="90" x2="528" y2="90" stroke="#c0392b" stroke-width="2"/>
+
+    <g transform="translate(536,30)">
+      <rect x="0" y="0" width="154" height="140" rx="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2.4"/>
+      <circle cx="22" cy="22" r="14" fill="#c0392b"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">4</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5" fill="#c0392b">WHAT IT TAUGHT</text>
+      <line x1="12" y1="44" x2="142" y2="44" stroke="#c0392b" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">A principle you'd carry</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">forward &mdash; generalise.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">the scoring beat</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">(your STARR reflection)</text>
+    </g>
+  </svg>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The two killers of a soft-KSB answer: <strong>generic</strong> and <strong>self-congratulatory</strong>. The Behaviour Story fixes both. Specific incident + named friction + named action + generalised principle. Try saying <em>"What I'd carry forward from that&hellip;"</em> &mdash; it's the cleanest entry to beat 4.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: WORKED STORIES — TWO EXAMPLES ========== -->
+<section class="page">
+
+  <p class="section-tag">two worked examples &middot; the behaviour story in action</p>
+  <h2 class="section">Two worked Behaviour Stories</h2>
+
+  <p>One soft KSB, one specific incident, one Behaviour Story. Below: B1 (time management) and B6 (valuing difference) each as a four-beat answer.</p>
+
+  <h3 class="sub" style="margin-top: 8pt;">Example 1 &mdash; B1 (manage own time and stakeholders)</h3>
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 10pt 14pt; background: #fcfaf2; font-size: 10.5pt;">
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">1 &middot; Moment.</strong> <em>"In October, finance wanted the quarterly reconciliation by the 15th and clinical wanted the PTL refresh by the 12th &mdash; same week, same dataset, conflicting deadlines."</em></p>
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">2 &middot; What was hard.</strong> <em>"Both were time-critical for different reasons; the PTL drove patient bookings, the reconciliation drove invoice payments. Neither stakeholder knew about the other ask."</em></p>
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">3 &middot; What I did.</strong> <em>"I went to both leads on the Monday with the conflict named explicitly. We agreed the PTL would land on the 12th (clinical priority) and the reconciliation on the 16th (one day later, with finance's sign-off)."</em></p>
+    <p style="margin: 0; color: #c0392b;"><strong>4 &middot; What it taught me.</strong> <em>"Naming a conflict early is cheaper than negotiating around it later. I now front-load the deadline conversation on any project where two stakeholders share a dataset."</em></p>
+  </div>
+
+  <h3 class="sub" style="margin-top: 12pt;">Example 2 &mdash; B6 (value difference)</h3>
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 10pt 14pt; background: #fcfaf2; font-size: 10.5pt;">
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">1 &middot; Moment.</strong> <em>"In June, a colleague who relies on a screen reader asked me to share dashboards differently &mdash; my colour-coding was invisible to them."</em></p>
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">2 &middot; What was hard.</strong> <em>"I'd built the dashboard for visual scanning &mdash; conditional formatting in red/amber/green. The accessibility re-work meant rethinking the layout from scratch."</em></p>
+    <p style="margin: 0 0 4pt 0;"><strong style="color: #c0392b;">3 &middot; What I did.</strong> <em>"I added a textual flag column ('OK / Warning / Action') alongside the colour code, and changed the colour palette to one that works for colour-blind users too."</em></p>
+    <p style="margin: 0; color: #c0392b;"><strong>4 &middot; What it taught me.</strong> <em>"Accessibility isn't an extra layer &mdash; it's a quality standard. Every dashboard I've built since starts with the text-first version, colour added second."</em></p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: COMMON SOFT-KSB ANSWER MISTAKES ========== -->
+<section class="page">
+
+  <p class="section-tag">five mistakes to avoid</p>
+  <h2 class="section">Where soft-KSB answers fail</h2>
+
+  <h3 class="sub">1. The general statement</h3>
+  <p><em>"I work well in teams."</em> Doesn't score. Replace with: a specific date, a specific colleague, a specific task. The Behaviour Story's beat 1 fixes this.</p>
+
+  <h3 class="sub">2. The self-praise</h3>
+  <p><em>"I'm proactive and a strong communicator."</em> Doesn't score &mdash; sounds like a CV. Replace with: a moment where being proactive was hard, what you did, what it taught you.</p>
+
+  <h3 class="sub">3. The skipped reflection</h3>
+  <p>You tell the story, name the action, and stop. Beat 4 (what it taught you) doesn't happen. The KSB descriptors specifically ask for reflective thinking &mdash; without it, the answer reads as just narrative.</p>
+
+  <div class="red-flag">
+    <div class="badge">RED FLAG &middot; THE FAKE STORY</div>
+    <p><strong>Don't invent incidents.</strong> If a KSB doesn't have a real workplace example, find an adjacent one &mdash; a college project, a previous job, a volunteer role. <em>"I haven't had that exact situation at work, but&hellip;"</em> beats a manufactured incident every time. Assessors smell rehearsed-but-not-lived stories.</p>
+  </div>
+
+  <h3 class="sub" style="margin-top: 12pt;">4. The one anecdote stretched too far</h3>
+  <p>One story can cover 2-3 KSBs, but not all 7. If you find yourself returning to the same project answer for K16, S14, S17, B1, B5 and B6, the assessor will notice. Aim for 3-4 distinct Behaviour Stories.</p>
+
+  <h3 class="sub">5. The "soft skill" framing</h3>
+  <p>Don't call them "soft skills" in the discussion. The KSB descriptors use them as <em>professional behaviours</em>. Use that vocabulary: <em>"my approach to managing stakeholder expectations"</em> rather than <em>"my soft skills around stakeholders"</em>.</p>
+
+</section>
+
+
+<!-- ========== PAGE 6: SHARPEN YOUR PENCIL ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 10pt 16pt 10pt 56pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>40 minutes &mdash; one Behaviour Story per KSB</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">For each of the seven soft KSBs, name ONE specific incident. A few words is enough &mdash; the full story comes when you say it out loud.</p>
+  </div>
+
+  <table style="width: 100%; margin-top: 6pt; border-collapse: collapse; font-size: 9.5pt;">
+    <tr style="background: #1a1a1a; color: #fff; font-family: Poppins, sans-serif; font-weight: 700;">
+      <th style="padding: 4pt 6pt; text-align: left; width: 8%;">KSB</th>
+      <th style="padding: 4pt 6pt; text-align: left; width: 26%;">What the KSB asks for</th>
+      <th style="padding: 4pt 6pt; text-align: left;">The moment / incident (a few words)</th>
+    </tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">K16</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">learning techniques</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">S14</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">review own dev needs</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">S15</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">keep up to date</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">S17</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">multi-functional team (NEED TWO)</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888;"></td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic; color:#888;">&hellip;and a second example</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">B1</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">time / stakeholders</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-weight:700;">B5</td><td style="padding: 5pt 6pt; border-bottom: 1pt dashed #888; font-style:italic;">internal + external customers</td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    <tr><td style="padding: 5pt 6pt; font-weight:700;">B6</td><td style="padding: 5pt 6pt; font-style:italic;">value difference</td><td></td></tr>
+  </table>
+
+  <p style="margin-top: 10pt; font-size: 10pt; color: #555;">For each filled row: can you say beats 2 (what was hard), 3 (what you did), and 4 (what it taught you) out loud? If not, the row's not ready &mdash; revisit before Day 16.</p>
+
+</section>
+
+
+<!-- ========== PAGE 7: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions.</p>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>1.</strong> The Behaviour Story has four beats: moment, what was hard, what I did, what it taught me.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>2.</strong> "I'm proactive and collaborative" is a strong opening for a soft-KSB answer.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>3.</strong> S17 (multi-functional team) needs at least two examples.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>4.</strong> One strong workplace story can cover all 7 soft KSBs.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>5.</strong> If I can't recall a real workplace example for a KSB, I should invent something plausible.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin: 8pt 0 4pt 0;">Answers</h3>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>1. True.</strong> The four-beat shape that fits inside STARR Action + Reflection.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>2. False.</strong> Generic claim, no evidence. Replace with a specific incident.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>3. True.</strong> The plan explicitly says S17 requires two scenario-based examples.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>4. False.</strong> Aim for 3-4 distinct stories &mdash; one stretched too far reads thin.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>5. False.</strong> Use an adjacent example (college, previous job, volunteer). Invented incidents fail authenticity tests.</p>
+
+</section>
+
+
+<!-- ========== PAGE 8: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa { margin: 5pt 0 8pt 24pt; }
+    .page .dumb h4 { margin: 0 0 8pt 0; }
+  </style>
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>I find soft KSBs the hardest to talk about. Is that normal?</div>
+    <div class="qa"><span class="a">A:</span>Very. Most data techs got into the role because they like the technical work; talking about feelings, teamwork, learning style feels alien. The Behaviour Story is the structural fix &mdash; you don't have to be "good at" reflection if you have a four-beat template you can fill in.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I don't have a formal CPD log. How do I answer S14?</div>
+    <div class="qa"><span class="a">A:</span>An informal one counts. A list of courses, blog posts you read, YouTube channels, conversations with seniors that taught you something. Pull it together as a one-page list before the discussion &mdash; the assessor wants to see <em>some</em> record, not necessarily a corporate template.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>For B5 (internal + external customers) &mdash; what counts as "external"?</div>
+    <div class="qa"><span class="a">A:</span>Anyone outside your immediate team. A different department in the same organisation usually counts as "internal customer" rather than external; external is partners, vendors, contractors, members of the public. If your work is entirely internal, name a partner / vendor interaction even if it's small (a software vendor support ticket, a data provider query).</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>My B6 example feels small &mdash; just one accessibility change. Is that enough?</div>
+    <div class="qa"><span class="a">A:</span>Yes. B6 is about valuing difference and being sensitive to needs &mdash; not about leading a diversity initiative. A specific accessibility change, a language adjustment for a non-native English speaker, a meeting format change for a colleague who works part-time &mdash; all valid.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>The assessor asked something I've never had to do. How do I answer?</div>
+    <div class="qa"><span class="a">A:</span>Two options. <strong>One:</strong> describe how you'd approach it if it came up &mdash; named principles count even without a real story. <strong>Two:</strong> if relevant, bring up an adjacent experience &mdash; <em>"I haven't had to handle a difficult external customer in this role, but earlier in my career I&hellip;"</em>. Honesty plus reasoning beats a manufactured anecdote.</div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 9: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">10 minutes &mdash; soft-KSB rehearsal</p>
+  <h2 class="section">Say it for real</h2>
+
+  <h3 class="sub">Q1 &mdash; Tell me about a time you had to manage competing deadlines or stakeholder demands.</h3>
+  <p><strong>The shape:</strong> Behaviour Story. Beat 1 names a date and the two stakeholders. Beat 4 generalises into a principle you'd carry forward.</p>
+
+  <h3 class="sub">Q2 &mdash; Describe a piece of professional development you've undertaken and how it changed your work.</h3>
+  <p><strong>The shape:</strong> Behaviour Story for K16/S14. Name the development (course/book/colleague), name the moment you applied it. The beat 4 is the bridge: <em>"what that taught me about how I learn was&hellip;"</em></p>
+
+  <h3 class="sub">Q3 &mdash; Tell me about working with someone whose perspective or working style differed from yours.</h3>
+  <p><strong>The shape:</strong> Behaviour Story for B6/S17. Specific person (anonymised if needed), specific adjustment you made, specific principle you carry forward. Don't try to sound like a diversity training; sound like someone who noticed and adapted.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Open soft-KSB answers with a date and a name. <em>"In October, working with Salma in the booking team&hellip;"</em> instantly signals specificity. Vague openers (<em>"I generally find&hellip;"</em>) cost marks; specific openers earn them.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>Seven soft KSBs.</strong> K16, S14, S15, S17, B1, B5, B6. None is Distinction-graded.</li>
+    <li><strong>The Behaviour Story.</strong> Four beats: Moment &middot; What was hard &middot; What I did &middot; What it taught me.</li>
+    <li><strong>S17 needs two examples.</strong> The plan explicitly requires it.</li>
+    <li><strong>B1 and B5 are mandatory-evidence.</strong> Have concrete examples ready &mdash; with names and dates.</li>
+    <li><strong>Don't generalise; don't self-praise; don't invent.</strong> Specific, honest, reflective.</li>
+    <li><strong>Aim for 3-4 distinct Behaviour Stories</strong> across the seven KSBs &mdash; one stretched too far reads thin.</li>
+    <li><strong>Open with a date and a name.</strong> That alone earns marks.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can name a specific workplace incident for each of the seven soft KSBs.</li>
+    <li>For S17, you have two distinct examples.</li>
+    <li>You can recite the four beats of the Behaviour Story from memory.</li>
+    <li>You've practised at least one full Behaviour Story out loud.</li>
+    <li>You can finish the sentence <em>"What I'd carry forward from that&hellip;"</em> for each story.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 16</h4>
+    <p style="margin: 0;"><strong>The Distinction Lift.</strong> Tomorrow we go back over all four content areas with one focus: turning Pass-level STARRs into Distinction-level ones. Named device: <strong>The Why Layer</strong>. Side-by-side Pass vs Distinction answers from every content area. This is the chapter that closes the gap most learners arrive with: hitting Pass everywhere, but the answers falling short of Distinction depth on D1, D2, D3.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 15 done &mdash; the four content areas, rehearsed.</p>
+
+</section>
+
+</body>
+</html>

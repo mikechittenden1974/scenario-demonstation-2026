@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 13 — Analysis &amp; Validation STARR-ed (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 13"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">13</p>
+  <p class="opener-tag">second content area &middot; the verification day</p>
+  <h1 class="opener-title">Analysis &amp; Validation, STARR-ed</h1>
+  <p class="opener-subtitle">K10 &middot; K11 &middot; K15 &middot; and a four-beat shape that lives inside Action</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left: K10/K11/K15 stickies -->
+  <g transform="translate(40,30) rotate(-3)">
+    <rect x="0" y="0" width="130" height="80" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K10</text>
+    <text x="48" y="22" font-family="Lato" font-size="10" font-weight="700">Quality Issues</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">duplicates &middot; nulls</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">spelling &middot; obsolete</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">compliance &middot; meaning</text>
+  </g>
+  <g transform="translate(50,116) rotate(2)">
+    <rect x="0" y="0" width="130" height="80" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K11</text>
+    <text x="48" y="22" font-family="Lato" font-size="10" font-weight="700">Validation</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">Two-Route Check</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">column profile</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">corrective action</text>
+  </g>
+  <g transform="translate(36,206) rotate(-2)">
+    <rect x="0" y="0" width="130" height="80" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K15</text>
+    <text x="48" y="22" font-family="Lato" font-size="10" font-weight="700">Digital Context</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">open datasets</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">IoT &middot; connectedness</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">customer-centricity</text>
+  </g>
+
+  <!-- centre: The Verification Story — 4-beat visual -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="270" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="130" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">THE VERIFICATION STORY</text>
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="130" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">a four-beat shape inside Action+Result</text>
+    <!-- beats -->
+    <rect x="20" y="68" width="220" height="36" rx="3" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="88" font-family="Poppins,sans-serif" font-weight="900" font-size="11">1 &middot; ISSUE FOUND</text>
+    <text x="30" y="100" font-family="Lato" font-size="8.5" font-style="italic">what you spotted, where</text>
+    <rect x="20" y="112" width="220" height="36" rx="3" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="132" font-family="Poppins,sans-serif" font-weight="900" font-size="11">2 &middot; METHOD USED</text>
+    <text x="30" y="144" font-family="Lato" font-size="8.5" font-style="italic">how you validated it</text>
+    <rect x="20" y="156" width="220" height="36" rx="3" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="176" font-family="Poppins,sans-serif" font-weight="900" font-size="11">3 &middot; CORRECTIVE ACTION</text>
+    <text x="30" y="188" font-family="Lato" font-size="8.5" font-style="italic">what you did about it</text>
+    <rect x="20" y="200" width="220" height="50" rx="3" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="30" y="220" font-family="Poppins,sans-serif" font-weight="900" font-size="11" fill="#c0392b">4 &middot; VERIFIED</text>
+    <text x="30" y="234" font-family="Lato" font-size="8.5" font-style="italic">how you confirmed the fix worked</text>
+    <text x="30" y="246" font-family="Lato" font-size="8" font-weight="700" fill="#c0392b">&larr; The Two-Route Check lives here</text>
+  </g>
+
+  <!-- DAY 13 mug -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 13</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v92 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">The mandatory KSBs:</text>
+    <text x="16" y="46" font-family="Lato" font-style="italic" font-size="10">K10 and K11 both carry</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">"Mandatory evidence:</text>
+    <text x="16" y="78" font-family="Lato" font-style="italic" font-size="10">Present" &mdash; assessor will</text>
+    <text x="16" y="94" font-family="Lato" font-style="italic" font-size="10">probe them deliberately.</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 6pt;">K10 and K11 are mandatory-evidence KSBs &mdash; the assessor will probe them deliberately. Today's named device, <strong>The Verification Story</strong>, is a four-beat shape that fits inside the Action+Result layers of STARR and rehearses exactly what those KSBs ask for.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE SIX QUALITY ISSUES ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">k10 &mdash; the six recurring data-quality issues</p>
+  <h2 class="section">The Quality Six</h2>
+  <p style="max-width: 5.5in;">K10 lists the categories of data-quality problem you should be able to name and describe from your own work. Six recurring shapes &mdash; below: one example and one detection method for each.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE SIX DATA-QUALITY ISSUES (K10)</text>
+  <line x1="60" y1="36" x2="660" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+
+  <!-- 2x3 grid of quality issue cards -->
+  <g transform="translate(40,52)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">1 &middot; MISCLASSIFICATION</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> drama tagged as documentary;</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">payment marked refunded when paid.</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">Group By on category column</text>
+  </g>
+
+  <g transform="translate(260,52)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">2 &middot; DUPLICATES</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> same patient on the list twice;</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">repeated cancellation rows.</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">Group By + COUNT &gt; 1</text>
+  </g>
+
+  <g transform="translate(480,52)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">3 &middot; SPELLING / FORMAT</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> "MRI" vs "M.R.I." vs "M R I";</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">trailing whitespace.</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">column profile distinct count</text>
+  </g>
+
+  <g transform="translate(40,184)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">4 &middot; OBSOLETE DATA</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> last-refreshed 3 months ago;</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">cached lookup-table out of date.</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">MAX(timestamp) sanity-check</text>
+  </g>
+
+  <g transform="translate(260,184)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">5 &middot; COMPLIANCE</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> identifiable data where</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">aggregated should suffice (GDPR).</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">audit who needs what</text>
+  </g>
+
+  <g transform="translate(480,184)">
+    <rect x="0" y="0" width="200" height="120" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="12">6 &middot; MEANING / TRANSLATION</text>
+    <line x1="14" y1="36" x2="186" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="14" y="56" font-family="Lato" font-size="9.5"><tspan font-style="italic">e.g.</tspan> "active" means different</text>
+    <text x="14" y="70" font-family="Lato" font-size="9.5">things in two source systems.</text>
+    <text x="14" y="92" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">spot it with:</text>
+    <text x="14" y="106" font-family="Lato" font-size="9">read the data dictionary</text>
+  </g>
+
+  <!-- bottom takeaway -->
+  <g transform="translate(60,330)">
+    <rect x="0" y="0" width="600" height="110" rx="6" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="20" y="26" font-family="Poppins,sans-serif" font-weight="900" font-size="12">KNOW ONE EXAMPLE OF EACH FROM YOUR WORK.</text>
+    <text x="20" y="46" font-family="Lato" font-size="10">K10 is "Mandatory evidence: Present" &mdash; the assessor will probe whether you can name and discuss</text>
+    <text x="20" y="60" font-family="Lato" font-size="10">multiple quality issues from your real workplace, not generic textbook examples.</text>
+    <text x="20" y="84" font-family="Lato" font-size="10" font-style="italic" fill="#c0392b">Two real examples covered well beats six described thinly.</text>
+    <text x="20" y="100" font-family="Lato" font-size="9.5" fill="#555">The Verification Story (named device today) is how you turn each one into a STARR answer.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE VERIFICATION STORY ========== -->
+<section class="page">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Verification Story</h2>
+
+  <p>K10 asks <em>what quality issue did you find?</em> K11 asks <em>how did you validate it?</em> The Verification Story answers both inside the same STARR &mdash; it's a four-beat shape that lives in the Action and Result layers.</p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- 4 beats horizontally, fits within viewBox -->
+    <g transform="translate(20,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">1</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">ISSUE FOUND</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">What you spotted,</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">where in the data.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">name it specifically</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">(one of the Quality Six)</text>
+    </g>
+    <polygon points="176,82 188,90 176,98" fill="#1a1a1a"/>
+    <line x1="170" y1="90" x2="184" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <g transform="translate(192,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">2</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">METHOD USED</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">How you validated it</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">(formula, profile).</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">the K11 method</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">(Group By, Two-Route)</text>
+    </g>
+    <polygon points="348,82 360,90 348,98" fill="#1a1a1a"/>
+    <line x1="342" y1="90" x2="356" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <g transform="translate(364,30)">
+      <rect x="0" y="0" width="150" height="140" rx="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="22" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">3</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5">CORRECTIVE</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">What you did about it</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">to fix the issue.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">the action you took</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">(replace, dedupe, escalate)</text>
+    </g>
+    <polygon points="520,82 532,90 520,98" fill="#c0392b"/>
+    <line x1="514" y1="90" x2="528" y2="90" stroke="#c0392b" stroke-width="2"/>
+
+    <g transform="translate(536,30)">
+      <rect x="0" y="0" width="154" height="140" rx="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2.4"/>
+      <circle cx="22" cy="22" r="14" fill="#c0392b"/>
+      <text x="22" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">4</text>
+      <text x="44" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="10.5" fill="#c0392b">VERIFIED</text>
+      <line x1="12" y1="44" x2="142" y2="44" stroke="#c0392b" stroke-width="0.6"/>
+      <text x="12" y="62" font-family="Lato" font-size="9">How you confirmed</text>
+      <text x="12" y="76" font-family="Lato" font-size="9">the fix worked.</text>
+      <text x="12" y="98" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">Two-Route Check zone</text>
+      <text x="12" y="112" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">(this is the K11 distinction)</text>
+    </g>
+  </svg>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Most apprentices stop at beat 3 (corrective action) and don't go on to beat 4 (verified). K11 specifically asks for the verification &mdash; <em>"how do you know the fix worked?"</em> The Two-Route Check from Phase 1 is the answer. Use those exact words: <em>"I verified with a Two-Route Check &mdash; route one was X, route two was Y, they matched."</em></p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: BIG BREATHER — WORKED STARR ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the worked example</p>
+  <h2 class="section">The Verification Story inside STARR</h2>
+  <p style="max-width: 5.5in;">A typical K10/K11 question answered in STARR shape, with the four-beat Verification Story folded into the Action layer and the Two-Route Check in beat 4.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE VERIFICATION STORY &mdash; in a STARR answer</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">Q: "Tell me about a time you found a data quality issue and how you handled it."</text>
+
+  <line x1="100" y1="60" x2="100" y2="430" stroke="#1a1a1a" stroke-width="2"/>
+
+  <g transform="translate(60,60)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">S</text>
+    <rect x="74" y="0" width="580" height="38" rx="4" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SITUATION</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"In May, processing the monthly outsourced-activity reconciliation for finance."</text>
+  </g>
+
+  <g transform="translate(60,108)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">T</text>
+    <rect x="74" y="0" width="580" height="38" rx="4" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">TASK</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"I had to ensure the activity numbers we billed against matched what had actually been done."</text>
+  </g>
+
+  <g transform="translate(60,156)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">A</text>
+    <rect x="74" y="0" width="580" height="124" rx="4" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">ACTION &mdash; the four-beat Verification Story lives here</text>
+    <text x="84" y="34" font-family="Lato" font-size="9.5"><tspan font-weight="700">1 &middot; Issue found:</tspan> <tspan font-style="italic">"A Group By on subscriber_id showed 12 patients with two cancellation rows each &mdash;</tspan></text>
+    <text x="84" y="46" font-family="Lato" font-size="9.5" font-style="italic">duplicates I hadn't seen on first inspection."</text>
+    <text x="84" y="64" font-family="Lato" font-size="9.5"><tspan font-weight="700">2 &middot; Method used:</tspan> <tspan font-style="italic">"I ran the Three Questions Before You Delete &mdash; checked migration_flag was consistent</tspan></text>
+    <text x="84" y="76" font-family="Lato" font-size="9.5" font-style="italic">across pairs, confirmed they were system-migration duplicates not separate cancellations."</text>
+    <text x="84" y="94" font-family="Lato" font-size="9.5"><tspan font-weight="700">3 &middot; Corrective action:</tspan> <tspan font-style="italic">"Removed the older duplicates, kept the migration-flagged rows, logged the decision in the methodology note."</tspan></text>
+    <text x="84" y="112" font-family="Lato" font-size="9.5"><tspan font-weight="700">4 &middot; Verified:</tspan> <tspan font-style="italic">"Ran the Two-Route Check &mdash; COUNTIF(status,'cancelled') against the deduped table matched the row count exactly."</tspan></text>
+  </g>
+
+  <g transform="translate(60,294)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="38" rx="4" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">RESULT</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"The reconciliation came in clean &mdash; finance approved 100% of the matched invoices."</text>
+  </g>
+
+  <g transform="translate(60,342)">
+    <circle cx="40" cy="14" r="18" fill="#c0392b"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="76" rx="4" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10" fill="#c0392b">REFLECTION</text>
+    <text x="84" y="34" font-family="Lato" font-size="10" font-style="italic">"On reflection, the Group By was the move I'd skipped on the previous month's run &mdash; I just hit Remove Duplicates</text>
+    <text x="84" y="48" font-family="Lato" font-size="10" font-style="italic">on autopilot. What that taught me: investigate before you delete, every time. I'd rather a 3-minute Group By</text>
+    <text x="84" y="62" font-family="Lato" font-size="10" font-style="italic">than a deletion I can't reverse."</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 5: PHASE 1 CALLBACKS ========== -->
+<section class="page">
+
+  <p class="section-tag">the verification language you already know</p>
+  <h2 class="section">Pulling Phase 1 forward</h2>
+
+  <p>You spent four days in Phase 1 building this exact vocabulary. Today is about deploying it &mdash; in conversation rather than in Excel. Three named devices from Phase 1 are central to the Verification Story:</p>
+
+  <div class="row" style="margin-top: 8pt; align-items: stretch;">
+    <div class="col" style="display: flex;">
+      <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 12pt; background: #fdfaf2; min-height: 140pt; display: flex; flex-direction: column; flex: 1;">
+        <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt; color: #c0392b;">Validate then Verify</p>
+        <p style="margin: 0; font-size: 10pt; flex: 1;">Validation is input quality (data fit for purpose). Verification is method correctness (output is right). Both score. They're different.</p>
+        <p style="margin: 4pt 0 0 0; font-size: 9.5pt; color: #555; font-style: italic;">from Day 4</p>
+      </div>
+    </div>
+    <div class="col" style="display: flex;">
+      <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 12pt; background: #fdfaf2; min-height: 140pt; display: flex; flex-direction: column; flex: 1;">
+        <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt; color: #c0392b;">The Two-Route Check</p>
+        <p style="margin: 0; font-size: 10pt; flex: 1;">Compute the same finding two different ways. Same number = verified. Different number = something to investigate.</p>
+        <p style="margin: 4pt 0 0 0; font-size: 9.5pt; color: #555; font-style: italic;">from Day 4</p>
+      </div>
+    </div>
+    <div class="col" style="display: flex;">
+      <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 12pt; background: #fdfaf2; min-height: 140pt; display: flex; flex-direction: column; flex: 1;">
+        <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt; color: #c0392b;">Three Questions Before You Delete</p>
+        <p style="margin: 0; font-size: 10pt; flex: 1;">Why is it here? What does it represent? What would I lose if I removed it? The Delete Anomaly is the red flag.</p>
+        <p style="margin: 4pt 0 0 0; font-size: 9.5pt; color: #555; font-style: italic;">from Day 2</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="assessor-fav" style="margin-top: 14pt;">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>Saying any of these named-device phrases out loud is a strong signal. <em>"I ran the Three Questions Before You Delete&hellip;"</em> tells the assessor you have a vocabulary for the work, not just a habit. K11 specifically rewards <em>"methods of validating data"</em> &mdash; named methods score above unnamed ones.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 6: K15 — THE DIGITAL WORLD CONTEXT ========== -->
+<section class="page">
+
+  <p class="section-tag">the third KSB &middot; the wider-context one</p>
+  <h2 class="section">K15 &mdash; data in the digital world</h2>
+
+  <p>K15 is the one most learners skim. It's lighter on technique and heavier on context &mdash; how the work fits into the wider digital landscape. Three things to be able to talk about.</p>
+
+  <h3 class="sub">1. Open data and trusted external datasets</h3>
+  <p>The assessor may ask whether you've used <em>open datasets</em> (e.g. ONS statistics, NHS Digital, government open data). If you haven't directly, you'll probably have seen them used &mdash; or know where you'd reach for them. One example is enough.</p>
+
+  <h3 class="sub">2. Data underpinning digital interactions</h3>
+  <p>Every login, search, click, payment, scan generates data. In a clinical context: every appointment booking, every result release. The question shape is usually <em>"how does data show up in the systems you work with day-to-day?"</em> &mdash; answer with one specific system from your workplace.</p>
+
+  <h3 class="sub">3. Customer-centricity / connectedness</h3>
+  <p>Data joins up customers, applications, devices, IoT. The shape: <em>"how does the data you handle connect to a wider system / customer journey?"</em> &mdash; describe one specific workflow.</p>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>Brain Power</h4>
+      <p>K15 is rarely the longest question. A 30-second answer with one named open dataset and one workplace example is enough. Don't overthink it &mdash; this isn't a Distinction-graded KSB. Focus your prep time on K10 and K11.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: SHARPEN YOUR PENCIL ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 10pt 16pt 10pt 56pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>30 minutes &mdash; the Verification Story, in your own words</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">Pick your analysis &amp; validation anchor. Fill in the four beats. The fourth one is where most apprentices stop short &mdash; spend extra time there.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fff; margin: 10pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt;">My analysis &amp; validation anchor: <span style="font-family: Lato, sans-serif; font-weight: 400; font-style: italic; color: #888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt;">Beat 1 &mdash; <em style="color:#555; font-weight:400;">What issue did you find, where, when?</em></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt;">Beat 2 &mdash; <em style="color:#555; font-weight:400;">What method did you use to validate it?</em></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt;">Beat 3 &mdash; <em style="color:#555; font-weight:400;">What corrective action did you take?</em></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt; color:#c0392b;">Beat 4 &mdash; <em style="color:#c0392b; font-weight:400;">How did you VERIFY the fix worked?</em> <span style="color:#888; font-weight:400; font-size:9.5pt; font-style:italic;">(the K11 distinction beat)</span></p>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 18pt;"></div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions.</p>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>1.</strong> K10 and K11 both carry "Mandatory evidence: Present" &mdash; expect direct probing.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>2.</strong> The Verification Story has four beats: issue found, method used, corrective action, verified.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>3.</strong> Naming a validation method (like "Two-Route Check") scores higher than describing it unnamed.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>4.</strong> K15 is one of the Distinction-graded KSBs &mdash; deepest answer of the chapter belongs here.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>5.</strong> "Verified" can be the same as "result" &mdash; both describe what happened after the fix.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin: 8pt 0 4pt 0;">Answers</h3>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>1. True.</strong> Mandatory evidence means specific points must be hit &mdash; come prepared with concrete examples.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>2. True.</strong> Issue found &middot; Method used &middot; Corrective action &middot; Verified. Beat 4 is the one most candidates skip.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>3. True.</strong> K11 specifically rewards methods, named.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>4. False.</strong> K15 is a Pass-only KSB &mdash; one workplace example is enough. K10 and K11 are where to invest.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>5. False.</strong> "Verified" is <em>how you confirmed the fix worked</em>. "Result" is what changed as a consequence.</p>
+
+</section>
+
+
+<!-- ========== PAGE 9: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa { margin: 5pt 0 8pt 24pt; }
+    .page .dumb h4 { margin: 0 0 8pt 0; }
+  </style>
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>My validation method was "I just looked at it carefully." Is that enough?</div>
+    <div class="qa"><span class="a">A:</span>Often, yes &mdash; eyeballing is a valid method when the dataset is small. But name what you were looking for. <em>"I scanned the column for entries that broke the five-digit pattern; row 47 was the only one."</em> Specific = method. Vague = not method.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I caught the issue but I didn't actually fix it &mdash; my manager did. What do I say?</div>
+    <div class="qa"><span class="a">A:</span>Tell that story. Beat 3 becomes <em>"I escalated to my manager because the fix required a system permission I didn't have; she made the change after agreeing the approach with me."</em> Escalation <strong>is</strong> corrective action; the assessor isn't checking whether you owned every step, just whether you understood the problem and the resolution.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>Can the Verification Story work for a quality issue I prevented rather than found?</div>
+    <div class="qa"><span class="a">A:</span>Yes &mdash; and it scores well. Beat 1 becomes "what could have gone wrong," beat 2 "the check I put in place to prevent it," beat 3 "no remediation needed because it didn't occur," beat 4 "verified the control by running [test] monthly." Prevention stories often score above remediation stories because they show you thinking ahead.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I don't have a single big quality story &mdash; just lots of small ongoing checks.</div>
+    <div class="qa"><span class="a">A:</span>Use one of the small ones, told in detail. Even a daily nullity check on a single column is a Verification Story if you can describe what you'd do if the nulls jumped. Specificity beats scale.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if my beat 4 (verified) doesn't really exist &mdash; we just trusted the fix worked?</div>
+    <div class="qa"><span class="a">A:</span>Then say so honestly, and add a Reflection: <em>"On reflection, I didn't have a verification step in place &mdash; what I'd do differently next time is run a Two-Route Check against the historic record to confirm."</em> That's a Distinction-shaped answer to a Pass-shaped story.</div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">10 minutes &mdash; the verification rehearsal</p>
+  <h2 class="section">Say it for real</h2>
+
+  <p>Two questions to rehearse out loud. End each with a clear beat 4.</p>
+
+  <h3 class="sub">Q1 &mdash; Tell me about a time you found a data quality issue.</h3>
+  <p><strong>The shape:</strong> full STARR with the four-beat Verification Story inside Action. The verified step (beat 4) names a specific method &mdash; <em>"I ran a Two-Route Check by computing the same total from a different angle&hellip;"</em></p>
+  <p class="annot annot-blue">Try: name the Quality-Six category in beat 1 &mdash; <em>"a duplicate-records issue&hellip;"</em> or <em>"a misclassification issue&hellip;"</em>. Categorising signals K10 directly.</p>
+
+  <h3 class="sub">Q2 &mdash; What methods of validating data do you use in your role?</h3>
+  <p><strong>The shape:</strong> a short stack of three methods, with one example each. Name them: <em>"Two-Route Check, column profiling, Three Questions Before You Delete."</em> Then one specific workplace story for one of them.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The phrase <em>"I verified by running the Two-Route Check"</em> is doing three things at once: claiming a method, naming it, and signalling K11. Use those exact words at least once in the discussion.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 11: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>Three KSBs.</strong> K10 (quality issues) &middot; K11 (validation methods) &middot; K15 (digital context).</li>
+    <li><strong>K10 and K11 are mandatory-evidence KSBs.</strong> The assessor will probe directly &mdash; have specific examples ready.</li>
+    <li><strong>The Quality Six.</strong> Misclassification &middot; duplicates &middot; spelling/format &middot; obsolete &middot; compliance &middot; meaning. Two real examples beat six generic ones.</li>
+    <li><strong>The Verification Story</strong> &mdash; four beats inside Action: <em>issue found &middot; method used &middot; corrective action &middot; verified.</em></li>
+    <li><strong>Beat 4 is the one most candidates skip.</strong> The Two-Route Check is the answer.</li>
+    <li><strong>Pull Phase 1 forward.</strong> Validate then Verify, The Two-Route Check, Three Questions Before You Delete &mdash; named devices score.</li>
+    <li><strong>K15 is the light one.</strong> One open-dataset example + one workplace system. Move on.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can name all six Quality issues from memory.</li>
+    <li>You can name your one workplace example of each (or at least three of the six).</li>
+    <li>You've drafted a full Verification Story for your analysis &amp; validation anchor.</li>
+    <li>You've practised saying <em>"I verified with a Two-Route Check"</em> out loud.</li>
+    <li>You can give a 30-second K15 answer covering one open dataset and one workplace system.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 14</h4>
+    <p style="margin: 0;"><strong>Distribution &amp; Dissemination, STARR-ed.</strong> The biggest content area &mdash; K5, K12, K13, K14, S10, S11, S12, S13. Tomorrow's named device: <strong>The Audience Switch</strong> &mdash; one piece of analysis, three audiences (technical peer &middot; manager &middot; end customer). Also sets up D2 (why-you-communicate-this-way) and D3 (storage, security, ethics).</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 13 done &mdash; validation, rehearsed.</p>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 16 — The Distinction Lift (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 16"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">16</p>
+  <p class="opener-tag">the chapter that closes the distinction gap</p>
+  <h1 class="opener-title">The Distinction Lift</h1>
+  <p class="opener-subtitle">D1 &middot; D2 &middot; D3 &mdash; three descriptors, one named device, one upgraded sentence shape</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left: distinction descriptors -->
+  <g transform="translate(30,30) rotate(-3)">
+    <rect x="0" y="0" width="160" height="76" fill="#fef0ec" stroke="#c0392b" stroke-width="1.8"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">D1</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">data gathering</text>
+    <line x1="10" y1="30" x2="150" y2="30" stroke="#c0392b" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">evaluate &amp; justify</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">use of data sets</text>
+  </g>
+  <g transform="translate(40,112) rotate(2)">
+    <rect x="0" y="0" width="160" height="76" fill="#fef0ec" stroke="#c0392b" stroke-width="1.8"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">D2</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">communication</text>
+    <line x1="10" y1="30" x2="150" y2="30" stroke="#c0392b" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">critically evaluate</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">why &amp; how communicated</text>
+  </g>
+  <g transform="translate(26,196) rotate(-2)">
+    <rect x="0" y="0" width="160" height="76" fill="#fef0ec" stroke="#c0392b" stroke-width="1.8"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">D3</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">storage &amp; ethics</text>
+    <line x1="10" y1="30" x2="150" y2="30" stroke="#c0392b" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">evaluate &amp; justify</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">storage &amp; security</text>
+  </g>
+
+  <!-- centre: The Why Layer / Pass → Distinction visual -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="270" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="130" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">THE WHY LAYER</text>
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="130" y="54" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">three additions to the second R</text>
+    <!-- Pass row -->
+    <rect x="20" y="74" width="220" height="40" fill="#f1efe7" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="30" y="92" font-family="Poppins,sans-serif" font-weight="900" font-size="10">PASS REFLECTION</text>
+    <text x="30" y="106" font-family="Lato" font-size="9" font-style="italic" fill="#555">"On reflection, what that taught me was X."</text>
+    <text x="130" y="130" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">+ THE WHY LAYER &darr;</text>
+    <!-- 3 add-ons -->
+    <rect x="20" y="142" width="220" height="32" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="30" y="158" font-family="Lato" font-size="9.5" font-weight="700">1 &middot; "why this not that"</text>
+    <text x="30" y="170" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">justify the choice you made</text>
+    <rect x="20" y="178" width="220" height="32" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1"/>
+    <text x="30" y="194" font-family="Lato" font-size="9.5" font-weight="700">2 &middot; "what would have gone wrong"</text>
+    <text x="30" y="206" font-family="Lato" font-size="8.5" font-style="italic" fill="#555">name the failure mode</text>
+    <rect x="20" y="214" width="220" height="32" fill="#fef0ec" stroke="#c0392b" stroke-width="1.6"/>
+    <text x="30" y="230" font-family="Lato" font-size="9.5" font-weight="700" fill="#c0392b">3 &middot; "what I'd do differently"</text>
+    <text x="30" y="242" font-family="Lato" font-size="8.5" font-style="italic" fill="#c0392b">the future-facing principle</text>
+    <text x="130" y="262" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">= distinction-level reflection</text>
+  </g>
+
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 16</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v98 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">The live failure pattern:</text>
+    <text x="16" y="48" font-family="Lato" font-style="italic" font-size="10">apprentices hit PASS on</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">every KSB &mdash; and stop</text>
+    <text x="16" y="78" font-family="Lato" font-style="italic" font-size="10">short of Distinction depth.</text>
+    <text x="16" y="100" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">today is when that ends.</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 6pt;">A pattern shows up in real assessor feedback: apprentices hit Pass on every KSB and fall short of every Distinction descriptor. The technical work is sound; the spoken depth isn't there. Today's named device, <strong>The Why Layer</strong>, is three sentence-additions that fold into your Reflection and lift Pass answers into Distinction territory.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE VERB LADDER ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the language of distinction</p>
+  <h2 class="section">The Verb Ladder</h2>
+  <p style="max-width: 5.5in;">The descriptors literally change verbs at Distinction. At Pass you <em>describe / explain / use</em>. At Distinction you <em>evaluate / critically evaluate / justify</em>. Hearing yourself climb the ladder is half the practice.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE VERB LADDER &middot; PASS &rarr; DISTINCTION</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">the descriptors change verbs at distinction. say the distinction-level verb out loud.</text>
+
+  <!-- Ladder with rungs -->
+  <line x1="120" y1="60" x2="120" y2="420" stroke="#1a1a1a" stroke-width="3"/>
+  <line x1="600" y1="60" x2="600" y2="420" stroke="#1a1a1a" stroke-width="3"/>
+
+  <!-- Top rung: Distinction -->
+  <g>
+    <line x1="120" y1="80" x2="600" y2="80" stroke="#c0392b" stroke-width="4"/>
+    <rect x="160" y="50" width="420" height="36" rx="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="370" y="74" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">DISTINCTION &middot; evaluates &middot; critically evaluates &middot; justifies</text>
+  </g>
+
+  <!-- Middle rung empty -->
+  <line x1="120" y1="240" x2="600" y2="240" stroke="#888" stroke-width="2" stroke-dasharray="6 4"/>
+
+  <!-- Bottom rung: Pass -->
+  <g>
+    <line x1="120" y1="400" x2="600" y2="400" stroke="#1a1a1a" stroke-width="4"/>
+    <rect x="160" y="370" width="420" height="36" rx="6" fill="#f1efe7" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="370" y="394" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">PASS &middot; describes &middot; explains &middot; uses</text>
+  </g>
+
+  <!-- middle section: the gap -->
+  <g transform="translate(150,110)">
+    <text x="220" y="14" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">THE GAP &mdash; what gets added to climb</text>
+    <line x1="0" y1="22" x2="440" y2="22" stroke="#1a1a1a" stroke-width="0.6"/>
+    <text x="10" y="46" font-family="Lato" font-size="11">&bull; <tspan font-weight="700">why this and not that</tspan> (justify the choice)</text>
+    <text x="10" y="68" font-family="Lato" font-size="11">&bull; <tspan font-weight="700">what would have gone wrong</tspan> (name the alternative's failure)</text>
+    <text x="10" y="90" font-family="Lato" font-size="11">&bull; <tspan font-weight="700">what I'd do differently next time</tspan> (project forward)</text>
+    <text x="10" y="112" font-family="Lato" font-size="11">&bull; <tspan font-weight="700">what the principle is</tspan> (generalise beyond the incident)</text>
+
+    <text x="220" y="146" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic" fill="#c0392b">these aren't extra content &mdash; they're a different shape of sentence</text>
+
+    <line x1="0" y1="166" x2="440" y2="166" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="220" y="186" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="11" fill="#c0392b">trigger phrases</text>
+    <text x="10" y="206" font-family="Lato" font-size="10" font-style="italic">"on reflection, the choice mattered more than the technique because&hellip;"</text>
+    <text x="10" y="222" font-family="Lato" font-size="10" font-style="italic">"if I'd gone the other way, X would have happened, which would have&hellip;"</text>
+    <text x="10" y="238" font-family="Lato" font-size="10" font-style="italic">"what I'd take from this into [future case] is&hellip;"</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE WHY LAYER ========== -->
+<section class="page">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Why Layer</h2>
+
+  <p>Three sentence-additions to your Reflection. None of them is extra content &mdash; they're a different sentence shape applied to content you already have. Used once each per content area, they cover D1, D2, and D3.</p>
+
+  <div class="row" style="margin-top: 8pt;">
+    <div class="col">
+      <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 12pt; background: #fff7c2;">
+        <p style="margin: 0 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 12pt;">1 &middot; "Why this, not that"</p>
+        <p style="margin: 0; font-size: 10pt;"><strong>The shape:</strong> justify the choice you made by naming what else you considered. <em>"I chose Epic over the invoice extract because Epic was clinical truth; the invoice was billing truth."</em></p>
+        <p style="margin: 6pt 0 0 0; font-size: 9.5pt; font-style: italic; color: #555;">covers: D1 (justifies data choice) &middot; D2 (justifies method) &middot; D3 (justifies storage)</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="border: 1.6pt solid #1a1a1a; border-radius: 4pt; padding: 12pt; background: #ebf6ef;">
+        <p style="margin: 0 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 12pt;">2 &middot; "What would have gone wrong"</p>
+        <p style="margin: 0; font-size: 10pt;"><strong>The shape:</strong> name the failure mode of the alternative. <em>"If I'd used the invoice as primary, we'd have rubber-stamped the billing errors I was meant to catch."</em></p>
+        <p style="margin: 6pt 0 0 0; font-size: 9.5pt; font-style: italic; color: #555;">covers: D1 (incorrect gathering effect) &middot; D2 (mis-communication risk) &middot; D3 (security/ethics breach)</p>
+      </div>
+    </div>
+    <div class="col">
+      <div style="border: 1.6pt solid #c0392b; border-radius: 4pt; padding: 12pt; background: #fef0ec;">
+        <p style="margin: 0 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 12pt; color: #c0392b;">3 &middot; "What I'd do differently"</p>
+        <p style="margin: 0; font-size: 10pt;"><strong>The shape:</strong> project forward into the principle you'd carry. <em>"What I'd take into future work is: when verifying a third party's data, never let their data be your sole source."</em></p>
+        <p style="margin: 6pt 0 0 0; font-size: 9.5pt; font-style: italic; color: #c0392b; font-weight:700;">the future-facing layer &mdash; signals evaluation, not just narration</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Use all three Why Layers across a 60-minute discussion, not all three in one answer. <strong>One per content area is plenty.</strong> Trying to cram three trigger phrases into a single Reflection makes the answer feel rehearsed; spreading them across the conversation makes it feel reflective.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: D1 — PASS vs DISTINCTION ========== -->
+<section class="page">
+
+  <p class="section-tag">data gathering &middot; the d1 upgrade</p>
+  <h2 class="section">D1 &mdash; side by side</h2>
+
+  <p>Same question. Same anchor story. Pass-level answer vs Distinction-level answer. The Why Layer additions are <span style="color:#c0392b;">highlighted</span>.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:50%;">PASS</th>
+      <th style="padding:6pt 10pt; text-align:left;">DISTINCTION</th>
+    </tr>
+    <tr>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #ddd;">
+        <p style="margin:0; font-size:10pt;"><em>"For the finance reconciliation I used the Epic activity feed and matched it against the provider's invoice using XLOOKUP on NHS number. We caught about 14 discrepancies a month. On reflection, that worked well &mdash; it was a good use of XLOOKUP."</em></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#555; font-style:italic;">describes the work, names the technique, mild reflection on technique. No evaluation of the data-set choice.</p>
+      </td>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #c0392b;">
+        <p style="margin:0; font-size:10pt;"><em>"For the finance reconciliation I used the Epic activity feed as my primary, matched against the provider's invoice using XLOOKUP on NHS number. We caught about 14 discrepancies a month. </em><span style="color:#c0392b;"><em>The choice of Epic as primary mattered more than the XLOOKUP technique &mdash; Epic was clinical truth; the invoice was just what we'd been charged. If I'd inverted it and used the invoice as my source of truth, we'd have rubber-stamped the billing errors I was trying to catch. What I'd take into any future verification work is: never let a third party's data be your sole source."</em></span></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#c0392b; font-style:italic;">evaluates the data choice &middot; names the alternative failure &middot; projects forward into a principle. Hits all three D1 moves.</p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>Notice what didn't change</h4>
+      <p>The Action and Result layers are identical. The technique is the same; the numbers are the same. Only the Reflection layer changed &mdash; three sentences added. That's the entire Distinction upgrade.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: D2 — PASS vs DISTINCTION ========== -->
+<section class="page">
+
+  <p class="section-tag">communication &middot; the d2 upgrade</p>
+  <h2 class="section">D2 &mdash; side by side</h2>
+
+  <p>Same Audience Switch story. Same delivery to two audiences. The Why Layer addition turns description into critical evaluation.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:50%;">PASS</th>
+      <th style="padding:6pt 10pt; text-align:left;">DISTINCTION</th>
+    </tr>
+    <tr>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #ddd;">
+        <p style="margin:0; font-size:10pt;"><em>"For my manager I summarised at headline level &mdash; the 31% churn rate with the regional breakdown. For the customer-facing team I cut the percentages and replaced them with plain language. That way both audiences could understand the finding."</em></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#555; font-style:italic;">describes two deliveries. No evaluation of why those choices.</p>
+      </td>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #c0392b;">
+        <p style="margin:0; font-size:10pt;"><em>"For my manager I summarised at headline level. For the customer-facing team I cut the percentages and replaced them with plain language. </em><span style="color:#c0392b;"><em>The reason for splitting it that way was that the manager needed numbers she could act on; the customer-facing team needed words their customers could act on. If I'd given the manager plain language she'd have had to do the percentage maths herself, slowing the decision; if I'd given the customer team the percentages they'd have either ignored the report or mis-quoted the rate to a customer. The principle I'd take forward: the audience determines the unit, not the analyst."</em></span></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#c0392b; font-style:italic;">critically evaluates both communication choices &middot; names the failure mode of swapping them &middot; lands on a principle.</p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>The phrase <em>"the audience determines the unit, not the analyst"</em> is a generalisation &mdash; it carries the insight beyond this one project. Generalisations are what Distinction-grade reflection sounds like. <em>"What I learned from this is&hellip;"</em> is the entry; the generalisation is the destination.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 6: D3 — PASS vs DISTINCTION ========== -->
+<section class="page">
+
+  <p class="section-tag">storage &amp; ethics &middot; the d3 upgrade</p>
+  <h2 class="section">D3 &mdash; side by side</h2>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:50%;">PASS</th>
+      <th style="padding:6pt 10pt; text-align:left;">DISTINCTION</th>
+    </tr>
+    <tr>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #ddd;">
+        <p style="margin:0; font-size:10pt;"><em>"The dashboard lives in our team's shared SharePoint &mdash; only the analytics team can access it. We follow UK GDPR. The methodology note records who has access and when files are deleted."</em></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#555; font-style:italic;">describes the controls. No evaluation of why those are the right controls.</p>
+      </td>
+      <td style="padding:8pt 10pt; vertical-align:top; border:1pt solid #c0392b;">
+        <p style="margin:0; font-size:10pt;"><em>"The dashboard lives in our team's shared SharePoint, restricted to the analytics team. </em><span style="color:#c0392b;"><em>I chose that level of restriction over a broader 'finance department' share because the dashboard contains identifiable subscriber details &mdash; the lawful basis for the original data collection was clinical, not financial reporting. If we'd opened access to all of finance, we'd have stretched the lawful basis. UK GDPR's data-minimisation principle says we only share what's necessary for the stated purpose; the methodology note records the access decision and the rationale, in case someone later asks why a wider share wasn't agreed."</em></span></p>
+        <p style="margin:6pt 0 0 0; font-size:9pt; color:#c0392b; font-style:italic;">evaluates the access choice &middot; justifies on lawful basis &middot; names the data-minimisation principle &middot; describes the documentation trail.</p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The two D3 trigger phrases: <em>"lawful basis"</em> and <em>"data minimisation"</em>. Used <strong>once each in any D3-relevant answer</strong>, they signal you know the named principles, not just the practices. These aren't dressed-up vocabulary; they're the names the standard explicitly uses.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: THE DISTINCTION LANGUAGE QUICK REFERENCE ========== -->
+<section class="page">
+
+  <p class="section-tag">phrases to muscle-memory</p>
+  <h2 class="section">The Distinction phrase bank</h2>
+
+  <p>Ten phrases. Memorise three or four; use them out loud at least once each across the 60 minutes. None replaces real content &mdash; all of them upgrade the shape of the sentence.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 6pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 10pt; text-align:left; width:32%;">When to use it</th>
+      <th style="padding:5pt 10pt; text-align:left;">The phrase</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Opening a Reflection</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"On reflection, the win wasn't really X &mdash; it was Y."</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Justifying a choice (D1/D2/D3)</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"The reason I went with this rather than that was&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Naming the failure mode</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"If I'd done it the other way, what would have happened is&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Generalising forward</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"The principle I'd carry forward into any [type of work] is&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Critical evaluation</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"The trade-off was X versus Y. I came down on X because&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Acknowledging limits (powerful)</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"What I'd want to check before committing to that approach is&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Reflective correction</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"With hindsight, what I'd do differently is&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Audience awareness (D2)</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"The audience determines the [unit / format / level of detail]&hellip;"</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Ethics (D3)</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"Under the lawful basis for this data, the right call was&hellip;"</td>
+    </tr>
+    <tr>
+      <td style="padding:5pt 10pt;"><strong>Closing a thought</strong></td>
+      <td style="padding:5pt 10pt; font-style:italic;">"That's the move I'd take into future work."</td>
+    </tr>
+  </table>
+
+</section>
+
+
+<!-- ========== PAGE 8: SHARPEN YOUR PENCIL ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 8pt 14pt 6pt 54pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>30 minutes &mdash; upgrade your Reflections</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">Take three of your anchor stories. For each, write a Distinction-level Reflection using the Why Layer's three additions.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 10pt 14pt; background: #fff; margin: 6pt 0;">
+    <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt;">Anchor 1: <span style="font-family: Lato; font-weight: 400; font-style: italic; color:#888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 8pt 0 4pt 0; font-size: 10pt; font-weight: 700;">+ Why this not that:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 6pt 0 4pt 0; font-size: 10pt; font-weight: 700;">+ What would have gone wrong:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 6pt 0 4pt 0; font-size: 10pt; font-weight: 700; color:#c0392b;">+ What I'd do differently / the principle:</p>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 16pt;"></div>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 10pt 14pt; background: #fff; margin: 6pt 0;">
+    <p style="margin: 0 0 4pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt;">Anchor 2: <span style="font-family: Lato; font-weight: 400; font-style: italic; color:#888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 8pt 0 4pt 0; font-size: 10pt; font-weight: 700;">+ Why this not that:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 6pt 0 4pt 0; font-size: 10pt; font-weight: 700;">+ What would have gone wrong:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 16pt;"></div>
+    <p style="margin: 6pt 0 4pt 0; font-size: 10pt; font-weight: 700; color:#c0392b;">+ What I'd do differently / the principle:</p>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 16pt;"></div>
+  </div>
+
+  </section>
+
+
+<!-- ========== PAGE 9: SHARPEN YOUR PENCIL CONTINUED ========== -->
+<section class="page">
+
+  <p class="section-tag">sharpen your pencil &middot; continued</p>
+  <h2 class="section">Your third anchor</h2>
+  <p>Same shape. Anchor 3, with a bit more space to think and write.</p>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 16pt 20pt; background: #fff; margin: 12pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 12pt;">Anchor 3: <span style="font-family: Lato; font-weight: 400; font-style: italic; color:#888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 26pt;"></div>
+    <p style="margin: 14pt 0 6pt 0; font-size: 11pt; font-weight: 700;">+ Why this not that:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 26pt;"></div>
+    <p style="margin: 12pt 0 6pt 0; font-size: 11pt; font-weight: 700;">+ What would have gone wrong:</p>
+    <div style="border-bottom: 1pt dashed #888; height: 26pt;"></div>
+    <p style="margin: 12pt 0 6pt 0; font-size: 11pt; font-weight: 700; color:#c0392b;">+ What I'd do differently / the principle:</p>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 26pt;"></div>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 26pt;"></div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 9: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">15 minutes &mdash; the lift rehearsed</p>
+  <h2 class="section">Say it for real</h2>
+
+  <p>Take three of your existing STARRs (data gathering, analysis &amp; validation, communication) and re-deliver each one with the Why Layer folded in. Time them. They should be 5-10 seconds longer than the Pass version, no more.</p>
+
+  <h3 class="sub">Q1 &mdash; Walk me through a time you chose between data sources.</h3>
+  <p><strong>The shape:</strong> full STARR. Reflection ends with all three Why Layers. Especially the "what would have gone wrong" sentence &mdash; that's the literal D1 trigger.</p>
+
+  <h3 class="sub">Q2 &mdash; Describe how you adapted your communication for a different audience.</h3>
+  <p><strong>The shape:</strong> full STARR with Audience Switch in Action. Reflection critically evaluates both choices &mdash; <em>"the reason I split it that way was that&hellip;"</em> covers D2.</p>
+
+  <h3 class="sub">Q3 &mdash; Tell me about how you decided who could access a particular piece of data.</h3>
+  <p><strong>The shape:</strong> full STARR. Action layer names the access decision; Reflection justifies on lawful basis or data minimisation. That's D3.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Record yourself answering these three out loud. Listen back. Do you hear the verbs <em>evaluate, justify, critically evaluate</em>? Do you hear at least one Why Layer phrase per answer? If not, redo. By the third take, the language will come naturally.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>Three Distinction descriptors.</strong> D1 (data gathering), D2 (communication), D3 (storage &amp; ethics).</li>
+    <li><strong>The verbs change at Distinction.</strong> <em>Describes</em> &rarr; <em>evaluates</em>. <em>Explains</em> &rarr; <em>justifies</em>. <em>Uses</em> &rarr; <em>critically evaluates</em>.</li>
+    <li><strong>The Why Layer.</strong> Three sentence-additions to your Reflection: <em>why this not that &middot; what would have gone wrong &middot; what I'd do differently</em>.</li>
+    <li><strong>The Pass &rarr; Distinction upgrade is shape, not content.</strong> Same anchor story, three sentences added.</li>
+    <li><strong>Use the trigger phrases out loud.</strong> "Lawful basis", "data minimisation", "the audience determines the unit" &mdash; once each is enough.</li>
+    <li><strong>Spread the Why Layers across the discussion.</strong> One per content area; don't cram all three into a single answer.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can recite the three Why Layer additions from memory.</li>
+    <li>You've written a Distinction-level Reflection for at least 3 anchor stories.</li>
+    <li>You can name 4 of the 10 Distinction phrases without looking.</li>
+    <li>You've rehearsed at least one D1, D2, and D3 answer out loud.</li>
+    <li>You've recorded yourself once and heard the Distinction verbs come through.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 17</h4>
+    <p style="margin: 0;"><strong>The 60-Minute Conversation.</strong> Tomorrow we put it all together. A full mock professional discussion. Named device: <strong>The Discussion Map</strong> &mdash; a one-page mental layout for the 60 minutes, with anchor stories and Distinction sentences pre-loaded for each content area. Plus recovery techniques and the bridge back to Phase 1's Listen &rarr; Repeat &rarr; Frame &rarr; Answer &rarr; Check.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 16 done &mdash; the lift, rehearsed.</p>
+
+</section>
+
+</body>
+</html>

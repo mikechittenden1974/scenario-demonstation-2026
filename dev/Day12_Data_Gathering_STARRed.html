@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 12 — Data Gathering STARR-ed (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 12"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">12</p>
+  <p class="opener-tag">first content area &middot; the why-this-data day</p>
+  <h1 class="opener-title">Data Gathering, STARR-ed</h1>
+  <p class="opener-subtitle">K1 &middot; K4 &middot; K6 &middot; and the D1 distinction setup</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- left: three KSB sticky-notes stacked -->
+  <g transform="translate(40,30) rotate(-3)">
+    <rect x="0" y="0" width="130" height="80" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K1</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">Data Types</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">structured</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">unstructured</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">semi / time / txn</text>
+  </g>
+  <g transform="translate(50,116) rotate(2)">
+    <rect x="0" y="0" width="130" height="80" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K4</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">Formats &amp; Tools</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">CSV / XLSX / PDF</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">visualisation tools</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">collab platforms</text>
+  </g>
+  <g transform="translate(36,206) rotate(-2)">
+    <rect x="0" y="0" width="130" height="80" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K6</text>
+    <text x="40" y="22" font-family="Lato" font-size="10" font-weight="700">Value &amp; Blending</text>
+    <line x1="10" y1="30" x2="120" y2="30" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="9">why this data?</text>
+    <text x="10" y="58" font-family="Lato" font-size="9">blend across sources</text>
+    <text x="10" y="70" font-family="Lato" font-size="9">the business cost</text>
+  </g>
+
+  <!-- centre: "WHY THIS DATA?" big stack visual -->
+  <g transform="translate(220,40)">
+    <rect x="0" y="0" width="260" height="270" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="130" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">THE WHY-THIS-DATA STACK</text>
+    <line x1="20" y1="36" x2="240" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+    <!-- Layer 1 -->
+    <rect x="20" y="50" width="220" height="60" rx="4" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="68" font-family="Poppins,sans-serif" font-weight="900" font-size="11">1 &middot; WHAT data</text>
+    <text x="30" y="84" font-family="Lato" font-size="9" font-style="italic">the sources you used</text>
+    <text x="30" y="98" font-family="Lato" font-size="9" font-style="italic">(internal, external, open)</text>
+    <!-- Layer 2 -->
+    <rect x="20" y="120" width="220" height="60" rx="4" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="30" y="138" font-family="Poppins,sans-serif" font-weight="900" font-size="11">2 &middot; WHY this data</text>
+    <text x="30" y="154" font-family="Lato" font-size="9" font-style="italic">what made it fit-for-purpose</text>
+    <text x="30" y="168" font-family="Lato" font-size="9" font-style="italic">(over the alternatives)</text>
+    <!-- Layer 3 -->
+    <rect x="20" y="190" width="220" height="70" rx="4" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="30" y="208" font-family="Poppins,sans-serif" font-weight="900" font-size="11" fill="#c0392b">3 &middot; the BUSINESS COST</text>
+    <text x="30" y="224" font-family="Lato" font-size="9" font-style="italic" fill="#555">if the gathering went wrong</text>
+    <text x="30" y="238" font-family="Lato" font-size="9" font-style="italic" fill="#555">(this layer wins D1)</text>
+    <text x="30" y="252" font-family="Lato" font-size="8" font-style="italic" font-weight="700" fill="#c0392b">distinction zone</text>
+  </g>
+
+  <!-- DAY 12 mug -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 12</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <!-- right speech bubble -->
+  <g transform="translate(500,40)">
+    <path d="M0 12 q0 -12 12 -12 H180 q12 0 12 12 v100 q0 12 -12 12 H80 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">The Distinction question:</text>
+    <text x="16" y="48" font-family="Lato" font-style="italic" font-size="10">"Walk me through how</text>
+    <text x="16" y="64" font-family="Lato" font-style="italic" font-size="10">you chose your data &mdash;</text>
+    <text x="16" y="80" font-family="Lato" font-style="italic" font-size="10">and what would have</text>
+    <text x="16" y="96" font-family="Lato" font-style="italic" font-size="10">gone wrong otherwise."</text>
+    <text x="16" y="116" font-family="Lato" font-size="9" font-weight="700" fill="#c0392b">&mdash; that's D1.</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 6pt;">Three KSBs, one STARR shape, one new mini-device &mdash; <strong>The "Why This Data?" Stack</strong>. Today's chapter takes your data-gathering anchor stories and turns them into the kind of answer that defends at Distinction.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — THE THREE KSBs ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the three KSBs the discussion asks about</p>
+  <h2 class="section">What the assessor will ask</h2>
+  <p style="max-width: 5.5in;">Three KSBs sit inside Data Gathering. Each has a typical question shape &mdash; below: what each KSB asks for, what good answers look like, and where the distinction lives.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="26" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">THE THREE DATA-GATHERING KSBs</text>
+  <line x1="60" y1="36" x2="660" y2="36" stroke="#1a1a1a" stroke-width="1"/>
+
+  <!-- K1 -->
+  <g transform="translate(40,56)">
+    <rect x="0" y="0" width="200" height="380" rx="6" ry="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="30" fill="#c0392b">K1</text>
+    <text x="100" y="62" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="12">Data Types</text>
+    <line x1="14" y1="74" x2="186" y2="74" stroke="#1a1a1a" stroke-width="0.8"/>
+    <text x="100" y="94" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">five types you'll know</text>
+    <text x="20" y="118" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Structured</tspan> &mdash; tables, schemas</text>
+    <text x="20" y="138" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Unstructured</tspan> &mdash; text, image</text>
+    <text x="20" y="158" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Semi-structured</tspan> &mdash; JSON/XML</text>
+    <text x="20" y="178" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Time-series</tspan> &mdash; sensor logs</text>
+    <text x="20" y="198" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Transactional</tspan> &mdash; events</text>
+    <line x1="20" y1="220" x2="180" y2="220" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="240" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700">Q shapes</text>
+    <text x="20" y="260" font-family="Lato" font-size="9" font-style="italic">"What kinds of data</text>
+    <text x="20" y="274" font-family="Lato" font-size="9" font-style="italic">do you work with?"</text>
+    <text x="20" y="294" font-family="Lato" font-size="9" font-style="italic">"Give me an example</text>
+    <text x="20" y="308" font-family="Lato" font-size="9" font-style="italic">of unstructured data."</text>
+    <line x1="20" y1="328" x2="180" y2="328" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="350" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">your anchor: name</text>
+    <text x="100" y="364" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">one example of each</text>
+  </g>
+
+  <!-- K4 -->
+  <g transform="translate(260,56)">
+    <rect x="0" y="0" width="200" height="380" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="100" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="30" fill="#c0392b">K4</text>
+    <text x="100" y="62" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="12">Formats &amp; Tools</text>
+    <line x1="14" y1="74" x2="186" y2="74" stroke="#1a1a1a" stroke-width="0.8"/>
+    <text x="100" y="94" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">three things at once</text>
+    <text x="20" y="118" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Data formats</tspan> for analysis</text>
+    <text x="36" y="132" font-family="Lato" font-size="9" font-style="italic" fill="#555">(CSV, XLSX, JSON, PDF)</text>
+    <text x="20" y="156" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Visualisation tools</tspan></text>
+    <text x="36" y="170" font-family="Lato" font-size="9" font-style="italic" fill="#555">(Power BI, Tableau, Excel)</text>
+    <text x="20" y="194" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Collab tools</tspan></text>
+    <text x="36" y="208" font-family="Lato" font-size="9" font-style="italic" fill="#555">(Teams, SharePoint, Git)</text>
+    <line x1="20" y1="230" x2="180" y2="230" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="250" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700">Q shapes</text>
+    <text x="20" y="270" font-family="Lato" font-size="9" font-style="italic">"Which tools did you</text>
+    <text x="20" y="284" font-family="Lato" font-size="9" font-style="italic">use, and why those?"</text>
+    <text x="20" y="304" font-family="Lato" font-size="9" font-style="italic">"What format made the</text>
+    <text x="20" y="318" font-family="Lato" font-size="9" font-style="italic">analysis easier?"</text>
+    <line x1="20" y1="338" x2="180" y2="338" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="358" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">link tool choice to</text>
+    <text x="100" y="372" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">the question being answered</text>
+  </g>
+
+  <!-- K6 -->
+  <g transform="translate(480,56)">
+    <rect x="0" y="0" width="200" height="380" rx="6" ry="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2.4"/>
+    <text x="100" y="40" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="30" fill="#c0392b">K6</text>
+    <text x="100" y="62" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="700" font-size="12">Value &amp; Blending</text>
+    <line x1="14" y1="74" x2="186" y2="74" stroke="#c0392b" stroke-width="0.8"/>
+    <text x="100" y="94" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">two-part KSB</text>
+    <text x="20" y="118" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Value to the business</tspan></text>
+    <text x="36" y="132" font-family="Lato" font-size="9" font-style="italic" fill="#555">why is this data worth</text>
+    <text x="36" y="144" font-family="Lato" font-size="9" font-style="italic" fill="#555">gathering at all?</text>
+    <text x="20" y="170" font-family="Lato" font-size="10">&middot; <tspan font-weight="700">Blending sources</tspan></text>
+    <text x="36" y="184" font-family="Lato" font-size="9" font-style="italic" fill="#555">combining internal +</text>
+    <text x="36" y="196" font-family="Lato" font-size="9" font-style="italic" fill="#555">external for richer view</text>
+    <line x1="20" y1="220" x2="180" y2="220" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="240" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700">Q shapes</text>
+    <text x="20" y="260" font-family="Lato" font-size="9" font-style="italic">"Why does data matter</text>
+    <text x="20" y="274" font-family="Lato" font-size="9" font-style="italic">to your organisation?"</text>
+    <text x="20" y="294" font-family="Lato" font-size="9" font-style="italic">"Describe a time you</text>
+    <text x="20" y="308" font-family="Lato" font-size="9" font-style="italic">blended two datasets."</text>
+    <line x1="20" y1="328" x2="180" y2="328" stroke="#c0392b" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="100" y="350" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">K6 is the D1 setup</text>
+    <text x="100" y="364" text-anchor="middle" font-family="Lato" font-size="9" fill="#c0392b" font-weight="700">&mdash; deepest answers here</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: THE WHY-THIS-DATA STACK ========== -->
+<section class="page">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The "Why This Data?" Stack</h2>
+
+  <p>A three-layer extension that lifts a data-gathering Reflection toward D1. You add it inside the second R of STARR. If you only remember one thing from this chapter, remember the third layer &mdash; <em>"what would have gone wrong otherwise."</em></p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- 3 stacked layers visualised side-by-side -->
+    <g transform="translate(40,30)">
+      <rect x="0" y="0" width="200" height="140" rx="6" ry="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#1a1a1a"/>
+      <text x="30" y="36" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">1</text>
+      <text x="60" y="36" font-family="Poppins,sans-serif" font-weight="900" font-size="13">WHAT</text>
+      <line x1="14" y1="60" x2="186" y2="60" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="14" y="78" font-family="Lato" font-size="9.5" font-weight="700">the data you used</text>
+      <text x="14" y="98" font-family="Lato" font-size="9" font-style="italic">"Epic activity feed as</text>
+      <text x="14" y="112" font-family="Lato" font-size="9" font-style="italic">primary; provider invoice</text>
+      <text x="14" y="126" font-family="Lato" font-size="9" font-style="italic">as cross-check."</text>
+    </g>
+    <polygon points="252,90 268,98 252,106" fill="#1a1a1a"/>
+    <line x1="244" y1="98" x2="262" y2="98" stroke="#1a1a1a" stroke-width="2"/>
+
+    <g transform="translate(270,30)">
+      <rect x="0" y="0" width="200" height="140" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#1a1a1a"/>
+      <text x="30" y="36" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">2</text>
+      <text x="60" y="36" font-family="Poppins,sans-serif" font-weight="900" font-size="13">WHY</text>
+      <line x1="14" y1="60" x2="186" y2="60" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="14" y="78" font-family="Lato" font-size="9.5" font-weight="700">why this, not the others</text>
+      <text x="14" y="98" font-family="Lato" font-size="9" font-style="italic">"Epic was clinical truth;</text>
+      <text x="14" y="112" font-family="Lato" font-size="9" font-style="italic">invoice was what we'd</text>
+      <text x="14" y="126" font-family="Lato" font-size="9" font-style="italic">been charged for."</text>
+    </g>
+    <polygon points="482,90 498,98 482,106" fill="#c0392b"/>
+    <line x1="474" y1="98" x2="492" y2="98" stroke="#c0392b" stroke-width="2"/>
+
+    <g transform="translate(500,30)">
+      <rect x="0" y="0" width="200" height="140" rx="6" ry="6" fill="#fef0ec" stroke="#c0392b" stroke-width="2.4"/>
+      <circle cx="30" cy="30" r="20" fill="#c0392b"/>
+      <text x="30" y="36" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">3</text>
+      <text x="60" y="36" font-family="Poppins,sans-serif" font-weight="900" font-size="13" fill="#c0392b">COST</text>
+      <line x1="14" y1="60" x2="186" y2="60" stroke="#c0392b" stroke-width="0.6"/>
+      <text x="14" y="78" font-family="Lato" font-size="9.5" font-weight="700">what would have gone wrong</text>
+      <text x="14" y="98" font-family="Lato" font-size="9" font-style="italic">"If I'd used invoice as</text>
+      <text x="14" y="112" font-family="Lato" font-size="9" font-style="italic">truth, we'd have rubber-</text>
+      <text x="14" y="126" font-family="Lato" font-size="9" font-style="italic">stamped billing errors."</text>
+    </g>
+  </svg>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Most apprentices nail layer 1 and miss layers 2 and 3. The assessor is looking for all three &mdash; especially the third, which is what D1 literally asks for: <em>"evaluates how incorrect data gathering can affect the output."</em> Layer 3 is the answer to that descriptor.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: BIG BREATHER — WORKED STARR ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the worked example for data gathering</p>
+  <h2 class="section">A full STARR with The "Why This Data?" Stack inside</h2>
+  <p style="max-width: 5.5in;">Below: a Data-Gathering question answered in STARR shape, with the three-layer Why Stack folded into the Reflection. Total time: ~70 seconds.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <text x="360" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">A DATA-GATHERING STARR &mdash; 70-second transcript</text>
+  <text x="360" y="36" text-anchor="middle" font-family="Lato" font-size="9.5" font-style="italic" fill="#555">Q: "Walk me through a time you had to choose between different data sources to answer a business question."</text>
+
+  <line x1="100" y1="60" x2="100" y2="430" stroke="#1a1a1a" stroke-width="2"/>
+
+  <g transform="translate(60,60)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">S</text>
+    <rect x="74" y="0" width="580" height="44" rx="4" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">SITUATION</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"In May, our finance lead asked for a monthly externally-provided activity report. Two possible sources."</text>
+  </g>
+
+  <g transform="translate(60,116)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">T</text>
+    <rect x="74" y="0" width="580" height="44" rx="4" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">TASK</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"I had to pick between the provider's own invoice extract and our internal Epic activity feed."</text>
+  </g>
+
+  <g transform="translate(60,172)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">A</text>
+    <rect x="74" y="0" width="580" height="76" rx="4" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">ACTION</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"I went with the Epic feed as primary &mdash; structured, NHS-number-keyed, refreshed nightly. I used the provider's</text>
+    <text x="84" y="46" font-family="Lato" font-size="10" font-style="italic">invoice as a verification cross-check. The reason: the Epic data was my source of clinical truth; the invoice</text>
+    <text x="84" y="60" font-family="Lato" font-size="10" font-style="italic">told me what we'd been charged but not whether the procedure had actually happened."</text>
+  </g>
+
+  <g transform="translate(60,260)">
+    <circle cx="40" cy="14" r="18" fill="#1a1a1a"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="44" rx="4" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10">RESULT</text>
+    <text x="84" y="32" font-family="Lato" font-size="10" font-style="italic">"The report flagged 14 invoice/activity mismatches a month. About a third were legitimate billing errors."</text>
+  </g>
+
+  <g transform="translate(60,316)">
+    <circle cx="40" cy="14" r="18" fill="#c0392b"/>
+    <text x="40" y="20" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="18" fill="#fff">R</text>
+    <rect x="74" y="0" width="580" height="100" rx="4" fill="#fef0ec" stroke="#c0392b" stroke-width="2"/>
+    <text x="84" y="16" font-family="Poppins,sans-serif" font-weight="700" font-size="10" fill="#c0392b">REFLECTION &mdash; the D1 layer: evaluate &amp; justify the choice, and the cost of getting it wrong</text>
+    <text x="84" y="34" font-family="Lato" font-size="10" font-style="italic">"On reflection, the choice mattered more than the analysis. If I'd taken the invoice as the source of truth instead,</text>
+    <text x="84" y="48" font-family="Lato" font-size="10" font-style="italic">we'd have rubber-stamped the billing errors &mdash; the very thing we were trying to catch. The lesson: when you're</text>
+    <text x="84" y="62" font-family="Lato" font-size="10" font-style="italic">verifying a third party's data, never let their data be your sole source. The choice between sources isn't</text>
+    <text x="84" y="76" font-family="Lato" font-size="10" font-style="italic">arbitrary; it's the verification itself. I'd take that into any future reconciliation work."</text>
+    <text x="84" y="93" font-family="Lato" font-size="9" font-weight="700" font-style="italic" fill="#c0392b">&uparrow; this is D1: evaluates the data-set choice, justifies it, names what would have gone wrong otherwise.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 5: D1 SETUP — THE DISTINCTION DESCRIPTOR ========== -->
+<section class="page">
+
+  <p class="section-tag">the distinction descriptor for today</p>
+  <h2 class="section">D1 in plain English</h2>
+
+  <p>D1 is the first of three Distinction descriptors. It applies to the Data Gathering content area. The official wording is dense; the plain-English version is shorter:</p>
+
+  <div class="row" style="margin-top: 6pt;">
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">The official wording</h3>
+      <p style="font-size: 10.5pt; font-style: italic; background: #fdfaf2; border-left: 3pt solid #c0392b; padding: 8pt 10pt;">
+        "Evaluate and justify why using different data sets is important to the business, and evaluate how incorrect data gathering can affect the output."
+      </p>
+    </div>
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">In plain English</h3>
+      <p style="font-size: 10.5pt;"><strong>Two moves:</strong></p>
+      <ol style="margin: 4pt 0 8pt 22pt; font-size: 10.5pt;">
+        <li>Justify <em>why this data</em> rather than something else.</li>
+        <li>Name <em>what would have gone wrong</em> if you'd picked badly.</li>
+      </ol>
+      <p style="font-size: 10pt; color: #555;">The Why Stack delivers both moves in one go.</p>
+    </div>
+  </div>
+
+  <h3 class="sub" style="margin-top: 12pt;">Pass-level &rarr; Distinction-level: side-by-side</h3>
+  <table style="width:100%; border-collapse:collapse; margin: 6pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:50%;">Pass-level answer</th>
+      <th style="padding:6pt 10pt; text-align:left;">Distinction-level answer</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:6pt 10pt; font-style:italic;">"I used the Epic feed for the report because it was easier to access."</td>
+      <td style="padding:6pt 10pt; font-style:italic; color:#c0392b;">"I used the Epic feed because it was the source of clinical truth. The provider invoice was secondary &mdash; using it as primary would have meant rubber-stamping the billing errors I was trying to catch."</td>
+    </tr>
+  </table>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>The phrase <em>"what would have gone wrong otherwise&hellip;"</em> is the D1 trigger. Use it in at least one Data Gathering answer in the discussion. Even if you cover the first two Why-Stack layers naturally, missing the third costs distinction marks every time.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 6: COMMON DATA GATHERING QUESTION SHAPES ========== -->
+<section class="page">
+
+  <p class="section-tag">five question shapes to expect</p>
+  <h2 class="section">What they're likely to ask</h2>
+
+  <p>The data-gathering portion of the discussion typically opens with one or two of these. Rehearse a STARR-shaped answer to each &mdash; using your anchors, not StreamWave examples.</p>
+
+  <div class="quick-card">
+    <p class="quick-q"><strong>1.</strong> "What kinds of data do you work with day-to-day?"</p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color:#555;"><em>Shape:</em> a quick STARR-Lite tour through three of the five data types, with one workplace example each. Don't try to cover all five.</p>
+  </div>
+
+  <div class="quick-card">
+    <p class="quick-q"><strong>2.</strong> "Walk me through a time you had to pick between different data sources."</p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color:#555;"><em>Shape:</em> full STARR. Reflection layer must include the Why Stack &mdash; especially the third layer (what would have gone wrong).</p>
+  </div>
+
+  <div class="quick-card">
+    <p class="quick-q"><strong>3.</strong> "Describe a piece of work where you blended two or more data sources."</p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color:#555;"><em>Shape:</em> full STARR. The Action layer is where the technical detail of the blend lives (matching keys, identifying overlaps, handling mismatches). The Reflection links to <em>why blending mattered</em> for the answer.</p>
+  </div>
+
+  <div class="quick-card">
+    <p class="quick-q"><strong>4.</strong> "Why does data matter to your organisation?"</p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color:#555;"><em>Shape:</em> a short opening on context, then a specific example of a decision data drove. Tie K6 to a real moment, not a slogan.</p>
+  </div>
+
+  <div class="quick-card">
+    <p class="quick-q"><strong>5.</strong> "What tool did you use and why those tools?"</p>
+    <p style="margin: 6pt 0 0 0; font-size: 10pt; color:#555;"><em>Shape:</em> K4. Quick mention of tools, longer mention of <em>why those tools fit the question</em>. Don't list features; link tool to purpose.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: SHARPEN YOUR PENCIL ========== -->
+<section class="page">
+
+  <div class="pencil" style="padding: 10pt 16pt 10pt 56pt;">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+    <h4 style="margin: 0 0 3pt 0;">Sharpen Your Pencil <small>30 minutes &mdash; Why-Stack your data-gathering anchor</small></h4>
+    <p class="pencil-question" style="margin: 3pt 0 6pt 0; font-size: 10pt;">Pick your data-gathering anchor story (from Day 10). For each layer of the Why Stack, write three or four words. The full sentence comes when you say it out loud.</p>
+  </div>
+
+  <div style="border: 1.4pt solid #1a1a1a; border-radius: 4pt; padding: 12pt 16pt; background: #fff; margin: 10pt 0;">
+    <p style="margin: 0 0 8pt 0; font-family: Poppins, sans-serif; font-weight: 900; font-size: 11pt;">My data-gathering anchor: <span style="font-family: Lato, sans-serif; font-weight: 400; font-style: italic; color: #888;">name it here:</span></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt;">Layer 1 &mdash; <em style="color:#555; font-weight:400;">WHAT data did you use?</em></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt;">Layer 2 &mdash; <em style="color:#555; font-weight:400;">WHY this data and not another?</em></p>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #888; height: 18pt;"></div>
+
+    <p style="margin: 14pt 0 6pt 0; font-family: Poppins, sans-serif; font-weight: 700; font-size: 10.5pt; color:#c0392b;">Layer 3 &mdash; <em style="color:#c0392b; font-weight:400;">what would have gone WRONG with a different choice?</em> <span style="color:#888; font-weight:400; font-size:9.5pt; font-style:italic;">(the D1 layer)</span></p>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 18pt;"></div>
+    <div style="border-bottom: 1pt dashed #c0392b; height: 18pt;"></div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions. Answer in your head first; check below.</p>
+
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>1.</strong> The Why-This-Data Stack lives inside the Reflection layer of STARR.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>2.</strong> Layer 3 of the Why Stack ("what would have gone wrong") is optional.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>3.</strong> D1 asks you to evaluate the choice of data sets and the cost of getting that choice wrong.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>4.</strong> When asked about K1, I should try to cover all five data types with workplace examples.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+  <div class="tf-card" style="padding: 5pt 12pt; margin: 3pt 0;">
+    <p class="tf-statement"><strong>5.</strong> K6 is the KSB most aligned with D1 &mdash; the deepest answers belong here.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin: 8pt 0 4pt 0;">Answers</h3>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>1. True.</strong> The Why Stack <em>is</em> the depth move you add inside Reflection.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>2. False.</strong> Layer 3 is the layer that wins D1. Skipping it is the most common reason apprentices miss Distinction here.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>3. True.</strong> Two moves: justify the choice, name the cost of the alternative.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>4. False.</strong> Three types with one workplace example each is stronger than five types covered briefly.</p>
+  <p style="margin: 2pt 0; font-size: 10pt;"><strong>5. True.</strong> K6 (value + blending) is where the Why Stack lands most naturally and where D1 is graded.</p>
+
+</section>
+
+
+<!-- ========== PAGE 9: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <style>
+    .page .dumb .qa { margin: 5pt 0 8pt 24pt; }
+    .page .dumb h4 { margin: 0 0 8pt 0; }
+  </style>
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>My anchor story uses only one data source. Does that still work for K6 / blending?</div>
+    <div class="qa"><span class="a">A:</span>For K6 you'll want a different anchor &mdash; or, in the same story, name the source you considered and chose not to use. <em>"I used the Epic feed; I considered the manual provider extract and decided against it because&hellip;"</em> That's enough to evidence blending-thinking even if you didn't blend in the end.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I struggle to remember what counts as semi-structured data.</div>
+    <div class="qa"><span class="a">A:</span>Two examples are enough &mdash; JSON or XML files, and email headers (structured envelope, free-text body). If asked, give one of those and move on.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if my Layer-3 "what would have gone wrong" feels too theoretical &mdash; it didn't actually happen?</div>
+    <div class="qa"><span class="a">A:</span>That's exactly what D1 wants: <em>"evaluates how incorrect data gathering can affect the output."</em> The descriptor is about reasoning, not about an actual incident. Pose the alternative scenario and walk through what it would have produced.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>The assessor asked about tool choice but I just used Excel for everything. Is that a problem?</div>
+    <div class="qa"><span class="a">A:</span>No &mdash; provided you can justify why Excel fit. <em>"I used Excel because everyone on the team can open it; Power BI would have been more powerful but harder to share."</em> Tool choice is about fit, not sophistication.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I work in a small team and we don't really "blend" datasets formally. What do I say?</div>
+    <div class="qa"><span class="a">A:</span>Almost everyone blends without naming it. If you've ever VLOOKUP-ed one sheet against another, cross-referenced a spreadsheet against an email, or built a report drawing on two systems &mdash; that's blending. Tell that story.</div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">10 minutes &mdash; rehearse two STARRs out loud</p>
+  <h2 class="section">Say it for real</h2>
+
+  <p>Two questions to rehearse out loud. Use your anchors; finish each with the Why Stack in the Reflection layer.</p>
+
+  <h3 class="sub">Q1 &mdash; Walk me through a time you chose between different data sources.</h3>
+  <p><strong>The shape:</strong> full STARR. Reflection ends with all three Why-Stack layers &mdash; especially <em>"what would have gone wrong otherwise"</em>.</p>
+  <p class="annot annot-blue">Try: end the answer with: <em>"...if I'd done it the other way, [name the failure mode]. The lesson I'd take into future work is [generalised principle]."</em></p>
+
+  <h3 class="sub">Q2 &mdash; Describe a piece of work where you blended data from multiple sources.</h3>
+  <p><strong>The shape:</strong> full STARR. The Action layer carries the technical detail (matching key, dedup, fan-out check); the Reflection layer carries why the blend was the right move and what would have gone wrong without it.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Land the phrase <em>"the choice between sources isn't arbitrary; it's the verification itself"</em> &mdash; or some version of it &mdash; in your Reflection. It's the kind of generalisation that signals you've thought past the technique into the principle. Distinction-level move.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 11: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>Three Data-Gathering KSBs.</strong> K1 (data types) &middot; K4 (formats &amp; tools) &middot; K6 (value &amp; blending).</li>
+    <li><strong>The Why-This-Data Stack.</strong> Three layers: WHAT &middot; WHY &middot; what would have gone WRONG.</li>
+    <li><strong>The Why Stack lives inside Reflection.</strong> Not as its own paragraph &mdash; folded into the second R of STARR.</li>
+    <li><strong>Layer 3 wins D1.</strong> "What would have gone wrong otherwise" is the literal D1 trigger.</li>
+    <li><strong>Tool choice is about fit, not sophistication.</strong> Justify why the tool matched the question.</li>
+    <li><strong>K6 is the depth KSB.</strong> Expect the longest, most reflective answers here.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You can name the three layers of the Why-This-Data Stack from memory.</li>
+    <li>You've rehearsed at least one full STARR with all three Why-Stack layers folded into Reflection.</li>
+    <li>You can give one workplace example of each: structured, unstructured, semi-structured data.</li>
+    <li>You can articulate <em>why</em> you chose your tool of choice in your anchor story.</li>
+    <li>You've practised the phrase <em>"what would have gone wrong otherwise&hellip;"</em> out loud.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 13</h4>
+    <p style="margin: 0;"><strong>Analysis &amp; Validation, STARR-ed.</strong> Tomorrow we take the second content area &mdash; K10 (data quality issues), K11 (validation methods), K15 (role of data in the digital world) &mdash; and walk them through STARR. Named device: <strong>The Verification Story</strong> &mdash; a four-beat shape (issue found &middot; method used &middot; corrective action &middot; verified) that pulls Phase 1's Two-Route Check and Three Questions Before You Delete into the AM2 conversation.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 12 done &mdash; data gathering, rehearsed.</p>
+
+</section>
+
+</body>
+</html>

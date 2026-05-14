@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 10 — Your Portfolio Is Already Written (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 10"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Red flag (assessor warning) ---------- */
+  .red-flag {
+    border: 2pt solid #c0392b;
+    background: #fef0ec;
+    padding: 12pt 14pt 12pt 56pt;
+    margin: 12pt 0;
+    position: relative;
+    page-break-inside: avoid;
+    border-radius: 4pt;
+  }
+  .red-flag::before {
+    content: "";
+    position: absolute;
+    left: 14pt; top: 12pt;
+    width: 28pt; height: 32pt;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 32'><rect x='3' y='0' width='2.4' height='32' fill='%231a1a1a'/><path d='M5.4 1 L24 1 L17 8 L24 15 L5.4 15 Z' fill='%23c0392b' stroke='%231a1a1a' stroke-width='0.8' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .red-flag .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+    text-transform: uppercase;
+  }
+  .red-flag p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .red-flag p + p { margin-top: 6pt; }
+  .red-flag strong { color: #c0392b; }
+  .red-flag em { font-style: italic; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+
+
+<!-- ========== PAGE 1: CHAPTER OPENER (with desk illustration) ========== -->
+<section class="page">
+
+  <p class="opener-num">10</p>
+  <p class="opener-tag">phase two starts here</p>
+  <h1 class="opener-title">Your Portfolio Is Already Written</h1>
+  <p class="opener-subtitle">8 days &middot; 1 hour a day &middot; the writing is done &mdash; the rehearsal starts now</p>
+
+  <svg viewBox="0 0 720 420" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- desk surface -->
+  <rect x="20" y="320" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="20" y1="340" x2="700" y2="340" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+  <!-- post-it top-left: "Phase 1 is done" -->
+  <g transform="translate(38,30) rotate(-4)">
+    <rect x="0" y="0" width="150" height="120" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="10" y="22" font-family="Lato" font-size="11" font-weight="700">PHASE 1 — DONE</text>
+    <line x1="10" y1="32" x2="140" y2="32" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="10" y="50" font-family="Lato" font-size="9">Excel — done.</text>
+    <text x="10" y="64" font-family="Lato" font-size="9">Power Query — done.</text>
+    <text x="10" y="78" font-family="Lato" font-size="9">The demos — rehearsed.</text>
+    <text x="10" y="100" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">portfolio — submitted.</text>
+  </g>
+
+  <!-- printed portfolio binder centre -->
+  <g transform="translate(220,160)">
+    <!-- binder body -->
+    <rect x="0" y="0" width="240" height="160" rx="3" ry="3" fill="#1e6091" stroke="#1a1a1a" stroke-width="2"/>
+    <!-- pages peeking out -->
+    <rect x="6" y="6" width="228" height="148" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="1"/>
+    <!-- spine -->
+    <rect x="0" y="0" width="16" height="160" fill="#143a55" stroke="#1a1a1a" stroke-width="1"/>
+    <!-- title block -->
+    <rect x="40" y="18" width="180" height="34" fill="#fff" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="130" y="34" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">PORTFOLIO</text>
+    <text x="130" y="46" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">Data Technician L3</text>
+    <!-- KSB list -->
+    <text x="40" y="70" font-family="Lato" font-size="8.5" font-weight="700">K1 · K4 · K5 · K6</text>
+    <text x="40" y="84" font-family="Lato" font-size="8.5" font-weight="700">K10 · K11 · K12 · K13 · K14</text>
+    <text x="40" y="98" font-family="Lato" font-size="8.5" font-weight="700">K15 · K16</text>
+    <text x="40" y="116" font-family="Lato" font-size="8.5" font-weight="700">S10 · S11 · S12 · S13</text>
+    <text x="40" y="130" font-family="Lato" font-size="8.5" font-weight="700">S14 · S15 · S17</text>
+    <text x="40" y="144" font-family="Lato" font-size="8.5" font-weight="700">B1 · B5 · B6</text>
+    <!-- "submitted" stamp -->
+    <g transform="translate(150,118) rotate(-12)">
+      <rect x="-2" y="-12" width="78" height="18" fill="none" stroke="#c0392b" stroke-width="1.6"/>
+      <text x="37" y="2" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="10" fill="#c0392b">SUBMITTED</text>
+    </g>
+  </g>
+
+  <!-- highlighter on desk -->
+  <g transform="translate(220,338)">
+    <rect x="0" y="0" width="60" height="14" rx="3" ry="3" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <rect x="60" y="2" width="20" height="10" rx="2" ry="2" fill="#c0392b" stroke="#1a1a1a" stroke-width="1.2"/>
+  </g>
+
+  <!-- pen on desk -->
+  <g transform="translate(310,335) rotate(8)">
+    <rect x="0" y="0" width="80" height="6" rx="2" fill="#1a1a1a"/>
+    <polygon points="80,0 88,3 80,6" fill="#1a1a1a"/>
+  </g>
+
+  <!-- DAY 10 coffee mug right side -->
+  <g transform="translate(580,260)">
+    <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 10</text>
+    <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+    <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+  </g>
+
+  <!-- right speech bubble: the assessor -->
+  <g transform="translate(490,40)">
+    <path d="M0 12 q0 -12 12 -12 H200 q12 0 12 12 v100 q0 12 -12 12 H90 l-12 18 l-2 -18 H12 q-12 0 -12 -12 z"
+      fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="16" y="28" font-family="Lato" font-size="10" font-weight="700">Your assessor:</text>
+    <text x="16" y="46" font-family="Lato" font-style="italic" font-size="10">"I've read your portfolio.</text>
+    <text x="16" y="62" font-family="Lato" font-style="italic" font-size="10">I've seen the work.</text>
+    <text x="16" y="78" font-family="Lato" font-style="italic" font-size="10">Now I'd like to hear you</text>
+    <text x="16" y="94" font-family="Lato" font-style="italic" font-size="10">talk about it &mdash; in your own</text>
+    <text x="16" y="110" font-family="Lato" font-style="italic" font-size="10">words, in your own time."</text>
+  </g>
+</svg>
+
+  <p style="max-width: 5.5in; margin-top: 8pt;">Take a breath. The hardest part is already done. Your portfolio is submitted; the assessor has it. The next 8 days are rehearsal &mdash; turning the words you already wrote into strong, defensible spoken answers in a 60-minute conversation.</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: BIG BREATHER — WHAT CHANGED ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">phase one is behind you</p>
+  <h2 class="section">What changed</h2>
+  <p style="max-width: 5.5in;">Phase 1 was a practical workout against a fictional brief. Phase 2 is conversation, anchored to <em>your</em> real workplace portfolio &mdash; already submitted, already read.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- LEFT SIDE: Phase 1 (the past) -->
+  <g>
+    <rect x="20" y="20" width="320" height="420" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="180" y="46" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#1a1a1a">PHASE 1 — the past</text>
+    <line x1="40" y1="58" x2="320" y2="58" stroke="#1a1a1a" stroke-width="1"/>
+
+    <!-- laptop with messy formula -->
+    <g transform="translate(70,80)">
+      <rect x="0" y="0" width="200" height="120" rx="4" ry="4" fill="#1a1a1a"/>
+      <rect x="6" y="6" width="188" height="108" fill="#fdfdf6"/>
+      <line x1="6" y1="22" x2="194" y2="22" stroke="#107c41" stroke-width="3"/>
+      <text x="100" y="44" text-anchor="middle" font-family="DejaVu Sans Mono" font-size="7">=SUMIFS(tblActivity[duration],</text>
+      <text x="100" y="56" text-anchor="middle" font-family="DejaVu Sans Mono" font-size="7">tblActivity[date],"&gt;="&amp;DATE(2025,4,1))</text>
+      <text x="100" y="76" text-anchor="middle" font-family="DejaVu Sans Mono" font-size="7">Power Query · Applied Steps · Refresh</text>
+      <text x="100" y="92" text-anchor="middle" font-family="DejaVu Sans Mono" font-size="7" fill="#c0392b">subscriber_id key mismatch — row 47</text>
+      <!-- laptop base -->
+      <path d="M-8 120 L208 120 L200 134 L0 134 Z" fill="#bfb59c" stroke="#1a1a1a" stroke-width="1.6"/>
+    </g>
+
+    <!-- post-it of phase 1 verbs -->
+    <g transform="translate(60,232) rotate(-2)">
+      <rect x="0" y="0" width="100" height="84" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="50" y="18" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">phase 1 verbs</text>
+      <line x1="10" y1="26" x2="90" y2="26" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="50" y="42" text-anchor="middle" font-family="Lato" font-size="9">clean</text>
+      <text x="50" y="54" text-anchor="middle" font-family="Lato" font-size="9">merge</text>
+      <text x="50" y="66" text-anchor="middle" font-family="Lato" font-size="9">verify</text>
+      <text x="50" y="78" text-anchor="middle" font-family="Lato" font-size="9">narrate</text>
+    </g>
+
+    <g transform="translate(180,232) rotate(3)">
+      <rect x="0" y="0" width="120" height="84" fill="#fef0ec" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="60" y="18" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">phase 1 worry</text>
+      <line x1="10" y1="26" x2="110" y2="26" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="60" y="44" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">"I'll freeze in</text>
+      <text x="60" y="56" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">the demo."</text>
+    </g>
+
+    <text x="180" y="360" text-anchor="middle" font-family="Lato" font-size="10" fill="#555">Practical · time-pressured · technical</text>
+    <text x="180" y="376" text-anchor="middle" font-family="Lato" font-size="10" fill="#555">Done. Behind you.</text>
+  </g>
+
+  <!-- ARROW IN MIDDLE -->
+  <g transform="translate(345,210)">
+    <line x1="0" y1="20" x2="28" y2="20" stroke="#1a1a1a" stroke-width="3"/>
+    <polygon points="28,12 40,20 28,28" fill="#1a1a1a"/>
+    <text x="20" y="6" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic">the writing</text>
+    <text x="20" y="48" text-anchor="middle" font-family="Lato" font-size="10" font-style="italic">is done</text>
+  </g>
+
+  <!-- RIGHT SIDE: Phase 2 (now) -->
+  <g>
+    <rect x="390" y="20" width="310" height="420" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="545" y="46" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#1a1a1a">PHASE 2 — now</text>
+    <line x1="410" y1="58" x2="690" y2="58" stroke="#1a1a1a" stroke-width="1"/>
+
+    <!-- portfolio in centre -->
+    <g transform="translate(440,80)">
+      <rect x="0" y="0" width="180" height="120" rx="3" ry="3" fill="#1e6091" stroke="#1a1a1a" stroke-width="2"/>
+      <rect x="6" y="6" width="168" height="108" fill="#fdfdf6"/>
+      <rect x="0" y="0" width="12" height="120" fill="#143a55" stroke="#1a1a1a" stroke-width="1"/>
+      <text x="98" y="34" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">YOUR PORTFOLIO</text>
+      <text x="98" y="50" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">submitted · KSB-mapped</text>
+      <line x1="30" y1="62" x2="166" y2="62" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+      <text x="98" y="80" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#2d8659">every chapter is a KSB</text>
+      <text x="98" y="94" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#2d8659">every illustration is yours</text>
+      <text x="98" y="108" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#2d8659">every word is already written</text>
+    </g>
+
+    <!-- post-it of phase 2 verbs -->
+    <g transform="translate(420,232) rotate(2)">
+      <rect x="0" y="0" width="100" height="84" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="50" y="18" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">phase 2 verbs</text>
+      <line x1="10" y1="26" x2="90" y2="26" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="50" y="42" text-anchor="middle" font-family="Lato" font-size="9">re-read</text>
+      <text x="50" y="54" text-anchor="middle" font-family="Lato" font-size="9">mark</text>
+      <text x="50" y="66" text-anchor="middle" font-family="Lato" font-size="9">anchor</text>
+      <text x="50" y="78" text-anchor="middle" font-family="Lato" font-size="9">rehearse</text>
+    </g>
+
+    <g transform="translate(540,232) rotate(-2)">
+      <rect x="0" y="0" width="124" height="84" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="62" y="18" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">phase 2 worry</text>
+      <line x1="10" y1="26" x2="114" y2="26" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="62" y="44" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">"I won't remember</text>
+      <text x="62" y="56" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">what I wrote."</text>
+      <text x="62" y="72" text-anchor="middle" font-family="Lato" font-size="8" fill="#2d8659">(the mining pass fixes this)</text>
+    </g>
+
+    <text x="545" y="360" text-anchor="middle" font-family="Lato" font-size="10" fill="#555">Conversational · open-ended · reflective</text>
+    <text x="545" y="376" text-anchor="middle" font-family="Lato" font-size="10" fill="#555">Already half-rehearsed.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: REHEARSAL NOT REVISION ========== -->
+<section class="page">
+
+  <p class="section-tag">the most useful idea on day 10</p>
+  <h2 class="section">It's rehearsal, not revision</h2>
+
+  <p class="pull" style="font-size: 18pt; line-height: 1.3; margin: 10pt 0;">
+    The writing is done.<br>
+    Now we make it <em>speakable</em>.
+  </p>
+
+  <div class="row" style="margin-top: 10pt;">
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">You will <em>not</em></h3>
+      <ul style="margin: 4pt 0; padding-left: 18pt;">
+        <li>revise your portfolio</li>
+        <li>add new evidence</li>
+        <li>invent material</li>
+      </ul>
+      <p style="margin-top: 6pt; font-size: 10.5pt;">The deadline has passed; the document is locked.</p>
+    </div>
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">You will</h3>
+      <ul style="margin: 4pt 0; padding-left: 18pt;">
+        <li>re-read it strategically</li>
+        <li>convert stories to STARR (Day 11)</li>
+        <li>rehearse until it flows</li>
+      </ul>
+      <p style="margin-top: 6pt; font-size: 10.5pt;">Repetition is the whole technique.</p>
+    </div>
+  </div>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>Every defensible answer ties back to something already in writing. When you say <em>"in my portfolio I covered this under K6 &mdash; the example I used was&hellip;"</em> the assessor doesn't have to take your word for it. <strong>Pass-level candidates answer. Distinction-level candidates anchor.</strong></p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: THE PORTFOLIO MINING PASS (named device) ========== -->
+<section class="page">
+
+  <p class="section-tag">the named device for today</p>
+  <h2 class="section">The Portfolio Mining Pass</h2>
+
+  <p>A structured re-read of your own portfolio. <strong>Four steps. About 90 minutes.</strong> You come out the other end with a marked-up copy and the beginnings of your <em>anchor stories</em>.</p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 8pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- Step 1 -->
+    <g transform="translate(20,30)">
+      <rect x="0" y="0" width="150" height="120" rx="6" ry="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="20" cy="22" r="14" fill="#1a1a1a"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">1</text>
+      <text x="42" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="12">SKIM</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="60" font-family="Lato" font-size="9">re-read each KSB</text>
+      <text x="12" y="74" font-family="Lato" font-size="9">chapter at speed</text>
+      <text x="12" y="98" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">don't edit</text>
+    </g>
+    <!-- arrow -->
+    <polygon points="178,82 196,90 178,98" fill="#1a1a1a"/>
+    <line x1="170" y1="90" x2="190" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(200,30)">
+      <rect x="0" y="0" width="150" height="120" rx="6" ry="6" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="20" cy="22" r="14" fill="#c0392b"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">2</text>
+      <text x="42" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="12">MARK</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="60" font-family="Lato" font-size="9">strongest illustration</text>
+      <text x="12" y="74" font-family="Lato" font-size="9">per KSB &mdash; one each</text>
+      <text x="12" y="98" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">highlighter time</text>
+    </g>
+    <polygon points="358,82 376,90 358,98" fill="#1a1a1a"/>
+    <line x1="350" y1="90" x2="370" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <!-- Step 3 -->
+    <g transform="translate(380,30)">
+      <rect x="0" y="0" width="150" height="120" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="20" cy="22" r="14" fill="#2d8659"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">3</text>
+      <text x="42" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="12">CAPTURE</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="60" font-family="Lato" font-size="9">dates, numbers,</text>
+      <text x="12" y="74" font-family="Lato" font-size="9">names &mdash; on a list</text>
+      <text x="12" y="98" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">specifics defend</text>
+    </g>
+    <polygon points="538,82 556,90 538,98" fill="#1a1a1a"/>
+    <line x1="530" y1="90" x2="550" y2="90" stroke="#1a1a1a" stroke-width="2"/>
+
+    <!-- Step 4 -->
+    <g transform="translate(560,30)">
+      <rect x="0" y="0" width="150" height="120" rx="6" ry="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+      <circle cx="20" cy="22" r="14" fill="#1e6091"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#fff">4</text>
+      <text x="42" y="28" font-family="Poppins,sans-serif" font-weight="900" font-size="12">ANCHOR</text>
+      <line x1="12" y1="44" x2="138" y2="44" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="12" y="60" font-family="Lato" font-size="9">pick your 4&ndash;6</text>
+      <text x="12" y="74" font-family="Lato" font-size="9">anchor stories</text>
+      <text x="12" y="98" font-family="Lato" font-size="9" font-style="italic" fill="#c0392b">one per content area</text>
+    </g>
+  </svg>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>The Mining Pass is not optional. Apprentices who skip it walk into the discussion trying to recall content cold. Apprentices who do it walk in knowing exactly which story to reach for &mdash; and that confidence is audible.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: BIG BREATHER — MINING IN ACTION ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">what it looks like in practice</p>
+  <h2 class="section">The Mining Pass &mdash; in action</h2>
+  <p style="max-width: 5.5in;">Open the document. Pen and highlighter beside you. Don't edit; mark. Below: what one page looks like after a Mining Pass session.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- the open portfolio with highlights, sticky notes -->
+  <rect x="20" y="20" width="680" height="420" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+
+  <!-- left page -->
+  <g transform="translate(50,40)">
+    <rect x="0" y="0" width="280" height="380" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="1.8"/>
+    <!-- chapter heading -->
+    <text x="20" y="32" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K6</text>
+    <text x="50" y="32" font-family="Poppins,sans-serif" font-weight="700" font-size="11">— Value of Data &amp; Blending</text>
+    <line x1="20" y1="42" x2="260" y2="42" stroke="#1a1a1a" stroke-width="1"/>
+
+    <!-- body lines -->
+    <line x1="20" y1="56" x2="260" y2="56" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="68" x2="260" y2="68" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="80" x2="240" y2="80" stroke="#bbb" stroke-width="1"/>
+    <text x="20" y="100" font-family="Lato" font-size="9" font-weight="700">Application in Practice</text>
+    <!-- highlighted block -->
+    <rect x="20" y="106" width="240" height="46" fill="#fff2a8" opacity="0.9"/>
+    <text x="20" y="118" font-family="Lato" font-size="8" font-style="italic">External provider invoice</text>
+    <text x="20" y="130" font-family="Lato" font-size="8" font-style="italic">reconciliation using XLOOKUP —</text>
+    <text x="20" y="142" font-family="Lato" font-size="8" font-style="italic">April 2026, NHS-number match</text>
+    <text x="20" y="154" font-family="Lato" font-size="8" font-style="italic">on 1,400/month, w/ Salma</text>
+    <!-- more body lines -->
+    <line x1="20" y1="170" x2="260" y2="170" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="182" x2="260" y2="182" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="194" x2="220" y2="194" stroke="#bbb" stroke-width="1"/>
+    <text x="20" y="214" font-family="Lato" font-size="9" font-weight="700">Practical Task</text>
+    <line x1="20" y1="226" x2="260" y2="226" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="238" x2="260" y2="238" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="250" x2="260" y2="250" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="262" x2="240" y2="262" stroke="#bbb" stroke-width="1"/>
+    <text x="20" y="282" font-family="Lato" font-size="9" font-weight="700">Conclusion</text>
+    <line x1="20" y1="294" x2="260" y2="294" stroke="#bbb" stroke-width="1"/>
+    <!-- highlighted result line -->
+    <rect x="20" y="302" width="240" height="14" fill="#fff2a8" opacity="0.9"/>
+    <text x="20" y="313" font-family="Lato" font-size="8" font-style="italic" font-weight="700">10% manual check → 100% coverage</text>
+    <line x1="20" y1="326" x2="260" y2="326" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="338" x2="220" y2="338" stroke="#bbb" stroke-width="1"/>
+    <!-- page number -->
+    <text x="140" y="370" text-anchor="middle" font-family="Lato" font-size="9" fill="#888" font-style="italic">page 34</text>
+  </g>
+
+  <!-- right page -->
+  <g transform="translate(390,40)">
+    <rect x="0" y="0" width="280" height="380" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="1.8"/>
+    <text x="20" y="32" font-family="Poppins,sans-serif" font-weight="900" font-size="14" fill="#c0392b">K10</text>
+    <text x="56" y="32" font-family="Poppins,sans-serif" font-weight="700" font-size="11">— Data Quality Issues</text>
+    <line x1="20" y1="42" x2="260" y2="42" stroke="#1a1a1a" stroke-width="1"/>
+    <line x1="20" y1="56" x2="260" y2="56" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="68" x2="260" y2="68" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="80" x2="240" y2="80" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="92" x2="260" y2="92" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="104" x2="240" y2="104" stroke="#bbb" stroke-width="1"/>
+    <text x="20" y="126" font-family="Lato" font-size="9" font-weight="700">Application in Practice</text>
+    <rect x="20" y="132" width="240" height="40" fill="#fff2a8" opacity="0.9"/>
+    <text x="20" y="146" font-family="Lato" font-size="8" font-style="italic">Spotting duplicate referrals on</text>
+    <text x="20" y="158" font-family="Lato" font-size="8" font-style="italic">PTL — 14 dupes/month, June '26</text>
+    <text x="20" y="170" font-family="Lato" font-size="8" font-style="italic">caught at MRN level</text>
+    <line x1="20" y1="188" x2="260" y2="188" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="200" x2="260" y2="200" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="212" x2="240" y2="212" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="224" x2="260" y2="224" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="236" x2="260" y2="236" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="248" x2="240" y2="248" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="260" x2="260" y2="260" stroke="#bbb" stroke-width="1"/>
+    <line x1="20" y1="272" x2="260" y2="272" stroke="#bbb" stroke-width="1"/>
+    <text x="140" y="370" text-anchor="middle" font-family="Lato" font-size="9" fill="#888" font-style="italic">page 38</text>
+  </g>
+
+  <!-- sticky note on left page top-right -->
+  <g transform="translate(280,40) rotate(7)">
+    <rect x="0" y="0" width="78" height="60" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="39" y="18" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700">ANCHOR</text>
+    <text x="39" y="32" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">strongest</text>
+    <text x="39" y="44" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">illustration</text>
+    <text x="39" y="56" text-anchor="middle" font-family="Lato" font-size="8" font-weight="700" fill="#c0392b">✓ marked</text>
+  </g>
+
+  <!-- sticky note on right page -->
+  <g transform="translate(610,40) rotate(-5)">
+    <rect x="0" y="0" width="78" height="60" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="1.4"/>
+    <text x="39" y="18" text-anchor="middle" font-family="Lato" font-size="9" font-weight="700">DATES</text>
+    <text x="39" y="32" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">14 dupes/mo</text>
+    <text x="39" y="44" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">Jun 26</text>
+    <text x="39" y="56" text-anchor="middle" font-family="Lato" font-size="8" font-style="italic">MRN level</text>
+  </g>
+
+  <!-- arrow pointing from highlights -->
+  <g transform="translate(330,140)">
+    <path d="M0 0 q15 -10 30 0" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+    <polygon points="30,0 26,-4 26,4" fill="#1a1a1a"/>
+  </g>
+
+  <!-- red pen -->
+  <g transform="translate(350,420) rotate(-10)">
+    <rect x="0" y="0" width="100" height="8" rx="2" fill="#c0392b" stroke="#1a1a1a" stroke-width="1.2"/>
+    <rect x="100" y="2" width="14" height="4" rx="1" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1"/>
+    <polygon points="114,2 122,4 114,6" fill="#1a1a1a"/>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 6: THREE TRAITS — STRONG ILLUSTRATION ========== -->
+<section class="page">
+
+  <p class="section-tag">three traits, no more</p>
+  <h2 class="section">What makes an illustration strong</h2>
+
+  <p>When you're marking on the Mining Pass, you're looking for these three. Two-out-of-three is acceptable; one alone is not.</p>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 4pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- Trait 1: Result -->
+    <g transform="translate(20,10)">
+      <rect x="0" y="0" width="220" height="180" rx="6" ry="6" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <g transform="translate(110,42)">
+        <polyline points="-40,20 -20,8 0,12 20,-4 40,-18" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="40,-18 30,-22 34,-12" fill="#1a1a1a"/>
+        <line x1="-50" y1="22" x2="50" y2="22" stroke="#1a1a1a" stroke-width="1.6"/>
+        <line x1="-50" y1="22" x2="-50" y2="-22" stroke="#1a1a1a" stroke-width="1.6"/>
+      </g>
+      <text x="110" y="106" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">1 &middot; A RESULT</text>
+      <text x="110" y="128" text-anchor="middle" font-family="Lato" font-size="9.5">Something <tspan font-style="italic">changed</tspan>:</text>
+      <text x="110" y="142" text-anchor="middle" font-family="Lato" font-size="9.5">a number moved, a process</text>
+      <text x="110" y="156" text-anchor="middle" font-family="Lato" font-size="9.5">improved, a problem caught</text>
+    </g>
+
+    <!-- Trait 2: Specifics -->
+    <g transform="translate(250,10)">
+      <rect x="0" y="0" width="220" height="180" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <g transform="translate(110,42)">
+        <!-- calendar -->
+        <rect x="-50" y="-22" width="34" height="34" rx="2" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/>
+        <line x1="-50" y1="-14" x2="-16" y2="-14" stroke="#1a1a1a" stroke-width="1"/>
+        <text x="-33" y="6" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">14</text>
+        <!-- name tag -->
+        <rect x="-8" y="-22" width="34" height="34" rx="2" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/>
+        <circle cx="9" cy="-12" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+        <path d="M-2 4 a11 11 0 0 1 22 0" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+        <!-- number -->
+        <rect x="34" y="-22" width="34" height="34" rx="2" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/>
+        <text x="51" y="6" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">187</text>
+      </g>
+      <text x="110" y="106" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">2 &middot; SPECIFICS</text>
+      <text x="110" y="128" text-anchor="middle" font-family="Lato" font-size="9.5">Named dates, named</text>
+      <text x="110" y="142" text-anchor="middle" font-family="Lato" font-size="9.5">numbers, named people.</text>
+      <text x="110" y="156" text-anchor="middle" font-family="Lato" font-size="9.5">Specifics signal authenticity.</text>
+    </g>
+
+    <!-- Trait 3: Story -->
+    <g transform="translate(480,10)">
+      <rect x="0" y="0" width="220" height="180" rx="6" ry="6" fill="#eaf2f7" stroke="#1a1a1a" stroke-width="2"/>
+      <g transform="translate(110,42)">
+        <!-- filmstrip -->
+        <rect x="-60" y="-20" width="120" height="40" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/>
+        <line x1="-30" y1="-20" x2="-30" y2="20" stroke="#1a1a1a" stroke-width="1.2"/>
+        <line x1="0" y1="-20" x2="0" y2="20" stroke="#1a1a1a" stroke-width="1.2"/>
+        <line x1="30" y1="-20" x2="30" y2="20" stroke="#1a1a1a" stroke-width="1.2"/>
+        <text x="-45" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">1</text>
+        <text x="-15" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">2</text>
+        <text x="15" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">3</text>
+        <text x="45" y="5" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="11">4</text>
+      </g>
+      <text x="110" y="106" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="13">3 &middot; A STORY</text>
+      <text x="110" y="128" text-anchor="middle" font-family="Lato" font-size="9.5">You can replay it</text>
+      <text x="110" y="142" text-anchor="middle" font-family="Lato" font-size="9.5">beat-by-beat: first X,</text>
+      <text x="110" y="156" text-anchor="middle" font-family="Lato" font-size="9.5">then Y, then Z.</text>
+    </g>
+  </svg>
+
+  <div class="show-off" style="margin-top: 12pt;">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The illustration with all three traits is your anchor story. The brilliant prose without specifics? Skip it. <em>Specifics defend; prose decorates.</em> Pick the messier, specific one every time.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: FOUR ANCHOR STORIES ========== -->
+<section class="page">
+
+  <p class="section-tag">the safety net</p>
+  <h2 class="section">Your four anchor stories</h2>
+
+  <p>From the strong illustrations you mark, four to six become your <strong>anchors</strong>. <strong>At least one per content area</strong> the discussion covers.</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:6pt 10pt; text-align:left; width:36%;">Content area</th>
+      <th style="padding:6pt 10pt; text-align:left;">An anchor story that fits</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Data Gathering</strong><br><span style="font-size:9pt; color:#888;">K1 &middot; K4 &middot; K6 &middot; K15</span></td>
+      <td style="padding:5pt 10pt;">A project where you picked which data sources to use &mdash; and one you decided <em>not</em> to use, with the reason.</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Data Analysis &amp; Validation</strong><br><span style="font-size:9pt; color:#888;">K10 &middot; K11</span></td>
+      <td style="padding:5pt 10pt;">Work where you found a data quality issue &mdash; duplicates, mismatched keys, nulls, outliers &mdash; and what you did about it.</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:5pt 10pt;"><strong>Distribution &amp; Dissemination</strong><br><span style="font-size:9pt; color:#888;">K5 &middot; K12 &middot; K13 &middot; K14 &middot; S10&ndash;S13</span></td>
+      <td style="padding:5pt 10pt;">A moment where you communicated the same analysis to two different audiences &mdash; technical peer vs manager, internal vs external.</td>
+    </tr>
+    <tr>
+      <td style="padding:5pt 10pt;"><strong>Approach to Work</strong><br><span style="font-size:9pt; color:#888;">K16 &middot; S14 &middot; S15 &middot; S17 &middot; B1 &middot; B5 &middot; B6</span></td>
+      <td style="padding:5pt 10pt;">A stakeholder pressure moment, a deadline you managed, or a learning episode where something didn't go well and you adjusted.</td>
+    </tr>
+  </table>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>Brain Power</h4>
+      <p>Before Day 11, name one candidate per content area. Just names &mdash; <em>"PTL project · invoice reconciliation · dashboard for booking lead · the October deadline crunch."</em> Don't polish them yet.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: BIG BREATHER — WHAT THE ASSESSOR HAS ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">they're not coming in blind</p>
+  <h2 class="section">What your assessor already has</h2>
+  <p style="max-width: 5.5in;">Before the 60 minutes start, three things are already on their desk. Which means the discussion is not about <em>whether</em> you did the work &mdash; it's about you talking about it.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- assessor's desk -->
+  <rect x="20" y="20" width="680" height="420" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="2"/>
+  <text x="360" y="46" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="900" font-size="14">What your assessor has — before the discussion starts</text>
+  <line x1="60" y1="58" x2="660" y2="58" stroke="#1a1a1a" stroke-width="1"/>
+
+  <!-- left: portfolio open -->
+  <g transform="translate(40,80)">
+    <text x="120" y="0" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">1. Your portfolio</text>
+    <rect x="0" y="10" width="240" height="160" fill="#fdfdf6" stroke="#1a1a1a" stroke-width="1.6"/>
+    <text x="14" y="32" font-family="Poppins,sans-serif" font-weight="900" font-size="11" fill="#c0392b">K11</text>
+    <text x="44" y="32" font-family="Poppins,sans-serif" font-weight="700" font-size="9">— Validating Data</text>
+    <line x1="14" y1="40" x2="226" y2="40" stroke="#1a1a1a" stroke-width="1"/>
+    <line x1="14" y1="50" x2="226" y2="50" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="62" x2="226" y2="62" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="74" x2="200" y2="74" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="86" x2="226" y2="86" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="98" x2="226" y2="98" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="110" x2="200" y2="110" stroke="#bbb" stroke-width="1"/>
+    <rect x="14" y="118" width="212" height="14" fill="#fff2a8" opacity="0.8"/>
+    <text x="14" y="130" font-family="Lato" font-size="8" font-style="italic">application: PTL data quality</text>
+    <line x1="14" y1="142" x2="226" y2="142" stroke="#bbb" stroke-width="1"/>
+    <line x1="14" y1="154" x2="180" y2="154" stroke="#bbb" stroke-width="1"/>
+    <text x="120" y="186" text-anchor="middle" font-family="Lato" font-size="9" fill="#888" font-style="italic">they've read every chapter</text>
+  </g>
+
+  <!-- middle: KSB mapping checklist -->
+  <g transform="translate(300,80)">
+    <text x="120" y="0" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">2. The KSB mapping</text>
+    <rect x="0" y="10" width="240" height="160" fill="#fff" stroke="#1a1a1a" stroke-width="1.6"/>
+    <text x="14" y="30" font-family="Poppins,sans-serif" font-weight="900" font-size="10">CHAPTER MAP</text>
+    <line x1="14" y1="36" x2="226" y2="36" stroke="#1a1a1a" stroke-width="0.6"/>
+    <g font-family="Lato" font-size="9">
+      <text x="14" y="50">K1</text><text x="60" y="50" fill="#888">pp 7–18</text><text x="220" y="50" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="62">K4</text><text x="60" y="62" fill="#888">pp 19–26</text><text x="220" y="62" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="74">K5</text><text x="60" y="74" fill="#888">pp 27–32</text><text x="220" y="74" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="86">K6</text><text x="60" y="86" fill="#888">pp 33–36</text><text x="220" y="86" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="98">K10</text><text x="60" y="98" fill="#888">pp 36–43</text><text x="220" y="98" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="110">K11</text><text x="60" y="110" fill="#888">pp 36–43</text><text x="220" y="110" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="122">K12</text><text x="60" y="122" fill="#888">pp 45–47</text><text x="220" y="122" text-anchor="end" fill="#2d8659" font-weight="700">✓</text>
+      <text x="14" y="134" fill="#888" font-style="italic">… and so on for every KSB</text>
+    </g>
+    <text x="120" y="186" text-anchor="middle" font-family="Lato" font-size="9" fill="#888" font-style="italic">they know which pages to open</text>
+  </g>
+
+  <!-- right: question shapes notepad -->
+  <g transform="translate(560,80)">
+    <text x="60" y="0" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">3. Question shapes</text>
+    <rect x="0" y="10" width="120" height="160" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.6"/>
+    <text x="10" y="30" font-family="Lato" font-size="8" font-weight="700">D1 — gathering</text>
+    <line x1="10" y1="34" x2="110" y2="34" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="10" y="46" font-family="Lato" font-size="8" font-style="italic">"Walk me through</text>
+    <text x="10" y="56" font-family="Lato" font-size="8" font-style="italic">why this data set…"</text>
+    <text x="10" y="76" font-family="Lato" font-size="8" font-weight="700">D2 — comms</text>
+    <line x1="10" y1="80" x2="110" y2="80" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="10" y="92" font-family="Lato" font-size="8" font-style="italic">"How did you adapt</text>
+    <text x="10" y="102" font-family="Lato" font-size="8" font-style="italic">for the audience?"</text>
+    <text x="10" y="122" font-family="Lato" font-size="8" font-weight="700">D3 — storage</text>
+    <line x1="10" y1="126" x2="110" y2="126" stroke="#888" stroke-width="0.6" stroke-dasharray="2 2"/>
+    <text x="10" y="138" font-family="Lato" font-size="8" font-style="italic">"Justify your storage</text>
+    <text x="10" y="148" font-family="Lato" font-size="8" font-style="italic">and ethics choices."</text>
+    <text x="60" y="186" text-anchor="middle" font-family="Lato" font-size="9" fill="#888" font-style="italic">prepared in advance</text>
+  </g>
+
+  <!-- bottom: takeaway -->
+  <g transform="translate(60,300)">
+    <rect x="0" y="0" width="600" height="100" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+    <text x="20" y="26" font-family="Poppins,sans-serif" font-weight="900" font-size="12" fill="#2d8659">SO THE DISCUSSION ISN'T A TEST OF WHETHER YOU DID THE WORK.</text>
+    <text x="20" y="44" font-family="Lato" font-size="10">The assessor has already seen that. The discussion is for them to hear</text>
+    <text x="20" y="58" font-family="Lato" font-size="10"><tspan font-weight="700">you</tspan> explain it, judge it, and reflect on it — the things the written</text>
+    <text x="20" y="72" font-family="Lato" font-size="10">portfolio explicitly doesn't include.</text>
+    <text x="20" y="90" font-family="Lato" font-size="10" font-style="italic" fill="#c0392b">It's conversation, not cross-examination.</text>
+  </g>
+</svg>
+
+</section>
+
+
+<!-- ========== PAGE 9: CONFIDENTIALITY ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick calming aside</p>
+  <h2 class="section">What happens to your discussion</h2>
+
+  <p>Three short facts that settle the most common format-worries.</p>
+
+  <div class="row" style="margin-top: 6pt;">
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">Remote</h3>
+      <p style="font-size: 10.5pt;">Held via video conferencing &mdash; Teams, Zoom, or similar. You're in a quiet room of your choosing. Water on the desk; notes visible to you; no travel.</p>
+    </div>
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">Moderation only</h3>
+      <p style="font-size: 10.5pt;">Audio is recorded so the EPAO can moderate consistency and handle appeals. Not played back to anyone else. Destroyed after the retention period.</p>
+    </div>
+    <div class="col">
+      <h3 class="sub" style="margin-top: 0;">Independent</h3>
+      <p style="font-size: 10.5pt;">The assessor is bound by EPAO confidentiality. Not affiliated with your employer. Your manager doesn't watch; colleagues don't see the portfolio.</p>
+    </div>
+  </div>
+
+  <svg viewBox="0 0 720 200" width="100%" style="display:block; margin: 14pt auto 4pt;" xmlns="http://www.w3.org/2000/svg">
+    <!-- you on left -->
+    <g transform="translate(30,30)">
+      <rect x="0" y="0" width="280" height="150" rx="6" ry="6" fill="#fdfaf2" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="140" y="22" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">YOUR SIDE</text>
+      <!-- person -->
+      <circle cx="80" cy="68" r="14" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <path d="M50 110 a30 28 0 0 1 60 0" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <!-- laptop -->
+      <rect x="150" y="50" width="100" height="60" rx="3" fill="#1a1a1a"/>
+      <rect x="155" y="55" width="90" height="50" fill="#fdfdf6"/>
+      <text x="200" y="80" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">your portfolio</text>
+      <text x="200" y="94" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">open beside you</text>
+      <path d="M140 110 L260 110 L256 122 L144 122 Z" fill="#bfb59c" stroke="#1a1a1a" stroke-width="1.4"/>
+      <!-- water -->
+      <rect x="100" y="90" width="14" height="20" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+      <rect x="100" y="98" width="14" height="12" fill="#a8d4ec"/>
+      <text x="140" y="140" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">your chosen room, your laptop, your water</text>
+    </g>
+
+    <!-- arrows in middle -->
+    <g transform="translate(320,90)">
+      <line x1="0" y1="-12" x2="60" y2="-12" stroke="#1a1a1a" stroke-width="2"/>
+      <polygon points="60,-18 70,-12 60,-6" fill="#1a1a1a"/>
+      <line x1="0" y1="14" x2="60" y2="14" stroke="#1a1a1a" stroke-width="2"/>
+      <polygon points="0,8 -10,14 0,20" fill="#1a1a1a"/>
+      <text x="35" y="-22" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic">video call</text>
+    </g>
+
+    <!-- assessor on right -->
+    <g transform="translate(410,30)">
+      <rect x="0" y="0" width="280" height="150" rx="6" ry="6" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="140" y="22" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">ASSESSOR'S SIDE</text>
+      <circle cx="80" cy="68" r="14" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <path d="M50 110 a30 28 0 0 1 60 0" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <!-- laptop -->
+      <rect x="150" y="50" width="100" height="60" rx="3" fill="#1a1a1a"/>
+      <rect x="155" y="55" width="90" height="50" fill="#fdfdf6"/>
+      <text x="200" y="80" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">your portfolio</text>
+      <text x="200" y="94" text-anchor="middle" font-family="Lato" font-size="8" fill="#555">already read</text>
+      <path d="M140 110 L260 110 L256 122 L144 122 Z" fill="#bfb59c" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="140" y="140" text-anchor="middle" font-family="Lato" font-size="9" font-style="italic" fill="#555">independent · bound by confidentiality</text>
+    </g>
+  </svg>
+
+</section>
+
+
+<!-- ========== PAGE 10: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check &mdash; about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Five quick questions. Answer in your head first; check below.</p>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>1.</strong> My Phase 2 job is to revise and improve my portfolio.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>2.</strong> The assessor has not read my portfolio &mdash; they read it as we go.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>3.</strong> A strong illustration has a result, specifics, and a story I can replay beat-by-beat.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>4.</strong> If I can't remember a detail mid-answer, my best move is to invent something plausible.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>5.</strong> The professional discussion is held at my employer's premises, in person.</p>
+    <p class="tf-choices">&#9744; True &nbsp;&nbsp;&nbsp; &#9744; False</p>
+  </div>
+
+  <h3 class="sub" style="margin-top: 12pt;">Answers</h3>
+  <p style="margin: 4pt 0 4pt 0;"><strong>1. False.</strong> Portfolio is locked; your Phase 2 job is rehearsal.</p>
+  <p style="margin: 0 0 4pt 0;"><strong>2. False.</strong> The assessor has read it in advance and cross-referenced KSBs against the standard.</p>
+  <p style="margin: 0 0 4pt 0;"><strong>3. True.</strong> All three traits; two-of-three is acceptable; one alone is not.</p>
+  <p style="margin: 0 0 4pt 0;"><strong>4. False.</strong> The Day 9 bluff warning still applies &mdash; <em>"I'd want to check that detail&hellip;"</em> beats invention.</p>
+  <p style="margin: 0;"><strong>5. False.</strong> The discussion is remote, via video conferencing.</p>
+
+</section>
+
+
+<!-- ========== PAGE 11: SHARPEN YOUR PENCIL — MINING TABLE ========== -->
+<section class="page">
+
+  <div class="pencil">
+    <svg class="pencil-icon" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 31 L9 27 L26 10 L30 14 L13 31 z" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M26 10 L29 7 L33 11 L30 14 z" fill="#c0392b" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M5 31 L9 27 L11 31 z" fill="#1a1a1a"/>
+    </svg>
+
+    <h4>Sharpen Your Pencil <small>90 minutes &mdash; do this <em>before</em> Day 11</small></h4>
+
+    <p class="pencil-question">Open your portfolio. For each KSB chapter, fill one row. <em>Don't edit &mdash; mark and note.</em></p>
+
+    <table style="width: 100%; margin-top: 6pt; border-collapse: collapse; font-size: 9pt;">
+      <tr style="background: #1a1a1a; color: #fff; font-family: Poppins, sans-serif; font-weight: 700;">
+        <th style="padding: 4pt 6pt; text-align: left; width: 7%;">KSB</th>
+        <th style="padding: 4pt 6pt; text-align: left; width: 36%;">Strongest illustration (1 line)</th>
+        <th style="padding: 4pt 6pt; text-align: left; width: 13%;">Date</th>
+        <th style="padding: 4pt 6pt; text-align: left;">Numbers / names / result</th>
+      </tr>
+      <tr style="background: #fef8d6;">
+        <td style="padding: 3pt 6pt; font-style: italic; color: #555;"><strong>eg</strong> K6</td>
+        <td style="padding: 3pt 6pt; font-style: italic; color: #555;">Invoice reconciliation, XLOOKUP on NHS no.</td>
+        <td style="padding: 3pt 6pt; font-style: italic; color: #555;">Apr 26</td>
+        <td style="padding: 3pt 6pt; font-style: italic; color: #555;">1,400/mo; Salma; 10% → 100% coverage</td>
+      </tr>      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K1</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K4</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K5</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K6</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K10</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K11</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K12</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K13</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K14</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K15</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>K16</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S10</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S11</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S12</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S13</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S14</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S15</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>S17</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>B1</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>B5</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+      <tr><td style="padding: 4pt 6pt; border-bottom: 1pt dashed #888;"><strong>B6</strong></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td><td style="border-bottom: 1pt dashed #888;"></td></tr>
+    </table>
+
+    <p style="margin-top: 8pt; font-size: 10pt; color: #555;">Half tonight, half tomorrow is fine. By Day 11: most rows filled, four anchors circled.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 12: DUMB QUESTIONS ========== -->
+<section class="page">
+
+  <div class="dumb">
+    <h4>There are no <em>Dumb</em> Questions</h4>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if I can't remember the project I wrote about?</div>
+    <div class="qa"><span class="a">A:</span>That's exactly what the Mining Pass fixes &mdash; you re-read your own words with the dates and numbers in front of you, and the memory comes back. If a section still feels distant, talk to the colleague you worked with on it.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I included something in the portfolio that I'm not actually proud of. Hide it?</div>
+    <div class="qa"><span class="a">A:</span>No &mdash; reflect on it. The Distinction descriptors reward apprentices who can evaluate their own work critically. <em>"In hindsight I'd have done this differently because&hellip;"</em> is exactly the move that scores. Day 16 will rehearse it.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if one KSB in my portfolio is barely covered?</div>
+    <div class="qa"><span class="a">A:</span>The assessor has already read it and decided to assess on what's there. They may probe a thin section in the discussion &mdash; that's an opportunity to fill it verbally, not a trap.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>The assessor asks something and my mind goes blank. What now?</div>
+    <div class="qa"><span class="a">A:</span>Standard recovery: <em>"Could I take a moment to pull up that chapter in my portfolio?"</em> Take 15 seconds, find the page, answer from there. Asking for a moment is professional, not failure.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>I've changed my mind about how I wrote something. Can I correct it?</div>
+    <div class="qa"><span class="a">A:</span>Yes &mdash; and it often scores. <em>"On reflection, what I wrote in K12 understated the challenge; what actually happened was&hellip;"</em> shows reflective thinking, which is what the discussion is for.</div>
+
+    <div class="qa qrow"><span class="q">Q:</span>What if they ask about something I never wrote about?</div>
+    <div class="qa"><span class="a">A:</span>Fully normal. The assessor isn't limited to the portfolio. Describe the real workplace example verbally and tie it to the KSB out loud. <strong>The one answer to avoid: <em>"I don't do that"</em> or <em>"I have no evidence"</em>.</strong> That's the major-fault answer &mdash; immediate Refer on the criterion. Always reframe instead: <em>"I haven't led on that, but I've supported it by&hellip;"</em> or <em>"I haven't covered that directly, but the principle I'd apply is&hellip;"</em></div>
+  </div>
+
+  <p class="pull" style="margin-top: 12pt;">
+    Mine, mark, anchor.<br>
+    What's already there is already enough.
+  </p>
+
+</section>
+
+
+<!-- ========== PAGE 13: SAY IT FOR REAL ========== -->
+<section class="page">
+
+  <p class="section-tag">10 minutes &mdash; the first portfolio-talk practice</p>
+  <h2 class="section">Say it for real</h2>
+
+  <p>Practise these out loud. The first time will feel slow; by the third pass, it flows.</p>
+
+  <h3 class="sub">Q1 &mdash; Tell me about your portfolio in 90 seconds.</h3>
+  <p><strong>The shape:</strong> role &amp; workplace &rarr; KSB structure &rarr; two-or-three strongest illustrations by name &rarr; what they collectively show.</p>
+  <p class="annot annot-blue">Try: <em>"I'm a data technician in [team] at [organisation]. My portfolio is structured by KSB &mdash; each chapter covers one. The illustrations I'm most likely to talk about today are [story 1], [story 2] and [story 3]. Between them they cover most of the four content areas."</em></p>
+
+  <h3 class="sub">Q2 &mdash; Which piece of work are you most proud of, and why?</h3>
+  <p><strong>The shape:</strong> pick one anchor story &rarr; name what made it hard &rarr; name the result &rarr; land on what it taught you about the work, not about yourself.</p>
+
+  <h3 class="sub">Q3 &mdash; What's one thing in your portfolio you'd change now?</h3>
+  <p><strong>The shape:</strong> pick something specific &rarr; show thinking that's developed since you wrote it. This scores particularly well at distinction level &mdash; it <em>evaluates</em> your own work, which is what D2 asks for.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>The word <em>portfolio</em> should appear in the first 30 seconds of your opening answer &mdash; not vaguely, but as a concrete anchor: <em>"in my portfolio, in the K6 chapter, I described&hellip;"</em> Signals to the assessor: grounded, defensible, same page.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 14: BULLETS + TEST DRIVE + COMING UP ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">&mdash; the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>The writing is done.</strong> Phase 2 is rehearsal, not creation.</li>
+    <li><strong>The Portfolio Mining Pass.</strong> Skim, Mark, Capture, Anchor &mdash; in that order.</li>
+    <li><strong>Strong illustrations have three traits.</strong> A result, specifics, a beat-by-beat story. Two-of-three minimum.</li>
+    <li><strong>Four anchor stories, one per content area.</strong> Most discussion questions hit at least one.</li>
+    <li><strong>The assessor has the portfolio, the mapping, and the question shapes.</strong> The discussion isn't about whether you did the work.</li>
+    <li><strong>Defensible answers anchor.</strong> <em>"In my portfolio in chapter X I described&hellip;"</em> is the opening move.</li>
+    <li><strong>No bluffing.</strong> Reach for the portfolio mid-answer; never invent.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Tick each only when it's true:</p>
+
+  <ul class="checklist">
+    <li>You've completed the Mining Pass on at least half your KSB chapters.</li>
+    <li>You've marked one strongest illustration per KSB you've covered.</li>
+    <li>You've named at least one anchor story per content area.</li>
+    <li>For each anchor, you have a date, a number, and a named person.</li>
+    <li>You've said <em>"in my portfolio in chapter [KSB] I described&hellip;"</em> out loud, at least once.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &mdash; Day 11</h4>
+    <p style="margin: 0;"><strong>STARR.</strong> The answer shape for every spoken question. Five layers &mdash; <em>Situation, Task, Action, Result, Reflection</em>. Tomorrow we take the anchor stories you marked today and walk each one through STARR until the cadence feels natural. The only new technique you need for AM2 &mdash; learned once, used every day after.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 14pt; font-size: 14pt;">that's Day 10 done &mdash; the heavy lifting is already behind you.</p>
+
+</section>
+
+</body>
+</html>

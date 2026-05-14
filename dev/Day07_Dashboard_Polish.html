@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 07 — Dashboard Polish (Head First style)</title>
+<style>
+  /* ---------- Page setup ---------- */
+  @page {
+    size: 8.5in 11in;
+    margin: 0.65in 0.65in 0.75in 0.65in;
+    @bottom-left { content: "Chapter 7"; font-family: Lato; font-size: 9pt; color: #555; }
+    @bottom-right { content: "you are here  " counter(page); font-family: Lato; font-style: italic; font-size: 9.5pt; color: #555; }
+  }
+  @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Lato, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  p { margin: 0 0 8pt 0; }
+
+  /* ---------- Common page ---------- */
+  .page { page-break-after: always; position: relative; padding-top: 4pt; }
+  .page:last-child { page-break-after: auto; }
+  .page.illustration { padding-top: 4pt; }
+  .page.illustration .section { font-size: 26pt; }
+
+  /* ---------- Chapter opener ---------- */
+  .opener-num {
+    font-family: Poppins, sans-serif;
+    font-weight: 900;
+    font-size: 84pt;
+    color: #c0392b;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+  .opener-tag {
+    font-family: Lato, sans-serif; font-weight: 400; font-size: 10pt;
+    color: #888; text-transform: lowercase; letter-spacing: 0.15em;
+    border-top: 2px solid #1a1a1a; padding-top: 4pt; margin-top: 6pt;
+  }
+  .opener-title {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 44pt; line-height: 1.0; margin: 8pt 0 0 0;
+    color: #1a1a1a; letter-spacing: -0.025em;
+  }
+  .opener-subtitle {
+    font-family: Lato, sans-serif; font-weight: 300;
+    font-size: 18pt; color: #555;
+    margin: 6pt 0 14pt 0;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .opener-lead { font-size: 11.5pt; line-height: 1.55; max-width: 5in; }
+  .opener-lead strong { background: #fff2a8; padding: 0 2pt; }
+
+  /* ---------- Section headings ---------- */
+  h2.section {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; margin: 16pt 0 4pt 0; color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+  .section-tag {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #888; margin-bottom: 6pt;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    display: inline-block;
+  }
+  h3.sub {
+    font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 13pt; margin: 14pt 0 4pt 0;
+  }
+
+  /* ---------- Speech bubbles ---------- */
+  .bubble {
+    position: relative; display: inline-block;
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 14pt;
+    padding: 9pt 13pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45; max-width: 2.6in;
+  }
+  .bubble.right::after, .bubble.right::before {
+    content: ""; position: absolute; right: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-left-color: #1a1a1a;
+  }
+  .bubble.right::after { right: -13pt; border-left-color: #fff; }
+  .bubble.left::after, .bubble.left::before {
+    content: ""; position: absolute; left: -16pt; top: 18pt;
+    border: 8pt solid transparent; border-right-color: #1a1a1a;
+  }
+  .bubble.left::after { left: -13pt; border-right-color: #fff; }
+  .bubble.bot::after, .bubble.bot::before {
+    content: ""; position: absolute; left: 24pt; bottom: -16pt;
+    border: 8pt solid transparent; border-top-color: #1a1a1a;
+  }
+  .bubble.bot::after { bottom: -13pt; border-top-color: #fff; }
+
+  /* Thought bubble */
+  .thought {
+    background: #fff; border: 1.6pt solid #1a1a1a; border-radius: 30pt;
+    padding: 9pt 14pt;
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10.5pt; line-height: 1.45;
+    display: inline-block; max-width: 2.8in;
+  }
+
+  /* ---------- Margin annotation ---------- */
+  .annot {
+    font-family: Lato, sans-serif; font-weight: 400;
+    font-size: 10pt; color: #c0392b; line-height: 1.45;
+  }
+  .annot-blue { color: #1e6091; }
+
+  /* ---------- Sharpen Your Pencil ---------- */
+  .pencil {
+    border: 1.6pt solid #1a1a1a; padding: 20pt 26pt 20pt 72pt;
+    margin: 16pt 0; position: relative; background: #fcfaf2;
+    border-radius: 3pt;
+  }
+  .pencil .pencil-icon {
+    position: absolute; left: 20pt; top: 18pt;
+    width: 36pt; height: 36pt;
+  }
+  .pencil h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 13pt; margin: 0 0 6pt 0; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pencil p { font-size: 11pt; }
+  .pencil h4 small {
+    font-family: Lato, sans-serif;
+    font-weight: 400; text-transform: none;
+    font-size: 11pt; color: #c0392b; margin-left: 8pt;
+  }
+  .pencil-question { margin: 10pt 0 0 0; font-size: 11pt; font-weight: 400; }
+  .pencil-lines { margin: 4pt 0 0 0; }
+  .pencil-lines .line {
+    display: block;
+    border-bottom: 1pt dashed #888;
+    height: 22pt;
+    margin-bottom: 0;
+  }
+
+  /* ---------- There are no Dumb Questions ---------- */
+  .dumb {
+    border-top: 2pt solid #1a1a1a; border-bottom: 2pt solid #1a1a1a;
+    padding: 14pt 0; margin: 16pt 0;
+  }
+  .dumb h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; margin: 0 0 12pt 0; letter-spacing: -0.01em;
+  }
+  .dumb h4 em { font-style: italic; font-weight: 700; }
+  .qa { margin: 8pt 0 12pt 0; padding-left: 24pt; position: relative; font-size: 10.5pt; line-height: 1.55; }
+  .qa .q, .qa .a {
+    position: absolute; left: 0; top: 1pt;
+    width: 16pt; height: 16pt; line-height: 16pt;
+    text-align: center;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 10pt;
+    border-radius: 2pt;
+  }
+  .qa .q { background: #1a1a1a; color: #fff; }
+  .qa .a { background: #fff; color: #1a1a1a; border: 1.4pt solid #1a1a1a; }
+  .qa.qrow { font-style: italic; }
+
+  /* ---------- Brain Power ---------- */
+  .brain {
+    display: flex; align-items: flex-start; gap: 22pt;
+    background: #fff7c2; border: 1.6pt solid #1a1a1a;
+    padding: 22pt 32pt 22pt 28pt; margin: 18pt 4pt; border-radius: 4pt;
+  }
+  .brain > div:last-child { padding-right: 8pt; }
+  .brain .icon-wrap {
+    width: 40pt; min-width: 40pt; text-align: center;
+  }
+  .brain .icon-wrap svg { width: 32pt; height: 32pt; }
+  .brain h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    margin: 0 0 6pt 0; font-size: 12pt; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brain p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- Assessor favourite callout ---------- */
+  .assessor-fav {
+    border: 1.6pt dashed #c0392b; background: #fef0ec;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  /* ---------- Show this off callout (warm, action-oriented) ---------- */
+  .show-off {
+    border: 1.6pt solid #2d8659; background: #ebf6ef;
+    padding: 14pt 18pt; margin: 14pt 0; border-radius: 4pt;
+  }
+  .show-off .badge {
+    display: inline-block; background: #2d8659; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .show-off p { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .show-off em { color: #1f5e3f; font-style: italic; }
+  .assessor-fav .badge {
+    display: inline-block; background: #c0392b; color: #fff;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 9.5pt;
+    letter-spacing: 0.1em; padding: 4pt 10pt;
+    border-radius: 2pt; margin-bottom: 8pt;
+  }
+  .assessor-fav p { margin: 0; font-size: 11pt; line-height: 1.55; }
+
+  /* ---------- True/False & Quick-fire cards ---------- */
+  .tf-card, .quick-card {
+    border: 1.6pt solid #1a1a1a; border-radius: 4pt;
+    padding: 14pt 18pt; margin: 12pt 0; background: #fff;
+    page-break-inside: avoid;
+  }
+  .quick-card { background: #f8f4e3; }
+  .tf-statement { margin: 0; font-size: 11pt; line-height: 1.55; }
+  .tf-choices {
+    margin-top: 10pt; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11pt; color: #555;
+    letter-spacing: 0.04em;
+  }
+  .quick-q {
+    margin: 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt; line-height: 1.5;
+  }
+
+  /* ---------- Test Drive ---------- */
+  .test-drive { margin: 12pt 0; padding: 0; }
+  .test-drive h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 22pt; color: #1a1a1a; margin: 0 0 4pt 0;
+    border-bottom: 2pt solid #1a1a1a; padding-bottom: 4pt;
+    letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* ---------- File card ---------- */
+  .file-card {
+    display: flex; gap: 12pt; padding: 7pt 11pt;
+    border: 1.4pt solid #1a1a1a; border-radius: 4pt;
+    margin: 6pt 0; background: #fff; align-items: stretch;
+    page-break-inside: avoid;
+  }
+  .file-card .fmt {
+    width: 58pt; min-width: 58pt; text-align: center;
+    border-right: 1.2pt dashed #888; padding-right: 8pt;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center;
+  }
+  .file-card .fmt svg { width: 24pt; height: 24pt; }
+  .file-card .fmt .ext {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 12pt; color: #c0392b; line-height: 1;
+    margin-top: 3pt;
+  }
+  .file-card .body h5 {
+    margin: 0 0 2pt 0; font-family: Poppins, sans-serif; font-weight: 700;
+    font-size: 12pt;
+  }
+  .file-card .body p { margin: 2pt 0 0 0; font-size: 10pt; line-height: 1.5; }
+  .file-card .body .watch {
+    font-family: Lato, sans-serif;
+    font-size: 9.5pt; color: #c0392b; margin-top: 5pt; display: block;
+    line-height: 1.5;
+  }
+  .file-card .body .nickname {
+    font-family: Lato, sans-serif; font-weight: 400; font-style: italic;
+    font-size: 10.5pt; color: #888; margin-left: 4pt;
+  }
+
+  /* ---------- Numbered step ---------- */
+  .step { display: flex; gap: 12pt; margin: 6pt 0; page-break-inside: avoid; }
+  .step .num {
+    width: 30pt; min-width: 30pt; height: 30pt; line-height: 26pt;
+    text-align: center; border: 2pt solid #1a1a1a; border-radius: 50%;
+    font-family: Poppins, sans-serif; font-weight: 900; font-size: 14pt;
+    background: #fff;
+  }
+  .step .body { flex: 1; }
+  .step .body h5 {
+    margin: 2pt 0 2pt 0; font-family: Poppins, sans-serif;
+    font-weight: 700; font-size: 11.5pt;
+  }
+  .step .body p { margin: 0 0 3pt 0; font-size: 10.5pt; line-height: 1.5; }
+  .step .body .narrate {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 10pt; color: #1e6091; line-height: 1.45;
+    background: #eaf2f7; padding: 4pt 9pt; border-radius: 4pt;
+    margin: 3pt 0 0 0;
+  }
+
+  /* ---------- Inline elements ---------- */
+  code, .code {
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt;
+    background: #f1efe7; padding: 0 3pt; border-radius: 2pt;
+  }
+  .hl { background: #fff2a8; padding: 0 2pt; }
+  .strike { text-decoration: line-through; color: #888; }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: flex; gap: 14pt; align-items: flex-start; }
+  .col { flex: 1; }
+  .col-narrow { width: 2.2in; min-width: 2.2in; }
+  .right { text-align: right; }
+  .center { text-align: center; }
+
+  /* ---------- Pull quote ---------- */
+  .pull {
+    font-family: Lato, sans-serif; font-weight: 300; font-style: italic;
+    font-size: 14pt; line-height: 1.45; color: #1a1a1a;
+    margin: 14pt 18pt; padding-left: 14pt;
+    border-left: 4pt solid #c0392b;
+  }
+
+  /* ---------- you are here ---------- */
+  .you-are-here {
+    font-family: Lato, sans-serif; font-style: italic;
+    font-size: 11pt; color: #888;
+    text-align: right; margin-top: 22pt;
+  }
+
+  /* ---------- Data preview ---------- */
+  .preview {
+    border: 1.4pt solid #1a1a1a; background: #fff;
+    font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt;
+    border-radius: 3pt; overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .preview .header {
+    background: #1a1a1a; color: #fff; padding: 4pt 8pt;
+    font-family: Poppins, sans-serif; font-weight: 700; font-size: 9.5pt;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .preview table { width: 100%; border-collapse: collapse; }
+  .preview th, .preview td {
+    padding: 3pt 6pt; border-bottom: 1pt dashed #ccc; text-align: left;
+    font-size: 9pt;
+  }
+  .preview th {
+    background: #f1efe7; font-weight: 700;
+    font-family: Poppins, sans-serif; font-size: 9pt;
+  }
+  .preview tr.rogue td {
+    background: #ffe2dc; font-weight: 700; color: #c0392b;
+  }
+  .preview tr.rogue td .crit {
+    background: #c0392b; color: #fff; padding: 0 4pt; border-radius: 2pt;
+  }
+
+  /* ---------- Coming up ---------- */
+  .coming-up {
+    border: 2pt dashed #1a1a1a; padding: 12pt 14pt; margin-top: 14pt;
+    background: #f8f4e3; page-break-inside: avoid;
+  }
+  .coming-up h4 {
+    font-family: Poppins, sans-serif; font-weight: 900;
+    font-size: 18pt; color: #c0392b; margin: 0 0 4pt 0;
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+
+  /* ---------- Checklist ---------- */
+  .checklist { margin: 10pt 0; padding: 0; list-style: none; }
+  .checklist li {
+    padding: 5pt 4pt 5pt 28pt; position: relative;
+    border-bottom: 1pt dashed #888; font-size: 11pt;
+  }
+  .checklist li::before {
+    content: ""; position: absolute; left: 4pt; top: 7pt;
+    width: 14pt; height: 14pt; border: 1.6pt solid #1a1a1a;
+    border-radius: 2pt; background: #fff;
+  }
+
+  /* Force key blocks not to split */
+  .file-card, .pencil, .dumb, .brain, .step, .preview,
+  .coming-up, .opener-num, .opener-title { page-break-inside: avoid; }
+</style>
+</head>
+<!-- ========== PAGE 1: CHAPTER OPENER ========== -->
+<section class="page">
+
+  <p class="opener-num">7</p>
+  <p class="opener-tag">dashboard polish</p>
+  <h1 class="opener-title">Make it Look the Part</h1>
+  <p class="opener-subtitle">turn a working sheet into a dashboard Priya is happy to be seen with</p>
+
+  <div class="row" style="margin-top: 18pt;">
+    <div class="col">
+      <p class="opener-lead">
+        Yesterday you built the analytical layer — pivots that answer
+        questions, charts that visualise them, slicers that filter the lot
+        with one click. The numbers are right. The layout, frankly, is not.
+        Today is the craft day.
+      </p>
+      <p class="opener-lead">
+        Number formatting (so 0.31196 reads as <code>31.2%</code>). The KPI
+        tile (one big number, one small label, Merge &amp; Centre). Bucket
+        grouping (so tenure becomes <em>0-6 months / 6-12 / 12-24 / 24+</em>).
+        Colour discipline (three colours, applied consistently). Chart polish
+        (remove the noise, leave the signal). And the layout that ties it all
+        together — <strong>the Polish Pyramid</strong>.
+      </p>
+      <p class="opener-lead">
+        And one bigger idea worth pausing on first: what you've built across
+        the week isn't just <em>analysis</em>. It's <em>automation</em>. We'll start
+        there.
+      </p>
+    </div>
+    <div class="col-narrow" style="padding-top: 14pt;">
+      <div class="bubble left">
+        Working sheet vs polished dashboard — what's the actual difference?
+      </div>
+      <p class="annot" style="margin-top: 8pt; text-align: right;">
+        — you, comparing your sheet to a professional one
+      </p>
+      <div class="thought" style="margin-top: 22pt;">
+        Mostly: number formatting, colour discipline, and an eye for layout.
+      </div>
+      <p class="annot annot-blue" style="margin-top: 6pt;">
+        all teachable. all today.
+      </p>
+    </div>
+  </div>
+
+  <div class="brain" style="margin-top: 18pt;">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 14 c-7 0 -12 5 -12 11 c0 4 2 7 4 9 c-3 2 -5 6 -5 10 c0 7 6 12 13 12 c2 0 4 -0.5 6 -1 v-41 c-2 -0.6 -4 -1 -6 -1 z"/>
+          <path d="M42 14 c7 0 12 5 12 11 c0 4 -2 7 -4 9 c3 2 5 6 5 10 c0 7 -6 12 -13 12 c-2 0 -4 -0.5 -6 -1 v-41 c2 -0.6 4 -1 6 -1 z"/>
+          <path d="M32 14 v41"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <h4>Brain Power</h4>
+      <p>You've seen good dashboards and bad ones. Think of one of each. What's the <em>single</em> visual thing that made the bad one look unprofessional? Note it down. Odds are this chapter fixes it.</p>
+    </div>
+  </div>
+
+  <p class="you-are-here">turn over — and reframe what you've built →</p>
+
+</section>
+
+
+<!-- ========== PAGE 2: SATURDAY MORNING (illustration breather) ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">day 7 · 10:00 a.m.</p>
+  <h2 class="section">The craft day</h2>
+  <p style="max-width: 5.5in;">Pivots and charts are on the sheet. Numbers are right. Today the work is making it look like the kind of dashboard a senior leader is happy to share in a meeting.</p>
+
+  <svg viewBox="0 0 720 460" width="100%" style="display:block; margin: 12pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- desk surface -->
+    <rect x="20" y="360" width="680" height="80" fill="#efe7d2" stroke="#1a1a1a" stroke-width="2"/>
+    <line x1="20" y1="380" x2="700" y2="380" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+
+    <!-- Post-it top-left: polish checklist -->
+    <g transform="translate(38,30) rotate(-3)">
+      <rect x="0" y="0" width="150" height="138" fill="#fff7c2" stroke="#1a1a1a" stroke-width="1.4"/>
+      <text x="10" y="22" font-family="Lato" font-size="11" font-weight="700">POLISH CHECKLIST</text>
+      <text x="10" y="42" font-family="Lato" font-size="9">- number formats</text>
+      <text x="10" y="56" font-family="Lato" font-size="9">- KPI tiles</text>
+      <text x="10" y="70" font-family="Lato" font-size="9">- bucket grouping</text>
+      <text x="10" y="84" font-family="Lato" font-size="9">- colour discipline</text>
+      <text x="10" y="98" font-family="Lato" font-size="9">- chart polish</text>
+      <line x1="10" y1="106" x2="140" y2="106" stroke="#888" stroke-width="1" stroke-dasharray="2 2"/>
+      <text x="10" y="124" font-family="Lato" font-size="9" font-style="italic">Polish Pyramid</text>
+      <text x="10" y="134" font-family="Lato" font-size="9" font-style="italic">ties it together</text>
+    </g>
+
+    <!-- Laptop showing a "before vs after" of the dashboard -->
+    <g>
+      <rect x="220" y="190" width="280" height="170" rx="6" ry="6" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+      <rect x="230" y="200" width="260" height="22" fill="#107c41"/>
+      <text x="360" y="216" text-anchor="middle" font-family="Lato" font-size="11" fill="#fff" font-weight="700">StreamWave — Q3/4 Dashboard</text>
+
+      <!-- KPI strip -->
+      <rect x="234" y="226" width="60" height="32" fill="#fff7c2" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="264" y="240" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="900">10,638</text>
+      <text x="264" y="252" text-anchor="middle" font-family="Lato" font-size="6" fill="#555">sessions</text>
+
+      <rect x="298" y="226" width="60" height="32" fill="#fef0ec" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="328" y="240" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="900" fill="#c0392b">31.2%</text>
+      <text x="328" y="252" text-anchor="middle" font-family="Lato" font-size="6" fill="#555">churn rate</text>
+
+      <rect x="362" y="226" width="60" height="32" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="392" y="240" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="900" fill="#2d8659">+18%</text>
+      <text x="392" y="252" text-anchor="middle" font-family="Lato" font-size="6" fill="#555">YoY hours</text>
+
+      <rect x="426" y="226" width="60" height="32" fill="#dfeaf2" stroke="#1a1a1a" stroke-width="0.6"/>
+      <text x="456" y="240" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="900" fill="#1e6091">38</text>
+      <text x="456" y="252" text-anchor="middle" font-family="Lato" font-size="6" fill="#555">med. session</text>
+
+      <!-- Charts -->
+      <rect x="234" y="266" width="120" height="86" fill="#fff" stroke="#888" stroke-width="0.4"/>
+      <text x="240" y="277" font-family="Poppins,sans-serif" font-size="7" font-weight="700">Hours by region</text>
+      <g fill="#107c41">
+        <rect x="244" y="320" width="10" height="20"/>
+        <rect x="258" y="305" width="10" height="35"/>
+        <rect x="272" y="312" width="10" height="28"/>
+        <rect x="286" y="290" width="10" height="50"/>
+        <rect x="300" y="298" width="10" height="42"/>
+        <rect x="314" y="316" width="10" height="24"/>
+      </g>
+
+      <rect x="358" y="266" width="120" height="86" fill="#fff" stroke="#888" stroke-width="0.4"/>
+      <text x="364" y="277" font-family="Poppins,sans-serif" font-size="7" font-weight="700">Tenure bands</text>
+      <g fill="#1e6091">
+        <rect x="370" y="320" width="22" height="20"/>
+        <rect x="396" y="300" width="22" height="40"/>
+        <rect x="422" y="295" width="22" height="45"/>
+        <rect x="448" y="310" width="22" height="30"/>
+      </g>
+
+      <!-- laptop base -->
+      <path d="M200 360 L520 360 L510 378 L210 378 Z" fill="#bfb59c" stroke="#1a1a1a" stroke-width="2"/>
+    </g>
+
+    <!-- Priya speech bubble top-right -->
+    <g transform="translate(540,40)">
+      <path d="M0 12 q0 -12 12 -12 H150 q12 0 12 12 v60 q0 12 -12 12 H68 l-12 16 l-2 -16 H12 q-12 0 -12 -12 z"
+        fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="16" y="24" font-family="Lato" font-size="10" font-weight="700">Priya:</text>
+      <text x="16" y="42" font-family="Lato" font-style="italic" font-size="10">"This is going to</text>
+      <text x="16" y="56" font-family="Lato" font-style="italic" font-size="10">land in the exec</text>
+      <text x="16" y="70" font-family="Lato" font-style="italic" font-size="10">meeting. Make it</text>
+      <text x="16" y="84" font-family="Lato" font-style="italic" font-size="10">look professional."</text>
+    </g>
+
+    <!-- DAY 7 coffee mug bottom-right -->
+    <g transform="translate(580,290)">
+      <path d="M0 0 H58 V52 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+      <path d="M58 12 q14 0 14 16 q0 16 -14 16" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="29" y="34" text-anchor="middle" font-family="Lato" font-size="10" font-weight="700">DAY 7</text>
+      <path d="M14 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+      <path d="M30 -4 q-4 -10 4 -16" fill="none" stroke="#888" stroke-width="1.4"/>
+      <path d="M46 -4 q-4 -8 4 -14" fill="none" stroke="#888" stroke-width="1.4"/>
+    </g>
+  </svg>
+
+</section>
+
+
+<!-- ========== PAGE 3: AUTOMATION ========== -->
+<section class="page">
+
+  <p class="section-tag">stand back for a second and see what you've actually built</p>
+  <h2 class="section">It's not a report — it's automation</h2>
+
+  <p>Before we dive into formatting, pause on what's now sitting on your screen. You've been calling it "a dashboard" or "the analysis". A senior leader would call it something else: <strong>an automated reporting pipeline</strong>. Two pieces of automation, working together.</p>
+
+  <h3 class="sub">Automation #1 — Power Query &amp; Refresh</h3>
+  <p>Every cleaning step, every merge, every key standardisation lives as a <em>recorded transformation</em> in Power Query. When next month's data lands, you don't redo the work — you press <strong>Data → Refresh All</strong> and the entire pipeline reruns in under thirty seconds. That's the automation of the <em>data layer</em>.</p>
+
+  <h3 class="sub">Automation #2 — PivotTables</h3>
+  <p>A PivotTable is not a one-off summary. It's a <em>configured aggregation</em> that recalculates whenever its source data changes. You set up "sessions by region by plan type" once; from that point onwards, the PivotTable answers that question forever — including next month, next quarter, next year. That's the automation of the <em>analytical layer</em>.</p>
+
+  <h3 class="sub">Together they form the toolkit</h3>
+  <p>The two pieces hand off to each other on every Refresh. Source files → Power Query reruns → Tables update → PivotTables rebuild → PivotCharts redraw → KPI cells recalculate. One button press; the whole stack stays current. That's what makes the work you've done this week <strong>recurring value</strong> rather than a one-time deliverable.</p>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>Asked <em>"what's the difference between what you've built and a normal Excel report?"</em>, the one-sentence answer: <em>"This is an automated pipeline, not a one-off report. Power Query Refresh keeps the data layer current and PivotTables keep the analytical layer current. Both run on a single button press — so next month the same dashboard reflects next month's data with zero rework."</em> That reframe — from "report" to "automated pipeline" — is distinction-band language.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 4: NUMBER FORMATTING ========== -->
+<section class="page">
+
+  <p class="section-tag">make numbers look like numbers</p>
+  <h2 class="section">Number formatting</h2>
+
+  <p>A churn rate that reads <code>0.31196</code> isn't a churn rate — it's a maths error waiting to happen. Number formatting is what turns the raw value into something a human can scan in half a second.</p>
+
+  <h3 class="sub">The dialog you'll use most</h3>
+  <p>Select the cell(s) → <strong>Ctrl+1</strong> (or right-click → Format Cells) → <strong>Number tab</strong>. Pick the category, set decimal places, tick the thousands separator if useful. Click OK.</p>
+
+  <h3 class="sub">The formats you'll need today</h3>
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 8pt; text-align:left;">Raw</th>
+      <th style="padding:5pt 8pt; text-align:left;">Format</th>
+      <th style="padding:5pt 8pt; text-align:left;">Displays as</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><code>0.31196</code></td>
+      <td style="padding:4pt 8pt;">Percentage, 1 decimal</td>
+      <td style="padding:4pt 8pt;"><code>31.2%</code></td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><code>10638</code></td>
+      <td style="padding:4pt 8pt;">Number, thousands sep</td>
+      <td style="padding:4pt 8pt;"><code>10,638</code></td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><code>0.184</code></td>
+      <td style="padding:4pt 8pt;">% with +/- sign</td>
+      <td style="padding:4pt 8pt;"><code>+18%</code></td>
+    </tr>
+    <tr>
+      <td style="padding:4pt 8pt;"><code>15/09/2024</code></td>
+      <td style="padding:4pt 8pt;">Date <code>dd mmm yyyy</code></td>
+      <td style="padding:4pt 8pt;"><code>15 Sep 2024</code></td>
+    </tr>
+  </table>
+
+  <h3 class="sub">Custom number formats — useful tricks</h3>
+  <p>In Format Cells, pick <strong>Custom</strong>. The format string controls how the number renders. The semicolons separate the formats for positive / negative / zero. Useful patterns:</p>
+  <ul style="margin: 6pt 0 10pt 0;">
+    <li><code>0.0%</code> — percentage to one decimal.</li>
+    <li><code>#,##0</code> — thousands separator, no decimals.</li>
+    <li><code>[Red]-0%;[Green]+0%</code> — negatives red, positives green. Great for variance KPIs.</li>
+    <li><code>#,##0,"k"</code> — divides by 1,000 and appends "k". <code>10638</code> renders as <code>11k</code>.</li>
+  </ul>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>When you apply a custom format, narrate it: <em>"I'm formatting variance as red for negative, green for positive — so Priya knows at a glance which direction it moved without reading the number first."</em> Format choices are <em>design</em> choices; saying that out loud is what marks the difference between a data tech and a spreadsheet user.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 5: THE KPI TILE — MERGE & CENTRE ========== -->
+<section class="page">
+
+  <p class="section-tag">one big number, one small label</p>
+  <h2 class="section">The KPI tile</h2>
+
+  <p>The four boxes across the top of a dashboard — the ones with a big number and a small label underneath — are the first thing the eye lands on. They're called <em>KPI tiles</em>, and they're built from one Excel feature: <strong>Merge &amp; Centre</strong>.</p>
+
+  <h3 class="sub">Build a single KPI tile — step by step</h3>
+  <ol style="margin: 6pt 0 10pt 0; padding-left: 22pt;">
+    <li>Pick a clean area of your sheet — say cells <code>B4:D7</code>. Four columns wide, four rows tall (gives you room for both the number and the label).</li>
+    <li>Select <code>B4:D5</code> (the top half, two rows). <strong>Home → Merge &amp; Center</strong>. The three cells become one big cell.</li>
+    <li>In that merged cell, type a formula that returns your KPI value. e.g. <code>=COUNTA(tblSubs[subscriber_id])</code> for total subscribers.</li>
+    <li>Format the cell: <strong>Home → Font Size 28</strong>, <strong>Bold</strong>, set the number format you want (e.g. thousands separator).</li>
+    <li>Select <code>B6:D7</code> (the bottom half). Merge &amp; Center again. Type the label — e.g. <em>total subscribers</em> — at font size 10, light grey.</li>
+    <li>Select the whole <code>B4:D7</code> block. Apply a fill colour (light yellow for headline KPIs, light red for warnings, light green for positives). Add a thin border (Home → Borders → Outside Borders).</li>
+  </ol>
+
+  <p>Repeat across the top of the sheet for each KPI. Four tiles is the usual upper limit before they start fighting for attention.</p>
+
+  <div class="brain">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="17" fill="none" stroke="#1a1a1a" stroke-width="2.4"/>
+        <line x1="20" y1="8" x2="20" y2="24" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="20" cy="30" r="2.2" fill="#1a1a1a"/>
+      </svg>
+    </div>
+    <div>
+      <h4>Don't Merge &amp; Centre inside a Table</h4>
+      <p>Merge &amp; Centre breaks sorting and filtering inside an Excel Table — the structure expects one value per cell. Only use Merge &amp; Centre on the <em>dashboard sheet</em>, where your KPI tiles live, never on the Tables themselves. Keep the data structures clean and the presentation layer separate.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 6: BUCKET GROUPING IN PIVOTTABLES ========== -->
+<section class="page">
+
+  <p class="section-tag">turn a continuous number into tidy bands</p>
+  <h2 class="section">Bucket grouping</h2>
+
+  <p>On Day 6 you grouped dates by month and quarter — that's the date version of bucket grouping. Power Query's PivotTable can do the same thing with any <em>numeric</em> field: group a continuous value into bands. Hugely useful for segmentation.</p>
+
+  <h3 class="sub">A worked example — tenure bands</h3>
+  <p><code>tenure_months</code> is currently a number from 0 to about 70. As a PivotTable row label, that's 70 distinct rows — useless for a chart. Bucket it into bands:</p>
+
+  <ol style="margin: 6pt 0 10pt 0; padding-left: 22pt;">
+    <li>Drop <code>tenure_months</code> into the <strong>Rows</strong> drop zone.</li>
+    <li>Right-click any value in the row labels → <strong>Group…</strong></li>
+    <li>In the Grouping dialog set <strong>Starting at:</strong> 0, <strong>Ending at:</strong> 72, <strong>By:</strong> 6. Click OK.</li>
+    <li>The pivot collapses from 70 rows to 12 — each labelled <code>0-5</code>, <code>6-11</code>, <code>12-17</code> etc. Rename the row label to something readable like <code>tenure_band</code>.</li>
+  </ol>
+
+  <h3 class="sub">Custom buckets — when the dialog isn't flexible enough</h3>
+  <p>The Group dialog assumes equal-width buckets. For unequal bands (e.g. <em>0-6 / 6-12 / 12-24 / 24+</em>), build a helper column on the Subscribers Table first using a Conditional Column back in Power Query, or with <code>=IFS</code> in Excel:</p>
+  <p style="text-align: center; font-family: 'DejaVu Sans Mono', monospace; font-size: 10pt; margin: 4pt 0;">=IFS([@tenure_months]&lt;6, "0-6 months", [@tenure_months]&lt;12, "6-12 months", [@tenure_months]&lt;24, "12-24 months", TRUE, "24+ months")</p>
+  <p>Then drag that new column into the pivot's Rows instead of the raw <code>tenure_months</code>. PivotTables sort alphabetically by default — for the order above, use a "Sort By" column or just live with the alphabetical order (<em>0-6, 12-24, 24+, 6-12</em>) and rename for human eyes.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>After bucket-grouping <code>tenure_months</code>, narrate: <em>"I bucketed tenure into 6-month bands. The raw column had 70 distinct values — useless for a chart. Twelve bands shows the pattern at a glance and matches how Priya talks about tenure cohorts."</em> Choosing the bucket size <em>is</em> the analysis decision.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 7: COLOUR DISCIPLINE ========== -->
+<section class="page">
+
+  <p class="section-tag">pick three colours, stick to them</p>
+  <h2 class="section">Colour discipline</h2>
+
+  <p>The number-one tell of a homemade dashboard is too many colours. The number-one tell of a professional one is restraint. Three or four colours, used <em>consistently</em>, will beat a rainbow every time.</p>
+
+  <h3 class="sub">Pick a palette and define what each colour means</h3>
+  <p>Three or four hex codes, used semantically (the same colour always means the same thing). For an analytical dashboard:</p>
+
+  <table style="width:100%; border-collapse:collapse; margin: 8pt 0; font-size: 10.5pt;">
+    <tr style="background:#1a1a1a; color:#fff; font-family:Poppins, sans-serif; font-weight:700;">
+      <th style="padding:5pt 8pt; text-align:left;">Colour</th>
+      <th style="padding:5pt 8pt; text-align:left;">Meaning</th>
+      <th style="padding:5pt 8pt; text-align:left;">Where you'd use it</th>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><span style="display:inline-block; width:12pt; height:12pt; background:#1e6091; vertical-align:middle;"></span> &nbsp; Dark blue</td>
+      <td style="padding:4pt 8pt;">Neutral / primary data</td>
+      <td style="padding:4pt 8pt;">Default chart bars, main KPI</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><span style="display:inline-block; width:12pt; height:12pt; background:#2d8659; vertical-align:middle;"></span> &nbsp; Green</td>
+      <td style="padding:4pt 8pt;">Positive / good direction</td>
+      <td style="padding:4pt 8pt;">YoY growth, retention</td>
+    </tr>
+    <tr style="border-bottom:1pt dashed #ccc;">
+      <td style="padding:4pt 8pt;"><span style="display:inline-block; width:12pt; height:12pt; background:#c0392b; vertical-align:middle;"></span> &nbsp; Red</td>
+      <td style="padding:4pt 8pt;">Negative / warning</td>
+      <td style="padding:4pt 8pt;">Churn, errors, things to fix</td>
+    </tr>
+    <tr>
+      <td style="padding:4pt 8pt;"><span style="display:inline-block; width:12pt; height:12pt; background:#888; vertical-align:middle;"></span> &nbsp; Grey</td>
+      <td style="padding:4pt 8pt;">Background / context</td>
+      <td style="padding:4pt 8pt;">Gridlines, labels, supporting text</td>
+    </tr>
+  </table>
+
+  <h3 class="sub">Two warnings worth knowing</h3>
+  <ul style="margin: 6pt 0 10pt 0;">
+    <li><strong>Colour-blindness.</strong> About 8% of men can't distinguish red and green reliably. Never use red and green as the <em>only</em> signal. Pair colour with a shape, icon, or text label so the dashboard still reads in greyscale.</li>
+    <li><strong>Brand vs analytical.</strong> If StreamWave had brand colours (a specific blue, a specific orange), use them for the dashboard <em>title and chrome</em> but stay disciplined with red/green/grey for the data layer. The brand stays consistent; the data stays readable.</li>
+  </ul>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>Asked <em>"why these colours?"</em>, the one-sentence answer: <em>"Three semantic colours — dark blue for neutral data, green for positive, red for negative. Always the same colour for the same meaning across the whole dashboard. Anything else would force Priya to learn a colour code that doesn't exist anywhere else."</em></p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 8: CONDITIONAL FORMATTING IN DEPTH ========== -->
+<section class="page">
+
+  <p class="section-tag">at-a-glance signals, applied properly</p>
+  <h2 class="section">Conditional formatting in depth</h2>
+
+  <p>Conditional formatting was introduced briefly on Day 6. Today is the proper version — when each of the four families is the right tool, with examples for the StreamWave dashboard.</p>
+
+  <h3 class="sub">Data Bars — for ranked summary tables</h3>
+  <p>Tiny bars inside cells, length proportional to the value. Best on a single-column summary table where the eye wants to compare lengths. <strong>Home → Conditional Formatting → Data Bars → Gradient Fill</strong>. Pick a colour matching your palette. <em>Use for:</em> top-10 most-watched titles (Hours column with data bars makes the ranking obvious without a chart).</p>
+
+  <h3 class="sub">Colour Scales — for matrix-style pivots</h3>
+  <p>Heat-map gradient across a 2D range. Low values one colour, high values another. <strong>Conditional Formatting → Color Scales</strong>. <em>Use for:</em> a PivotTable showing churn rate by region × plan_type — the cells light up where churn is worst.</p>
+
+  <h3 class="sub">Icon Sets — sparingly</h3>
+  <p>Traffic lights, arrows, flags. Use icon sets when the categorical meaning is more important than the precise value. <strong>Conditional Formatting → Icon Sets</strong>. <em>Use for:</em> month-over-month trend column (up arrow / flat / down arrow). Don't apply icons to every column — they get noisy fast.</p>
+
+  <h3 class="sub">Highlight Cells Rules — for thresholds</h3>
+  <p>Apply a colour when a cell crosses a threshold. <strong>Conditional Formatting → Highlight Cells Rules → Greater Than…</strong> (or any of the other comparisons). <em>Use for:</em> the churn rate KPI cell — turns red if it climbs above 30%, automatically, on every Refresh.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>When demonstrating conditional formatting, point at the <em>auto-update</em> behaviour: <em>"This colour rule lives on the cell, not on the value. So when next month's data comes in and the churn rate changes, the colour follows automatically — same Refresh, same one button press, the dashboard is still self-maintaining."</em> The link between Refresh and conditional formatting is what makes it automation, not decoration.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 9: SLICER STYLING ========== -->
+<section class="page">
+
+  <p class="section-tag">make the slicers look intentional, not bolted on</p>
+  <h2 class="section">Slicer styling</h2>
+
+  <p>Default slicers are functional but ugly — chunky buttons, mismatched colours, awkward spacing. Three settings and they go from "Excel out of the box" to "part of the dashboard."</p>
+
+  <h3 class="sub">Slicer settings — buttons that fit</h3>
+  <ol style="margin: 6pt 0 10pt 0; padding-left: 22pt;">
+    <li>Click the slicer to select it.</li>
+    <li><strong>Slicer → Buttons → Columns</strong> (on the ribbon). Increase from 1 to 2 or 3 if your slicer has many items — fits more in the same vertical space.</li>
+    <li><strong>Slicer → Buttons → Height</strong> and <strong>Width</strong>. Set both to round numbers (e.g. 0.3" height, 1.0" width) so the buttons line up cleanly.</li>
+    <li><strong>Slicer → Size</strong>. Manually set the slicer's overall height and width so it fits the slot in your layout — typically 1.5" wide, however tall it needs to be.</li>
+  </ol>
+
+  <h3 class="sub">Slicer styles — match your palette</h3>
+  <p>The slicer's colour scheme is on the Slicer ribbon, under <strong>Slicer Styles</strong> (a gallery of small previews). Pick one that uses your dashboard palette — the dark-blue default usually works well, or duplicate a style and recolour it. To set a custom colour: right-click the style → Duplicate → adjust the fill/border colours → save with a new name.</p>
+
+  <h3 class="sub">Connect to multiple PivotTables</h3>
+  <p>Already mentioned on Day 6 but worth repeating because it's the slicer's superpower: <strong>right-click slicer → Report Connections…</strong> → tick every PivotTable you want it to filter. One click on the slicer now filters the whole dashboard.</p>
+
+  <div class="show-off">
+    <div class="badge">SHOW THIS OFF</div>
+    <p>When you size the slicer, narrate the choice: <em>"I set the slicer to two columns and reduced the button height — fits eleven regions in the same space the default takes for four. Layout is part of the analysis."</em></p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 10: CHART POLISH ========== -->
+<section class="page">
+
+  <p class="section-tag">remove the noise, leave the signal</p>
+  <h2 class="section">Chart polish</h2>
+
+  <p>A default Excel chart contains four pieces of <em>chart junk</em> — visual stuff that adds nothing and distracts. Removing them takes one minute per chart and lifts the dashboard out of the spreadsheet-looking-thing category.</p>
+
+  <h3 class="sub">The four bits of junk to remove</h3>
+
+  <ol style="margin: 6pt 0 10pt 0; padding-left: 22pt;">
+    <li><strong>Unnecessary gridlines.</strong> Click any horizontal gridline → press Delete. Almost no chart needs horizontal gridlines. Vertical ones are even rarer.</li>
+    <li><strong>Redundant axes.</strong> If you've added data labels to your bars, the value axis is now redundant — delete it. Same chart, less ink, easier to read.</li>
+    <li><strong>The default chart title.</strong> Excel adds "Chart Title" — click it, type the actual title (e.g. <em>"Hours by region — Q3 2024"</em>). Or delete it entirely if your dashboard has a higher-level title above the chart.</li>
+    <li><strong>The default colour scheme.</strong> Click any bar → format the data series → fill colour = your palette's blue (or green/red where semantic). Apply consistently across all charts. Greatest single change in dashboard polish.</li>
+  </ol>
+
+  <h3 class="sub">What to add — sparingly</h3>
+  <ul style="margin: 6pt 0 10pt 0;">
+    <li><strong>Data labels</strong> on the bars/columns themselves — eliminates the need for the value axis.</li>
+    <li><strong>A short caption</strong> beneath the chart in a 9pt grey font — gives context without crowding the title.</li>
+    <li><strong>Reference lines</strong> (e.g. industry average, prior year) — adds meaning to the comparison.</li>
+  </ul>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>When demonstrating chart polish, narrate the <em>removal</em>: <em>"I deleted the gridlines and the value axis because the data labels make them redundant. Same data, less ink, the comparison is what stands out."</em> Less is more in chart design — saying that out loud is the distinction-band move.</p>
+  </div>
+
+</section>
+
+
+<!-- ========== PAGE 11: HALFWAY HOUSE ========== -->
+<section class="page">
+
+  <p class="section-tag">a quick check — about 3 minutes</p>
+  <h2 class="section">Halfway House</h2>
+
+  <p>Four scenarios. Pick the right polish move for each. Answers below the line; wrong answer = the page you should re-read.</p>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>1.</strong> Your churn rate cell shows <code>0.31196</code>. You want it to read <code>31.2%</code>.</p>
+    <p class="tf-choices">☐ Merge &amp; Centre &nbsp; ☐ Number Format → Percentage &nbsp; ☐ Conditional Formatting &nbsp; ☐ Bucket Group</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>2.</strong> The tenure_months column has 70 distinct values. You want a chart with about 12 tidy bands.</p>
+    <p class="tf-choices">☐ Merge &amp; Centre &nbsp; ☐ Number Format &nbsp; ☐ Conditional Formatting &nbsp; ☐ Bucket Group</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>3.</strong> You want the churn-rate KPI cell to automatically turn red when the value exceeds 30%.</p>
+    <p class="tf-choices">☐ Merge &amp; Centre &nbsp; ☐ Number Format &nbsp; ☐ Conditional Formatting → Highlight Cells &nbsp; ☐ Slicer Style</p>
+  </div>
+
+  <div class="tf-card" style="padding: 9pt 14pt; margin: 7pt 0;">
+    <p class="tf-statement"><strong>4.</strong> The four KPI tiles at the top of the dashboard need to look uniform — one big number, one small label each.</p>
+    <p class="tf-choices">☐ Merge &amp; Centre &nbsp; ☐ Bucket Group &nbsp; ☐ Icon Set &nbsp; ☐ Conditional Formatting</p>
+  </div>
+
+  <h3 class="sub" style="margin-top: 14pt;">Answers — check yourself</h3>
+  <p style="margin: 4pt 0 6pt 0;"><strong>1. Number Format → Percentage.</strong> Ctrl+1, Percentage, 1 decimal place. Done.</p>
+  <p style="margin: 0 0 6pt 0;"><strong>2. Bucket Group.</strong> Right-click any value in the row labels → Group → set Starting/Ending/By.</p>
+  <p style="margin: 0 0 6pt 0;"><strong>3. Conditional Formatting → Highlight Cells.</strong> Greater than 0.30 → Light Red Fill. Updates on every Refresh automatically.</p>
+  <p style="margin: 0;"><strong>4. Merge &amp; Centre.</strong> Pair of merged regions per tile — top for the number, bottom for the label — same shape across all four.</p>
+
+</section>
+
+
+<!-- ========== PAGE 12: THE POLISH PYRAMID ========== -->
+<section class="page illustration">
+
+  <p class="section-tag">the named layout device</p>
+  <h2 class="section">The Polish Pyramid</h2>
+
+  <p>Four layers, top to bottom. Same shape on every dashboard you'll build for the rest of your career. The reader's eye lands on the top-left and works outward; the layout has to match that path.</p>
+
+  <svg viewBox="0 0 720 360" width="100%" style="display:block; margin: 14pt auto;" xmlns="http://www.w3.org/2000/svg">
+    <!-- pyramid layers -->
+    <g>
+      <!-- Layer 1 — KPIs (top, biggest) -->
+      <rect x="60" y="40" width="600" height="60" fill="#fff7c2" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="80" y="62" font-family="Poppins,sans-serif" font-size="14" font-weight="900">1. KPIs</text>
+      <text x="80" y="80" font-family="Lato" font-size="10" fill="#555">Big numbers in tiles across the top. Eye lands here first. Three or four tiles maximum.</text>
+      <text x="630" y="76" text-anchor="end" font-family="Lato" font-style="italic" font-size="10" fill="#888">Merge &amp; Centre</text>
+
+      <!-- Layer 2 — Charts (middle) -->
+      <rect x="60" y="110" width="450" height="100" fill="#dfeaf2" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="80" y="132" font-family="Poppins,sans-serif" font-size="14" font-weight="900">2. Charts</text>
+      <text x="80" y="150" font-family="Lato" font-size="10" fill="#555">PivotCharts and regular charts. Two to four maximum.</text>
+      <text x="80" y="166" font-family="Lato" font-size="10" fill="#555">Match the colour palette. Remove the chart junk. Add data labels where useful.</text>
+      <text x="80" y="182" font-family="Lato" font-size="10" fill="#555">Choose chart type via the Chart Test.</text>
+
+      <!-- Layer 3 — Slicers (right of charts) -->
+      <rect x="520" y="110" width="140" height="100" fill="#ebf6ef" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="540" y="132" font-family="Poppins,sans-serif" font-size="14" font-weight="900">3. Slicers</text>
+      <text x="540" y="150" font-family="Lato" font-size="10" fill="#555">Stacked down the right.</text>
+      <text x="540" y="166" font-family="Lato" font-size="10" fill="#555">Region, plan, date.</text>
+      <text x="540" y="182" font-family="Lato" font-size="10" fill="#555">One click filters</text>
+      <text x="540" y="196" font-family="Lato" font-size="10" fill="#555">everything.</text>
+
+      <!-- Layer 4 — Methodology (bottom) -->
+      <rect x="60" y="220" width="600" height="60" fill="#fef0ec" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="80" y="242" font-family="Poppins,sans-serif" font-size="14" font-weight="900">4. Methodology</text>
+      <text x="80" y="260" font-family="Lato" font-size="10" fill="#555">A short paragraph at the bottom of the sheet — sources, transforms, assumptions, date of last refresh.</text>
+      <text x="630" y="270" text-anchor="end" font-family="Lato" font-style="italic" font-size="10" fill="#888">where the audit trail lives</text>
+
+      <!-- big arrow showing reading order -->
+      <line x1="40" y1="50" x2="40" y2="280" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <polygon points="36,278 44,278 40,288" fill="#c0392b"/>
+      <text x="35" y="170" text-anchor="end" transform="rotate(-90, 35, 170)" font-family="Lato" font-style="italic" font-size="10" fill="#c0392b">eye travels down</text>
+    </g>
+  </svg>
+
+  <p>One sheet. No scrolling. The reader takes about ten seconds to absorb the top KPI tiles, twenty seconds on the charts, and a glance at the methodology if they care how it was built. That's it — three quick passes and the story has landed.</p>
+
+</section>
+
+
+<!-- ========== PAGE 13: DOCUMENTATION & GDPR ========== -->
+<section class="page">
+
+  <p class="section-tag">the audit trail and the responsible bit</p>
+  <h2 class="section">Documentation &amp; GDPR</h2>
+
+  <p>A polished dashboard you can't explain — or that exposes data it shouldn't — fails on a different axis. Two short topics: where your audit trail lives, and the three GDPR rules you need by heart.</p>
+
+  <h3 class="sub">Where the audit trail lives</h3>
+  <ul style="margin: 6pt 0 10pt 0;">
+    <li><strong>Applied Steps</strong> in each Power Query — the full transformation history. Rename steps in plain English before handing over.</li>
+    <li><strong>Source files listed</strong> in the methodology cell at the bottom of the dashboard.</li>
+    <li><strong>Table-column references</strong> (<code>tblActivity[duration]</code>) — formulas that read like sentences.</li>
+    <li><strong>A methodology note</strong> — three or four sentences covering sources, transforms, assumptions, and "last refreshed" date. Enough for a colleague to pick up where you left off.</li>
+  </ul>
+
+  <h3 class="sub">GDPR — three rules for any dashboard with personal data</h3>
+  <p>Your StreamWave data contains personal data: names, regions, plan types, viewing history. UK GDPR applies. Three practical rules:</p>
+  <ul style="margin: 6pt 0 10pt 0;">
+    <li><strong>Report on aggregates, not individuals.</strong> <em>"31.2% churn rate"</em> is fine. <em>"Isla Hussain cancelled on the 19th"</em> is not — unless there's a specific business reason and the dashboard is locked to the right audience.</li>
+    <li><strong>Minimise what you include.</strong> The Subscribers Table can live as Connection Only; only aggregated summaries need to be on a visible sheet. Don't load personal details to a sheet you don't need to.</li>
+    <li><strong>Be careful where the file goes.</strong> Personal data shouldn't be emailed to <em>"all employees"</em> or posted to a general channel. Restrict access to people with a business reason.</li>
+  </ul>
+
+  <div class="assessor-fav">
+    <div class="badge">ASSESSOR FAVOURITE</div>
+    <p>The data ethics question is asked almost every assessment. The one-sentence answer: <em>"This data is personal — names, regions, viewing history — so I've reported on aggregates rather than individuals, kept the raw Subscribers Table as Connection Only, and restricted file access to people with a business reason to see it."</em> Three practical actions, not a lecture on GDPR.</p>
+  </div>
+
+  <h3 class="sub" style="margin-top: 14pt;">The pre-share QA pass</h3>
+  <p>Before the dashboard leaves your screen — before you email it to Priya, before the exec meeting — run a ten-point QA pass. Two minutes. Catches almost every embarrassing miss.</p>
+  <ul class="checklist" style="margin-top: 6pt;">
+    <li>Every headline number has been verified with <strong>The Two-Route Check</strong> at least once — note in methodology cell.</li>
+    <li>Every chart has a title that explains the finding, not just the data field.</li>
+    <li>Every percentage has a % sign; every currency has a £; every count has a thousand separator.</li>
+    <li>No <code>#DIV/0!</code>, <code>#REF!</code>, or <code>#VALUE!</code> anywhere — even hidden behind a filter selection.</li>
+    <li>Press <strong>Data → Refresh All</strong>. Pivots and KPIs all update without errors.</li>
+    <li>Click each slicer to its extremes (all selected, one selected, none selected). Nothing breaks; nothing returns blank where it shouldn't.</li>
+    <li>The methodology cell names the source files, the date of last refresh, and any assumptions.</li>
+    <li>No personal data shown at individual level on any visible sheet.</li>
+    <li>Open in another zoom level (75%, 150%) — layout still holds.</li>
+    <li>Save. Close. Reopen. Everything still works — proves it'll work for Priya tomorrow.</li>
+  </ul>
+  <p>The first time you'll forget at least three of these. Tape the list to the side of your monitor for the first week of using a new dashboard. After that it's muscle memory.</p>
+
+</section>
+
+
+<!-- ========== PAGE 14: BULLET POINTS + TEST DRIVE + COMING UP DAY 8 ========== -->
+<section class="page">
+
+  <h2 class="section">Bullet Points <span class="annot" style="font-size:13pt;">— the chapter in 30 seconds</span></h2>
+
+  <ul style="margin-top: 4pt;">
+    <li><strong>It's automation, not a report.</strong> Refresh + PivotTables = a recurring system updated on one button press.</li>
+    <li><strong>Number formats first.</strong> A KPI without a format is a maths error waiting to happen.</li>
+    <li><strong>The KPI tile.</strong> Merge &amp; Centre, big number above, small label below. Max four tiles.</li>
+    <li><strong>Bucket grouping</strong> turns 70 distinct values into tidy bands. Use <code>=IFS</code> for unequal buckets.</li>
+    <li><strong>Three colours, used semantically</strong> — same colour, same meaning, everywhere.</li>
+    <li><strong>Chart polish = removal.</strong> Gridlines, redundant axes, default titles, default colours &#x2014; gone.</li>
+    <li><strong>The Polish Pyramid.</strong> KPIs &#xb7; Charts &#xb7; Slicers &#xb7; Methodology, top to bottom.</li>
+    <li><strong>The pre-share QA pass.</strong> Ten-point check before the dashboard leaves your screen &#x2014; Two-Route on every headline, refresh, slicer extremes, methodology cell complete.</li>
+  </ul>
+
+  <div class="test-drive" style="margin-top: 12pt;">
+    <h4>Test Drive</h4>
+  </div>
+
+  <p>Before closing the laptop, run this self-check:</p>
+
+  <ul class="checklist">
+    <li>Every number on the dashboard has the right format (% / thousands / decimals / dates).</li>
+    <li>KPI tiles built with Merge &amp; Centre at the top of the sheet.</li>
+    <li>At least one PivotTable uses bucket grouping for a numeric field.</li>
+    <li>Three colours, used consistently. Every chart has had its junk removed.</li>
+    <li>Slicers styled and connected to multiple pivots; methodology paragraph at the bottom.</li>
+    <li>The ten-point QA pass run and every item ticked.</li>
+    <li>You can name the four layers of The Polish Pyramid from memory.</li>
+  </ul>
+
+  <div class="coming-up">
+    <h4>Coming up &#x2014; Day 8</h4>
+    <p style="margin: 0;"><strong>Effective Working Practices.</strong> Tomorrow we move off the keyboard and onto the soft skills the EPA grades just as hard. Audience-appropriate communication, stakeholder management, the three voices (exec / peer / new starter), CPD, multi-functional teamwork, inclusive working, and how to write a methodology note that anyone could pick up tomorrow morning. Plus the <strong>Headline &#x2192; Evidence &#x2192; Caveat</strong> framework for presenting findings.</p>
+  </div>
+
+  <p class="annot" style="text-align:right; margin-top: 18pt; font-size: 14pt;">that's Day 7 done &#x2014; the dashboard now looks the part.</p>
+
+</section>
+
+</body>
+</html>
